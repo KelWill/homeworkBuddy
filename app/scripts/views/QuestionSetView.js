@@ -10,26 +10,37 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
         //basically a large div that will be used for showAll
         // template: new ejs({url: 'app/scripts/templates/QuestionSetView.ejs'}), 
         events:{
-        'click a.MC' : "addMC", 
-        'click a.ShortAnswer' : 'addShortAnswer', 
-        'click a.FillBlank' : 'AddFillBlank'  
-
+        //this looks for events on the view element that is associated with this view
+        },
+        doSomething: function(){
+          console.log('You successfully registered an event');
         },
         addMC: function(){
+          console.log('link got clicked!')
           this.collection.addMC();
         }, 
         addShortAnswer: function(){
           this.collection.addShortAnswer();
         }, 
-        AddFillBlank: function(){
+        addFillBlank: function(){
           this.collection.addFillBlank();
         },
         initialize: function(){
-          debugger;
+          var view = this;
+          
           this.collection.on('add', function(question){
             console.log(question);
-            this.addOne(question);
+            view.addOne(question);
           });
+
+          $('a.MC').on('click', function(e){ 
+            console.log(e);
+            console.log('wheeee');
+            view.addMC() 
+          });
+
+          $('a.ShortAnswer').on('click', function(e){ view.addShortAnswer() });
+          $('a.FillBlank').on('click', function(e){ view.addFillBlank() });
         },
         
         //this function will be called when going back to edit a previously created assignment
