@@ -12,7 +12,7 @@ homeworkBuddy.Collections = homeworkBuddy.Collections || {};
         addShortAnswer: function(){
           this.add(new homeworkBuddy.Models.ShortAnswerCreationModel());
         }, 
-        AddFillBlank: function(){
+        addFillBlank: function(){
           this.add(new homeworkBuddy.Models.FillBlankCreationModel());
         }
     

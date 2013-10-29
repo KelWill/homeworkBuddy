@@ -12,30 +12,29 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
         events:{
         //this looks for events on the view element that is associated with this view
         },
-        doSomething: function(){
-          console.log('You successfully registered an event');
-        },
+
         addMC: function(){
-          console.log('link got clicked!')
           this.collection.addMC();
         }, 
+        
         addShortAnswer: function(){
           this.collection.addShortAnswer();
         }, 
+        
         addFillBlank: function(){
           this.collection.addFillBlank();
         },
+        
         initialize: function(){
-          var view = this;
+          this.$el= $('.container');
           
-          this.collection.on('add', function(question){
-            console.log(question);
-            view.addOne(question);
+          var view = this;
+                   
+          this.collection.on('add', function(model, collection){
+            view.addOne(model);
           });
 
           $('a.MC').on('click', function(e){ 
-            console.log(e);
-            console.log('wheeee');
             view.addMC() 
           });
 
@@ -60,14 +59,17 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
         addOne: function(question){
           var questionView;
           if (question.questionType === 'MC'){
-              questionView = new homeworkBuddy.Views.MCCreationView();
-              return this;
+            console.log(homeworkBuddy.Views.MCCreationView.render);
+            questionView = new homeworkBuddy.Views.MCCreationView({model: question});
           } else if (question.questionType === 'ShortAnswer') {
-              questionView = new homeworkBuddy.Views.ShortAnswerCreationView();
+            console.log('question type is short answer');
+            questionView = new homeworkBuddy.Views.ShortAnswerCreationView({model: question});
           } else if (question.questionType === 'FillBlank') {
-              questionView = new homeworkBuddy.Views.FillBlankCreationView();
+            console.log('question type is fill in the blank');
+            questionView = new homeworkBuddy.Views.FillBlankCreationView({model: question});
           }
           questionView.render();
+          $('.container').append(questionView.el);
           return this;
         }
         

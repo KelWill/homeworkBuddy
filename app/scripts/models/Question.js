@@ -15,6 +15,7 @@ homeworkBuddy.Models = homeworkBuddy.Models || {};
     //options for student answer
     homeworkBuddy.Models.MCCreationModel = homeworkBuddy.Models.QuestionModel.extend({
       initialize: function(options){
+        console.log('creating an MC model')
         if (options){
           this.question = options.question;
           this.answerOptions = options.answerOptions;
@@ -23,6 +24,8 @@ homeworkBuddy.Models = homeworkBuddy.Models || {};
       }, 
       questionType: "MC"
     });
+
+
     homeworkBuddy.Models.FillBlankCreationModel = homeworkBuddy.Models.QuestionModel.extend({
       initialize: function(options){
         if (options){
@@ -34,6 +37,8 @@ homeworkBuddy.Models = homeworkBuddy.Models || {};
       }, 
       questionType: "FillBlank"
     });
+
+
     homeworkBuddy.Models.ShortAnswerCreationModel = homeworkBuddy.Models.QuestionModel.extend({
       initialize: function(options){
         if (options){
@@ -42,7 +47,7 @@ homeworkBuddy.Models = homeworkBuddy.Models || {};
           this.maximumLength = options.maximumLength;
         } 
       }, 
-      questionType: "ShortResponse"
+      questionType: "ShortAnswer"
     });
 
 

@@ -6,7 +6,6 @@ window.homeworkBuddy = {
     templates: {},
     init: function () {
         'use strict';
-        console.log('Hello from Backbone!');
     }
 };
 
