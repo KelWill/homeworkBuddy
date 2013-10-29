@@ -8,9 +8,24 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
     homeworkBuddy.Views.QuestionSetView = Backbone.View.extend({
         
         //basically a large div that will be used for showAll
-        template: JST['app/scripts/templates/QuestionSetView.ejs'], 
+        // template: new ejs({url: 'app/scripts/templates/QuestionSetView.ejs'}), 
+        events:{
+        'click a.MC' : "addMC", 
+        'click a.ShortAnswer' : 'addShortAnswer', 
+        'click a.FillBlank' : 'AddFillBlank'  
 
+        },
+        addMC: function(){
+          this.collection.addMC();
+        }, 
+        addShortAnswer: function(){
+          this.collection.addShortAnswer();
+        }, 
+        AddFillBlank: function(){
+          this.collection.addFillBlank();
+        },
         initialize: function(){
+          debugger;
           this.collection.on('add', function(question){
             console.log(question);
             this.addOne(question);

@@ -5,7 +5,7 @@ homeworkBuddy.Models = homeworkBuddy.Models || {};
 (function () {
     'use strict';
 
-    homeworkBuddy.Models.HwModel = Backbone.Model.extend({
+    homeworkBuddy.Models.HWModel = Backbone.Model.extend({
 
     });
 

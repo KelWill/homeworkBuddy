@@ -1,18 +1,3 @@
-/*global homeworkBuddy, $*/
-
-
-window.homeworkBuddy = {
-    Models: {},
-    Collections: {},
-    Views: {},
-    Routers: {},
-    init: function () {
-        'use strict';
-        console.log('Hello from Backbone!');
-    }
-};
-
-$(document).ready(function () {
-    'use strict';
-    homeworkBuddy.init();
-});
+homeworkBuddy.questionSet = new homeworkBuddy.Collections.QuestionSetCollection({model: homeworkBuddy.Models.QuestionModel});
+homeworkBuddy.questionSetView = new homeworkBuddy.Views.QuestionSetView({collection: homeworkBuddy.questionSet});
+console.log('hello from main.js');

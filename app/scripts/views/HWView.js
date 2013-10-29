@@ -7,8 +7,7 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
 
     homeworkBuddy.Views.HWView = Backbone.View.extend({
 
-        template: JST['app/scripts/templates/HWView.ejs']
-
+        // template: new EJS({url: 'app/scripts/templates/HWView.ejs'})
     });
 
 })();

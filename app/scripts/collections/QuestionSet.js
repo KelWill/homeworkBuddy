@@ -6,7 +6,15 @@ homeworkBuddy.Collections = homeworkBuddy.Collections || {};
     'use strict';
 
     homeworkBuddy.Collections.QuestionSetCollection = Backbone.Collection.extend({
-        model: homeworkBuddy.Models.QuestionModel
+        addMC: function(){
+          this.add(new homeworkBuddy.Models.MCCreationModel());
+        }, 
+        addShortAnswer: function(){
+          this.add(new homeworkBuddy.Models.ShortAnswerCreationModel());
+        }, 
+        AddFillBlank: function(){
+          this.add(new homeworkBuddy.Models.FillBlankCreationModel());
+        }
     
     });
 
