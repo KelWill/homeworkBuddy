@@ -5,10 +5,9 @@ homeworkBuddy.Collections = homeworkBuddy.Collections || {};
 (function () {
     'use strict';
 
-    homeworkBuddy.Collections.QuestionsetCollection = Backbone.Collection.extend({
-
-        model: homeworkBuddy.Models.QuestionsetModel
-
+    homeworkBuddy.Collections.QuestionSetCollection = Backbone.Collection.extend({
+        model: homeworkBuddy.Models.QuestionModel
+    
     });
 
 })();

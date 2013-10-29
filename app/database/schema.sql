@@ -38,7 +38,7 @@ CREATE TABLE `Assignments` (
   `FileName` VARCHAR(30) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
-
+  
 -- ---
 -- Table 'Questions'
 -- 
