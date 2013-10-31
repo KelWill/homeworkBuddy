@@ -24,9 +24,6 @@
 
 
 
-        <a href = "#" class = "MC">Add MC</a><br>
-        <a class = "ShortAnswer">Add Short Answer</a><br>
-        <a class = "FillBlank">Add Fill in the Blank</a>
         <div class = "container"></div>
 
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
@@ -65,17 +62,24 @@
         <!-- build:js({.tmp,app}) scripts/main.js -->
         <script src = "scripts/setup.js"></script>
         <script src="scripts/templates/MCCreationTemplate.js"></script>
+        <script src="scripts/templates/HWCreationTemplate.js"></script>
         <script src="scripts/templates/FillBlankCreationTemplate.js"></script>
         <script src="scripts/templates/ShortAnswerCreationTemplate.js"></script>
         <script src="scripts/routes/studentRouter.js"></script>
         <script src="scripts/routes/teacherRouter.js"></script>
-        <script src="scripts/models/HW.js"></script>
+        <script src="scripts/models/HWCreation.js"></script>
         <script src="scripts/views/HWView.js"></script>
         <script src="scripts/models/Question.js"></script>
         <script src="scripts/views/QuestionView.js"></script>
         <script src="scripts/collections/QuestionSet.js"></script>
         <script src="scripts/views/QuestionSetView.js"></script>
-        
+        <script src="scripts/views/ParagraphView.js"></script>
+        <script src="scripts/views/AssignmentView.js"></script>
+        <script src="scripts/views/CompletedQuestion.js"></script>
+        <script src="scripts/models/Paragraph.js"></script>
+        <script src="scripts/collections/Assignment.js"></script>
+
+
         <script src="scripts/main.js"></script>
         <!-- endbuild -->
 </body>

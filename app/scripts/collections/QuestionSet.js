@@ -4,8 +4,9 @@ homeworkBuddy.Collections = homeworkBuddy.Collections || {};
 
 (function () {
     'use strict';
+    
 
-    homeworkBuddy.Collections.QuestionSetCollection = Backbone.Collection.extend({
+    homeworkBuddy.Collections.QuestionSet = Backbone.Collection.extend({
         addMC: function(){
           this.add(new homeworkBuddy.Models.MCCreationModel());
         }, 
@@ -14,8 +15,15 @@ homeworkBuddy.Collections = homeworkBuddy.Collections || {};
         }, 
         addFillBlank: function(){
           this.add(new homeworkBuddy.Models.FillBlankCreationModel());
+        },
+
+        initialize: function(){
+          this.count = 1;
+          this.on('add', function(model){
+            model.set('number', this.count);
+            this.count++;
+          }, this);
         }
-    
     });
 
 })();
