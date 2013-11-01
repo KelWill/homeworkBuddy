@@ -15,6 +15,39 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
           'click a.addFillBlank': 'addFillBlank', 
         },
 
+        questionOptions: '<span class = "questionOptions"><a href = "#" class = "MC question">Add MC</a><br><a class = "ShortAnswer question">Add Short Answer</a><br>\
+                        <a class = "FillBlank question">Add Fill in the Blank<br></a></span><span class = "addedQuestions"></span>\
+                        <div class = "questionForm"></div>',
+
+        initialize: function(){
+          this.$el.html(this.questionOptions);
+
+          this.collection.on('add', function(model, collection){
+            this.addOne(model);
+          }, this);
+
+          this.collection.on('editQuestion', function(question){
+            this.addOne(question);
+          }, this);
+
+          this.collection.on('change', function(model, collection){
+            //view.render();
+          }, this);
+
+          this.collection.on('questionAdded', function(question){
+            if (!question.get('rendered')){
+              var completedQuestionView = new homeworkBuddy.Views.CompletedQuestion({model: question});
+              this.$el.find('span.addedQuestions').append(completedQuestionView.render().el);
+            }
+          }, this);
+
+        },
+
+        render: function(){
+          //this.$el.find('span.questionOptions').html('');
+          this.$el.find('span.questionOptions').html(this.questionOptions);
+        },
+
         addMC: function(){
           this.collection.addMC();
         }, 
@@ -26,49 +59,12 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
         addFillBlank: function(){
           this.collection.addFillBlank();
         },
-        questionOptions: '<a href = "#" class = "MC question">Add MC</a><br><a class = "ShortAnswer question">Add Short Answer</a><br>\
-                        <a class = "FillBlank question">Add Fill in the Blank<br></a>',
-
-        initialize: function(){
-          var view = this;
-
-          this.collection.on('add', function(model, collection){
-            view.addOne(model);
-          });
-
-          this.collection.on('editQuestion', function(question){
-            view.addOne(question);
-          });
-
-          this.collection.on('change', function(model, collection){
-            view.render();
-          });
-
-          this.$el.html(this.questionOptions);
-        },
-        
-        //this function will be called when going back to edit a previously created assignment
-        //or if the user wishes to see all the questions in a div
-        
-        render: function(){
-          this.$el.find('span.addQuestion').show();
-          this.$el.html('');
-          this.$el.html(this.questionOptions);
-          this.collection.forEach(function(question){
-            var completedQuestionView = new homeworkBuddy.Views.CompletedQuestion({model: question});
-          }, this);
-          this.collection.on('questionAdded', function(completedQuestionView){
-            console.log('questionAdded was triggered');
-            this.$el.append(completedQuestionView.render().el)
-          }, this);
-        },
 
         showAll: function(){
           //to write later
         },
 
-        //add one takes care of rendering the view, logic of placing it into the DOM
-        //will reside with the route controller
+        //addOne takes a question model and renders it and places it in the dom
         addOne: function(question){
           var questionView;
           if (question.questionType === 'MC'){
@@ -79,7 +75,7 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
             questionView = new homeworkBuddy.Views.FillBlankCreationView({model: question});
           }
           questionView.render();
-          $(this.el).append(questionView.el);
+          this.$el.find('.questionForm').append(questionView.el);
           return this;
         }
         

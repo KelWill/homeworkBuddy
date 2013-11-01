@@ -20,6 +20,7 @@ homeworkBuddy.Collections = homeworkBuddy.Collections || {};
         initialize: function(){
           this.count = 1;
           this.on('add', function(model){
+            console.log(model);
             model.set('number', this.count);
             this.count++;
           }, this);

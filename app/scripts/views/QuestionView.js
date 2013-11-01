@@ -10,39 +10,45 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
 
       events: {
         'click button': 'saveQuestion',
-        }, 
+      }, 
 
-      hide: function(){
-        this.$el.remove();
+      render: function(){
       },
-
-
 
       saveQuestion: function(){
         //for now just handles MC questions
         //TODO refactor into different views
+        
+        //getting the values from the input boxes
         var question = $('#question').val();
         var answerOptions = [];
         answerOptions.push($('.A').val());
         answerOptions.push($('.B').val());
         answerOptions.push($('.C').val());
         answerOptions.push($('.D').val());
-        
-        var correctAnswer = $('.correct').val();
+        var correctAnswer = $('input:radio[name=correct]:checked').val();
+        console.log('correct answer is', correctAnswer);
+
+        //updating the model
         this.model.set({question: question, answerOptions: answerOptions, correctAnswer: correctAnswer});
-        this.$el.remove();
-        this.model.trigger('questionEntered');
+
+        //finishing editing the form
+        this.model.trigger('stopEdit');
+        this.model.trigger('questionAdded', this.model);
       },
 
-      render: function(){
-      }
     });
 
     homeworkBuddy.Views.MCCreationView = homeworkBuddy.Views.QuestionCreationView.extend({
         template: _.template(homeworkBuddy.templates.MCCreation),
+        
         initialize: function(){
-          this.model.on('stopEdit', function(){ this.hide(); }, this)
+          //when done editing hide this view
+          this.model.on('stopEdit', function(){ 
+            this.$el.remove();
+          }, this);
         },
+        
         render: function(){
           this.$el.append(this.template(this.model.attributes));
           return this;
@@ -52,7 +58,9 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
     homeworkBuddy.Views.FillBlankCreationView = Backbone.View.extend({
         template: _.template(homeworkBuddy.templates.FillBlankCreation),
         initialize: function(){
-          this.model.on('stopEdit', function(){ this.hide(); }, this)
+          this.model.on('stopEdit', function(){ 
+            this.$el.remove(); 
+          }, this)
         },
         render: function(){
           this.$el.append(this.template(this.model.attributes));
@@ -63,7 +71,9 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
     homeworkBuddy.Views.ShortAnswerCreationView = Backbone.View.extend({
         template: _.template(homeworkBuddy.templates.ShortAnswerCreation),
         initialize: function(){
-          this.model.on('stopEdit', function(){ this.hide(); }, this)
+          this.model.on('stopEdit', function(){ 
+            this.$el.remove();
+          }, this)
         },
         render: function(){
           this.$el.append(this.template(this.model.attributes));

@@ -14,19 +14,15 @@ homeworkBuddy.Models = homeworkBuddy.Models || {};
     //these models are all designed for use on the teacher creation side, and so don't include 
     //options for student answer
     homeworkBuddy.Models.MCCreationModel = homeworkBuddy.Models.QuestionModel.extend({
-      defaults: {
+      defaults: {//these are important for editing
         question: "", 
         correctAnswer: "",
         answerOptions:["", "", "", ""]
       },
 
       initialize: function(options){
-        if (options){
-          this.question = options.question;
-          this.answerOptions = options.answerOptions;
-          this.correctAnswer = options.correctAnswer;
-        }
-      }, 
+      },
+
       questionType: "MC"
     });
 

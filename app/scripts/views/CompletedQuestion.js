@@ -6,14 +6,14 @@ homeworkBuddy.Views.CompletedQuestion = Backbone.View.extend({
   },
   
   initialize: function(){
-    this.model.on('questionEntered', function(){
-      this.model.trigger('questionAdded', this);
-    }, this);
+    this.model.on('stopEdit', function(){
+      this.editing = false;
+    }, this)
   },
 
   showQuestionCreation: function(){
-    this.editing = !this.editing;
-    if (this.editing){
+    if (!this.editing){
+      this.editing = true;
       this.model.trigger('editQuestion', this.model);
     } else {
       this.model.trigger('stopEdit', this.model);
@@ -22,7 +22,8 @@ homeworkBuddy.Views.CompletedQuestion = Backbone.View.extend({
   
   render: function(){
    this.$el.text( this.model.get('number') + '. ' + this.model.questionType + ' ');
+   this.model.set('rendered', true);
    return this;
-  } 
+  }
 
 })

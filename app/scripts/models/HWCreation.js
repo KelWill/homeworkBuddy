@@ -7,7 +7,7 @@ homeworkBuddy.Models = homeworkBuddy.Models || {};
 
     homeworkBuddy.Models.HWCreationModel = Backbone.Model.extend({
       initialize: function(){
-        this.height = '500px';
+        this.height = '200px';
       }
     });
 
