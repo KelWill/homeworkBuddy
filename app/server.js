@@ -5,17 +5,16 @@ var app = express();
 
 app.use(express.static(__dirname));
 
+
+//add in /:user/:assignmentName
 app.post('/', function(request, response){
   message = "";
   request.on('data', function(chunk){
-    console.log(chunk);
     message+=chunk;
   })
   request.on('end', function(){
-    console.log(message.toString());
-    console.log('request has ended');
     message = JSON.parse(message);
-    console.log(message.contents[0].questionSet);
+    console.log(message);
     response.end();
   })
 })

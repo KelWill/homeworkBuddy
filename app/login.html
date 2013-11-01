@@ -1,0 +1,94 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>HW Bud</title>
+    <style>
+      .hide {
+        display: none;
+       }
+    </style>
+  </head>
+
+  <body>
+    <h2>Login</h2>
+      <div class = "loginSignup">
+        <form class = "login">
+          Username: <input type = "text" placeholder = "your email" class = "username"/><br>
+          Password: <input type = "password" class = "password"/><br>
+          <button>Submit</button><a href = "#"> Don't have an account?</a>
+        </form>
+        <form class = "signup hide">
+          Username: <input type = "text" placeholder = "Your email" class = "username"/><br>
+          Password: <input type = "password" class = "password"/><br>
+          Password: <input type = "password" class = "password"/><br>
+          <button>Submit</button><a href = "#"> Already have an account?</a>
+        </form>
+        <p class = "message"></p>
+     </div>
+      <script src = "http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+      <script>
+        $(document).ready(function(){
+          var url = "http://localhost:8080";
+          $('.login').on('click', 'button', function(){
+            var form = $(this).parent();
+            debugger;
+            var password = form.find('input.password').val();
+            var username = form.find('input.username').val();
+            console.log(password);
+            console.log(username);
+            var dataString = JSON.stringify({password: password, username: username});
+            if (password.length >= 6  && username.length){
+              $.ajax({
+                url: url + '/login', 
+                method: 'post', 
+                data: dataString, 
+                success: function(){
+                  //redirect should be handled on server side
+                }, 
+                error: function(){
+                  $('.message').text("Either username or password is incorrect.");
+                }
+              })
+            }
+          });
+
+          $('div.loginSignup').find('form a').on('click', function(e){
+            e.preventDefault();
+            $('form').toggleClass('hide');
+          });
+
+          $('.signup').on('click', 'button', function(){
+            var form = $(this).parent();
+            var password = form.find('input.password').val();
+            var username = form.find('input.username').val();
+            console.log(password, 'should be an array');
+            if (password[0] === password[1]){
+              password = password[0];
+            } else {
+              return;
+            }
+            var dataString = JSON.stringify({password: password, username: username});
+            if (password.length >= 6  && username.length){
+              $.ajax({
+                url: url + '/signup', 
+                method: 'post', 
+                data: dataString, 
+                success: function(){
+                  //redirect should be handled on server side
+                }, 
+                error: function(){
+                  $('.message').text("Username has already been taken. :(");
+                }
+              })
+            }
+          });
+
+        });
+      </script>
+  </body>
+</html>

@@ -60,10 +60,6 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
           this.collection.addFillBlank();
         },
 
-        showAll: function(){
-          //to write later
-        },
-
         //addOne takes a question model and renders it and places it in the dom
         addOne: function(question){
           var questionView;

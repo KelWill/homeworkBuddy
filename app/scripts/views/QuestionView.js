@@ -27,7 +27,6 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
         answerOptions.push($('.C').val());
         answerOptions.push($('.D').val());
         var correctAnswer = $('input:radio[name=correct]:checked').val();
-        console.log('correct answer is', correctAnswer);
 
         //updating the model
         this.model.set({question: question, answerOptions: answerOptions, correctAnswer: correctAnswer});

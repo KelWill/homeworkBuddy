@@ -28,7 +28,6 @@ homeworkBuddy.Views.AssignmentView = Backbone.View.extend({
   }, 
 
   submitHomework: function(){
-    console.log('heyyyyyyy');
     this.collection.submitHomework();
   }
 
