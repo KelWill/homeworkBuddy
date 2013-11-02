@@ -5,6 +5,7 @@ var app = express();
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy;
 
+
 //   Database   //
 //creating connection with database
 var db = mysql.createConnection({
@@ -26,7 +27,7 @@ app.configure(function() {
 
   //initializing passport
   app.use(passport.initialize());
-  app.use(passport.session());
+  //app.use(passport.session());  //this looks for serialize and deserialize users
   app.use(app.router);
 });
 
@@ -34,16 +35,19 @@ app.use(express.static(__dirname));
 
 
 //   Passport   //
-//starting local strategy for passport
+// starting local strategy for passport
 passport.use(new LocalStrategy(
   function(username, password, done) {
+    console.log(username);
+    console.log(password);
+    console.log(done);
     db.query('SELECT * FROM teachers WHERE name = ?', [userData.username], function(err, rows, fields){
       if ( rows.length && rows[0].password_hash === userData.password){
         //successful login
         return done(null, user);
       } else {
         //failed login
-        return done(null, false, {message: 'Incorrect username or password'});
+        return done(null, false);
       }
     });
   }
@@ -74,7 +78,13 @@ passport.deserializeUser(function(id, done) {
 
 //   User authentication   //
 //   Login   //
-app.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login'}));
+app.post('/login',
+  function(req, res) {
+    var a = passport.authenticate('local')('teacher', 'teacher', function(){ console.log('success'); });
+    console.log(a);
+    console.log('you are authenicated!');
+    res.end();
+  });
 
 app.get('/login', function(request, response){
   response.sendfile(__dirname + '/login.html');
@@ -104,6 +114,9 @@ app.post('/signup', function(request, response){
     });
 
   });
+});
+
+
 
 //   Posting Homework   //
 //   Teacher View   //
@@ -120,27 +133,7 @@ app.post('/', function(request, response){
     response.end();
   });
 
-})
-
-
-
 });
-
-
-
-// app.post('/login', function(request, response){
-
-
-  // var userData = '';
-
-  // request.on('data', function(chunk){
-  //   userData+=chunk;
-  // });
-
-  // request.on('end', function(){
-  //   userData = JSON.parse(userData);
-
-// });
 
 
 //   Starting Server   //
