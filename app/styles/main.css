@@ -1,13 +1,53 @@
-body {
+/*body {
     background: #fafafa;
 }
 
-textarea{
- width: 100%;
- height: 100%;
+h1 {
+  font-family: helvetica, sans-serif, serif;
+  margin-top: -50px;
+
 }
+.container {
+  position: absolute;
+  top: 50px;
+  left: 100px;
+  right: 100px;
+  bottom: 100px;
+
+  border: 2px solid black;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+textarea{
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  top: 5px;
+
+  outline: none;
+  overflow: auto;
+
+  font-size: 1.2em;
+  font-family: helvetica, sans-serif, serif;
+  }
+
+.container div button {
+  position: absolute;
+  right: 0px;
+  bottom: -65px;
+
+  font: 1.5em solid black;
+  line-height: 2em;
+  font-family: helvetica, sans-serif;
+  font-weight: bold;
+
+}
+
 
 .hero-unit {
     margin: 50px auto 0 auto;
     width: 300px;
-}
+}*/

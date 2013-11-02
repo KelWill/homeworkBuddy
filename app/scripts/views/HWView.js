@@ -41,8 +41,6 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
 
       render: function(){
         this.$el.append(this.template(this.model.attributes));
-        this.$el.css('height', this.model.height);
-        this.$el.css('width', '50%');
         
         return this;
       }

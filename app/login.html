@@ -15,18 +15,18 @@
   </head>
 
   <body>
-    <h2>Login</h2>
+    <h2>Login</h2><h2 class = "hide">Signup</h2>
       <div class = "loginSignup">
         <form class = "login">
           Username: <input type = "text" placeholder = "your email" class = "username"/><br>
           Password: <input type = "password" class = "password"/><br>
-          <button>Submit</button><a href = "#"> Don't have an account?</a>
+          <button>Log In!</button><a href = "#"> Don't have an account?</a>
         </form>
         <form class = "signup hide">
           Username: <input type = "text" placeholder = "Your email" class = "username"/><br>
           Password: <input type = "password" class = "password"/><br>
           Password: <input type = "password" class = "password"/><br>
-          <button>Submit</button><a href = "#"> Already have an account?</a>
+          <button>Sign Up!</button><a href = "#"> Already have an account?</a>
         </form>
         <p class = "message"></p>
      </div>
@@ -34,61 +34,74 @@
       <script>
         $(document).ready(function(){
           var url = "http://localhost:8080";
-          $('.login').on('click', 'button', function(){
+          $('.login').on('click', 'button', function(e){
+            e.preventDefault();
             var form = $(this).parent();
-            debugger;
             var password = form.find('input.password').val();
             var username = form.find('input.username').val();
-            console.log(password);
-            console.log(username);
             var dataString = JSON.stringify({password: password, username: username});
+
             if (password.length >= 6  && username.length){
+
               $.ajax({
                 url: url + '/login', 
                 method: 'post', 
                 data: dataString, 
-                success: function(){
-                  //redirect should be handled on server side
+                success: function(text){
+                  $('.message').text(text);
                 }, 
-                error: function(){
-                  $('.message').text("Either username or password is incorrect.");
+                error: function(text){
+                  console.log(text)
+                  $('.message').text(text);
                 }
               })
+
+            } else { 
+              if (!username.length) {
+                $('.message').text('But...who are you!?');
+              } else {
+                $('.message').text('Incorrect password. (Hint, all passwords are at least six characters long)');
+              }
             }
+
           });
 
           $('div.loginSignup').find('form a').on('click', function(e){
             e.preventDefault();
             $('form').toggleClass('hide');
+            $('body').find('h2').toggleClass('hide');
           });
 
-          $('.signup').on('click', 'button', function(){
+          $('.signup').on('click', 'button', function(e){
+            e.preventDefault();
             var form = $(this).parent();
             var password = form.find('input.password').val();
             var username = form.find('input.username').val();
-            console.log(password, 'should be an array');
-            if (password[0] === password[1]){
-              password = password[0];
-            } else {
-              return;
-            }
             var dataString = JSON.stringify({password: password, username: username});
             if (password.length >= 6  && username.length){
+
               $.ajax({
                 url: url + '/signup', 
                 method: 'post', 
                 data: dataString, 
-                success: function(){
-                  //redirect should be handled on server side
+                success: function(html){
+                  
                 }, 
-                error: function(){
-                  $('.message').text("Username has already been taken. :(");
+                error: function(text){
+                  $('.message').text(text);
                 }
-              })
+              });
+
+            } else {
+              if (!username.length) {
+                $('.message').text('But...who are you!?');
+              } else {
+                $('.message').text('Passwords need to be at least 6 characters long');
+              }
             }
           });
-
         });
       </script>
+
   </body>
 </html>
