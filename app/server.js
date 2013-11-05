@@ -33,6 +33,9 @@ app.configure(function() {
   app.use(express.static(__dirname));
 });
 
+app.get('/', function(request, response){
+  response.sendfile('index.html');
+});
 
 //   Passport   //
 // starting local strategy for passport
@@ -79,20 +82,20 @@ passport.use(new LocalStrategy(
 passport.use(new LocalStrategy({
           usernameField: 'username',
           passwordField: 'password'
-  },
-  function(username, password, done) {
+  }, function(username, password, done) {
     isValidUserPassword(username, password, done);
   }));
 
 passport.serializeUser(function(user, done) {
-  console.log('serialize user is running')
+  console.log('serializing!');
+  console.log('user', user);
   done(null, user.id);
 });
 
 passport.deserializeUser(function(id, done) {
-  console.log('deserialize user is running')
-  db.query('SELECT * FROM teachers WHERE id = ?', [id], function(err, user){
-    done(err, user[0]);
+  console.log('deserializing!');
+  db.query('SELECT * FROM teachers WHERE id = ?', [id], function(err, rows, fields){
+    done(err, rows[0]);
   });
 });
 
@@ -118,6 +121,7 @@ app.get('/login', function(request, response){
 });
 
 //   Signing Up   //
+//   todo: rewrite  //
 app.post('/signup', function(request, response){
   console.log('signup attempted!');
 
@@ -140,7 +144,6 @@ app.post('/signup', function(request, response){
         response.end('User already exists');
       }
     });
-
   });
 });
 
@@ -149,19 +152,62 @@ app.post('/signup', function(request, response){
 //   Posting Homework   //
 //   Teacher View   //
 app.post('/', function(request, response){
+  console.log('posting homework!');
+  console.log('request.body', request.body);
+  console.log('request.user', request.user);
+  //because of passport.js request.user will have data associated with the user automagically
+  
 
-  message = "";
+  // if (!request.user) {
+  //   response.writeHead(401);
+  //   response.end();
+  // } 
 
-  request.on('data', function(chunk){
-    message+=chunk;
-  });
+  var assignment = request.body;
+  var thingsToInsert = 0;
+  var thingsInserted = 0;
+  //var teacher_id = request.user.id;
+  var text, questionSet, answer, question, paragraph, p_id;
+  //insert into the assignment body with a teacher's id
+  for ( var i = 0 ; i < assignment.length; i++) {
+    paragraph = assignment[i];
+    console.log(paragraph);
+    p_id = paragraph.id;
+    text = paragraph.text;
+    questionSet = paragraph.questionSet;
+    console.log('questionSet ', questionSet);
+    console.log('p_id', p_id);
+    console.log('text', text);
 
-  request.on('end', function(){
-    message = JSON.parse(message);
-    response.end();
-  });
+
+
+    //first need to insert into assignments, so can get the assignment id
+    //then can insert questions into questions and text into paragraphs
+    questionSet = paragraph.questionSet;
+    if (questionSet){
+      for ( var j = 0; j < questionSet.length; j++ ) {
+        question = questionSet[j];
+        if (question.correctAnswer){
+          answer = question.correctAnswer;
+          delete question.correctAnswer;
+        }
+      }
+      console.log(question);
+      console.log(answer);
+    }
+
+    //insert all the paragraphs and questions into the appropriate tables with the right ids so that they can be reconstructed
+  }
+
+  response.end('stuff happened...');
 
 });
+
+var finish = function(thingsInserted, thingsToInsert, message){
+  if (thingsInserted === thingsToInsert){
+    response.end(message);
+  }
+}
 
 
 //   Starting Server   //

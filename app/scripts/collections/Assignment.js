@@ -7,12 +7,19 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
   
   submitHomework: function(){
     var data = this.toJSON();
-    stuff = JSON.stringify(stuff);
+    data = JSON.stringify(data);
+    console.log(data);
+    console.log('submitting homework');
+
     $.ajax({
      method: 'POST', 
-     contenttype: 'application/json',
+     contentType: 'application/json',
      data: data, 
-     url: 'http://localhost:8080'
+     url: 'http://localhost:8080/', 
+     success: function(text){
+      console.log(text);
+     }
     });
+
   }
 })

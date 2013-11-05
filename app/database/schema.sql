@@ -1,5 +1,5 @@
 
-
+--might need to drop the whole database and then redo it
 
 
 -- ---
@@ -36,6 +36,7 @@ CREATE TABLE `Assignments` (
   `id` TINYINT NULL AUTO_INCREMENT DEFAULT NULL,
   `id_Teachers` TINYINT NULL DEFAULT NULL,
   `FileName` VARCHAR(30) NULL DEFAULT NULL,
+  `assignmentName` VARCHAR(30),
   PRIMARY KEY (`id`)
 );
   
@@ -51,6 +52,15 @@ CREATE TABLE `Questions` (
   `id_Assignments` TINYINT NULL DEFAULT NULL,
   `QuestionText` BLOB NULL DEFAULT NULL,
   `QuestionAnswer` VARCHAR(10) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+
+DROP TABLE IF EXISTS `Paragraphs`;
+    
+CREATE TABLE `Paragraphs` (
+  `id` TINYINT NULL AUTO_INCREMENT DEFAULT NULL,
+  `id_Assignments` TINYINT NULL DEFAULT NULL,
+  `text` BLOB NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -108,12 +118,12 @@ CREATE TABLE `Classes (SS_Teachers)` (
 -- ---
 
 ALTER TABLE `Assignments` ADD FOREIGN KEY (id_Teachers) REFERENCES `Teachers` (`id`);
+ALTER TABLE `Paragraphs` ADD FOREIGN KEY (id_Assignments) REFERENCES `Assignments` (`id`);
 ALTER TABLE `Questions` ADD FOREIGN KEY (id_Assignments) REFERENCES `Assignments` (`id`);
 ALTER TABLE `Student_Questions` ADD FOREIGN KEY (id_Questions) REFERENCES `Questions` (`id`);
 ALTER TABLE `Student_Questions` ADD FOREIGN KEY (id_Students) REFERENCES `Students` (`id`);
 ALTER TABLE `Classes (SS_Teachers)` ADD FOREIGN KEY (id_Teachers) REFERENCES `Teachers` (`id`);
 ALTER TABLE `Classes (SS_Teachers)` ADD FOREIGN KEY (id_Students) REFERENCES `Students` (`id`);
-
 -- ---
 -- Table Properties
 -- ---
