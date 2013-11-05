@@ -3,6 +3,7 @@ var mysql = require('mysql');
 var express = require('express');
 var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy;
+var assignments = require('./helpers/assignments');
 
 //   Database   //
 //creating connection with database
@@ -17,6 +18,7 @@ db.connect();
 db.query('use homeworkBuddy', function(){
   console.log('using homeworkBuddy database');
 });
+
 
 var app = express();
 //configuring express app
@@ -152,63 +154,8 @@ app.post('/signup', function(request, response){
 //   Posting Homework   //
 //   Teacher View   //
 app.post('/', function(request, response){
-  console.log('posting homework!');
-  console.log('request.body', request.body);
-  console.log('request.user', request.user);
-  //because of passport.js request.user will have data associated with the user automagically
-  
-
-  // if (!request.user) {
-  //   response.writeHead(401);
-  //   response.end();
-  // } 
-
-  var assignment = request.body;
-  var thingsToInsert = 0;
-  var thingsInserted = 0;
-  //var teacher_id = request.user.id;
-  var text, questionSet, answer, question, paragraph, p_id;
-  //insert into the assignment body with a teacher's id
-  for ( var i = 0 ; i < assignment.length; i++) {
-    paragraph = assignment[i];
-    console.log(paragraph);
-    p_id = paragraph.id;
-    text = paragraph.text;
-    questionSet = paragraph.questionSet;
-    console.log('questionSet ', questionSet);
-    console.log('p_id', p_id);
-    console.log('text', text);
-
-
-
-    //first need to insert into assignments, so can get the assignment id
-    //then can insert questions into questions and text into paragraphs
-    questionSet = paragraph.questionSet;
-    if (questionSet){
-      for ( var j = 0; j < questionSet.length; j++ ) {
-        question = questionSet[j];
-        if (question.correctAnswer){
-          answer = question.correctAnswer;
-          delete question.correctAnswer;
-        }
-      }
-      console.log(question);
-      console.log(answer);
-    }
-
-    //insert all the paragraphs and questions into the appropriate tables with the right ids so that they can be reconstructed
-  }
-
-  response.end('stuff happened...');
-
+  assignments.createAssignment(request, response, db);
 });
-
-var finish = function(thingsInserted, thingsToInsert, message){
-  if (thingsInserted === thingsToInsert){
-    response.end(message);
-  }
-}
-
 
 //   Starting Server   //
 app.listen(8080);
