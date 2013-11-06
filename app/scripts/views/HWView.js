@@ -19,13 +19,13 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
       //maybe should communicate with router
       submit: function(){
         var temp, paragraph;
-        var title = $('input.newAssignment.title').val();
+        var assignmentName = $('input#assignmentName').val();
         //need to add in check here 
 
         var text = $('textarea.newAssignment').val();
         var array = encodeURIComponent(text).split('%0A');
 
-        homeworkBuddy.assignment = new homeworkBuddy.Collections.Assignment();
+        homeworkBuddy.assignment = new homeworkBuddy.Collections.Assignment({name: assignmentName});
         homeworkBuddy.assignmentView = new homeworkBuddy.Views.AssignmentView({collection: homeworkBuddy.assignment});
 
         var id = 0;

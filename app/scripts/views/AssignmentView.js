@@ -18,6 +18,7 @@ homeworkBuddy.Views.AssignmentView = Backbone.View.extend({
   render: function(){
    //clears out the old container and adds in assignment view
    $('.container').html("");
+   $('.title').prepend(this.collection.assignmentName);
    $('.container').append(this.$el);
    this.$el.append(this.completedButton)
   },

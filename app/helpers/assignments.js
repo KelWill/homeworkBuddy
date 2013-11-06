@@ -1,7 +1,7 @@
-
-
 module.exports.createAssignment = function(request, response, db){
   var assignment = request.body;
+  var assignmentName = request.params.assignmentName;
+  console.log(assignmentName);
   var thingsToInsert = 0;
   var thingsInserted = 0;
   if (request.user) { var teacher_id = request.user.id; } else { teacher_id = 1; }
@@ -44,7 +44,7 @@ module.exports.createAssignment = function(request, response, db){
   };
 
 
-  db.query('INSERT INTO assignments (id_teachers) VALUES (?)', teacher_id, function(error, result){
+  db.query('INSERT INTO assignments (id_teachers, name) VALUES (?, ?)', [teacher_id, assignmentName], function(error, result){
     if (error){
       console.log(error);
     } else {
@@ -59,6 +59,39 @@ module.exports.createAssignment = function(request, response, db){
   }
 };
 
-module.exports.retrieveAssignment = function(request, response){
+module.exports.retrieveAssignment = function(request, response, db){
+  //add in logic with request.user to check to make sure that the student is actually a member of the class...
+  var teacher = request.params.teacher;
+  var assignmentName = request.params.assignmentName;
 
+  console.log(teacher);
+  console.log(assignmentName);
+
+  //can refactor to use an inner join
+  db.query('SELECT * FROM TEACHERS WHERE name = ?', [teacher], function(error, rows, fields){
+    if (error) {
+      console.log(error);
+      response.end('We messed up! Sorry! Try again in a few minutes');
+    } 
+    if (rows.length) {
+      console.log(rows);
+      db.query('SELECT * FROM assignments where id_Teachers = ? and name = ?', [rows[0].id, assignmentName], function(error, rows, fields){
+        if (error){
+          console.log(error);
+          response.writeHead(500);
+          response.end('We messed up! Sorry! Try again in a few minutes');
+        } else if (!rows.length){
+          console.log('assignment not found');
+          response.end('Assignment not found.')
+        } else {
+          console.log('success!');
+          console.log(rows);
+          response.end(rows[0]);
+        }
+      });
+    } else {
+      console.log(rows[0]);
+      response.end('Teacher name not found');
+    }
+  })
 };

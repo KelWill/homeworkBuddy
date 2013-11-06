@@ -1,7 +1,7 @@
 //Requiring Modules
 var mysql = require('mysql');
 var express = require('express');
-var passport = require('passport')
+var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var assignments = require('./helpers/assignments');
 
@@ -15,10 +15,7 @@ var db = mysql.createConnection({
 
 //connecting to database and using correct table
 db.connect();
-db.query('use homeworkBuddy', function(){
-  console.log('using homeworkBuddy database');
-});
-
+db.query('use homeworkBuddy', function(){});
 
 var app = express();
 //configuring express app
@@ -40,7 +37,6 @@ app.get('/', function(request, response){
 });
 
 //   Passport   //
-// starting local strategy for passport
 var isValidUserPassword = function(username, password, done){
   console.log('isValidUserPassword is running');
   db.query('SELECT * FROM teachers WHERE email = ?', username, function(err, rows, fields){
@@ -60,9 +56,8 @@ var isValidUserPassword = function(username, password, done){
       return done(null, rows[0]);
     }
   })
-}
+};
 
-var passport = require('passport')
 var LocalStrategy = require('passport-local').Strategy;
 
 passport.use(new LocalStrategy(
@@ -80,13 +75,13 @@ passport.use(new LocalStrategy(
   }
 ));
 
-
 passport.use(new LocalStrategy({
           usernameField: 'username',
           passwordField: 'password'
   }, function(username, password, done) {
     isValidUserPassword(username, password, done);
-  }));
+}));
+
 
 passport.serializeUser(function(user, done) {
   console.log('serializing!');
@@ -101,19 +96,6 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-
-//   Cors stuff, if necessary   //
-// app.all('*', function(req, res, next){
-//   // if (!req.get('Origin')) return next();
-//   // use "*" here to accept any origin
-//   res.set('Access-Control-Allow-Origin', '*');
-//   res.set('Access-Control-Allow-Methods', "GET, POST, PUT, DELETE, OPTIONS");
-//   res.set('Access-Control-Allow-Headers', "content-type, accept");
-//   res.set('Access-Control-Allow-Max-Age', 10);
-//   if ('OPTIONS' == req.method) return res.send(200);
-//   next();
-// });
-
 //   User authentication   //
 //   Login   //
 app.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login'})  );
@@ -123,10 +105,7 @@ app.get('/login', function(request, response){
 });
 
 //   Signing Up   //
-//   todo: rewrite  //
 app.post('/signup', function(request, response){
-  console.log('signup attempted!');
-
   var userData = '';
 
   request.on('data', function(chunk){
@@ -149,11 +128,13 @@ app.post('/signup', function(request, response){
   });
 });
 
-
+app.get('/getassignments/:teacher/:assignmentName', function(request, response){
+  assignments.retrieveAssignment(request, response, db);
+});
 
 //   Posting Homework   //
 //   Teacher View   //
-app.post('/', function(request, response){
+app.post('/newhw/:assignmentName', function(request, response){
   assignments.createAssignment(request, response, db);
 });
 
