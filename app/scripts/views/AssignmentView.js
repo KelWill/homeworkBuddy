@@ -26,7 +26,7 @@ homeworkBuddy.Views.AssignmentView = Backbone.View.extend({
   addOne: function(paragraph){
     var paragraphView = new homeworkBuddy.Views.ParagraphView({model: paragraph});
     this.$el.append(paragraphView.el);
-  }, 
+  },
 
   submitHomework: function(){
     this.collection.submitHomework();

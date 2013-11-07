@@ -9,6 +9,7 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
   },
   submitHomework: function(){
     var assignmentName = this.assignmentName;
+    delete this.assignmentName;
     var data = this.toJSON();
     data = JSON.stringify(data);
     console.log(data);

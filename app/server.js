@@ -19,8 +19,7 @@ db.query('use homeworkBuddy', function(){});
 
 var app = express();
 //configuring express app
-app.configure(function() {
-  app.use(express.static('public'));
+app.configure(function() {;
   app.use(express.cookieParser());
   app.use(express.bodyParser());
   app.use(express.session({ secret: 'a random string' }));
@@ -35,6 +34,17 @@ app.configure(function() {
 app.get('/', function(request, response){
   response.sendfile('index.html');
 });
+app.get('/student', function(request, response){
+  response.sendfile('student.html');
+});
+
+app.get('/student/:teacher/yaynohomework', function(request, response){
+  response.redirect('http://www.zoombo.com');
+});
+
+app.get('/student/:teacher/:assignmentid', function(request, response){
+  response.sendfile('assignment.html');
+})
 
 //   Passport   //
 var isValidUserPassword = function(username, password, done){
@@ -128,9 +138,21 @@ app.post('/signup', function(request, response){
   });
 });
 
-app.get('/getassignments/:teacher/:assignmentName', function(request, response){
+
+//   Getting Assignments   //
+app.get('/getassignment/:teacher/:assignmentName', function(request, response){
   assignments.retrieveAssignment(request, response, db);
 });
+
+app.get('/getassignments/:teacher', function(request, response){
+  assignments.retrieveTeacherAssignments(request, response, db);
+});
+
+//   Getting List of Teachers   //
+app.get('/allteachers', function(request, response){
+  assignments.getAllTeachers(request, response, db);
+});
+
 
 //   Posting Homework   //
 //   Teacher View   //

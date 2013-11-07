@@ -1,7 +1,6 @@
 module.exports.createAssignment = function(request, response, db){
   var assignment = request.body;
   var assignmentName = request.params.assignmentName;
-  console.log(assignmentName);
   var thingsToInsert = 0;
   var thingsInserted = 0;
   if (request.user) { var teacher_id = request.user.id; } else { teacher_id = 1; }
@@ -86,12 +85,72 @@ module.exports.retrieveAssignment = function(request, response, db){
         } else {
           console.log('success!');
           console.log(rows);
-          response.end(rows[0]);
+          getParagraphsAndQuestions(request, response, db, rows[0].id);
         }
       });
     } else {
       console.log(rows[0]);
       response.end('Teacher name not found');
     }
+  });
+};
+
+var getParagraphsAndQuestions = function(request, response, db, assignmentId){
+  var query = 0;
+  var data = {};
+  var paragraphs;
+  var questions;
+
+  //refactor with inner join
+  db.query('SELECT CONVERT(text USING utf8) as text, paragraph_id FROM paragraphs WHERE id_Assignments = ? ORDER BY paragraph_id DESC', [assignmentId], function(error, rows, fields){
+    if (error) { console.log(error); }
+    query++;
+    console.log(rows);
+    paragraphs = JSON.stringify(rows);
+    if ( query === 2){
+      data.questions = questions;
+      data.paragraphs =  paragraphs
+      data = JSON.stringify(data);
+      response.end(data);
+    }
+  });
+  db.query('SELECT id, paragraph_id, CONVERT(QuestionText USING utf8) as QuestionText FROM questions WHERE id_Assignments = ? ORDER BY paragraph_id DESC', [assignmentId], function(error, rows, fields){
+    if (error) { console.log(error); }
+    query++;
+    questions = JSON.stringify(rows);
+    if ( query === 2){
+      data.questions = questions;
+      data.paragraphs =  paragraphs;
+      data = JSON.stringify(data);
+      response.end(data);
+    }
+  });
+};
+
+module.exports.retrieveTeacherAssignments = function(request, response, db){
+  var teacher = request.params.teacher;
+  db.query('SELECT assignments.name, assignments.id FROM teachers JOIN assignments on teachers.id = id_Teachers WHERE teachers.name = ?', [teacher], function(error, rows, fields){
+    if (error) {
+      console.log(error);
+      response.end('We messed up! Sorry! Try again in a few minutes');
+    } 
+    if (rows.length) {
+      console.log(rows);
+      response.end(JSON.stringify(rows));
+    } else {
+      var data = JSON.stringify([{name: "This teacher hasn\'t created any assignments. No homework for you!", id: 'yaynohomework'}]);
+      response.end(data);
+    }
   })
 };
+
+module.exports.getAllTeachers = function(request, response, db){
+  db.query('SELECT name FROM TEACHERS', function(error, rows, fields){
+    response.end(JSON.stringify(rows));
+  });
+}
+
+// SELECT column_name(s)
+// FROM table1
+// JOIN table2
+// ON table1.column_name=table2.column_name;

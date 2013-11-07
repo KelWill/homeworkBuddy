@@ -1,0 +1,51 @@
+<!doctype html>
+<html ng-app = "student">
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+  <script>
+    var app = angular.module('student', []);
+    
+    app.controller('teacherList', function($scope, $http, $rootScope){
+      $scope.teachers = 'Just wait a second for our teachers to load';
+      $http({
+        method: 'get', 
+        url: '/allteachers'
+      }).success(function(data, status){
+        $scope.teachers = data;
+        $scope.show = true;
+      }).error(function(error){
+        $rootScope.show = true
+        console.log(error);
+      })
+
+      $scope.getAssignments = function(name){
+        $scope.teacher = name;
+        $http({
+          method: 'get', 
+          url: '/getassignments/' + name
+        }).success(function(data, status){
+          $scope.assignments = data;
+          $scope.show = false;
+        }).error(function(error){
+          console.log(error);
+          $scope.show = false;
+        })
+      }
+    });
+
+  </script>
+</head>
+
+<body>
+  <div ng-controller = "teacherList">
+    <input type = "text" placeholder = "Search for your teacher" ng-model = "searchTeacher" / ng-show = "show">
+    <input type = "text" placeholder = "Search for an assignment" ng-model = "searchAssignment" / ng-show = "!show">
+    <ul ng-show = "show">
+      <li ng-repeat = "teacher in teachers | filter:searchTeacher"><a href = "#" ng-click = 'getAssignments(teacher.name)'>{{teacher.name}}</a></li>
+    </ul>
+    <ul ng-show = "!show">
+      <li ng-repeat = "assignment in assignments | filter:searchAssignment"><a ng-href = "/student/{{teacher}}/{{assignment.name}}">{{assignment.name}}</a></li>
+    </ul>
+  </div>
+</body>
+</html>
