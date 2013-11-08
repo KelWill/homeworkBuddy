@@ -21,7 +21,7 @@ homeworkBuddy.Views.CompletedQuestion = Backbone.View.extend({
   },
   
   render: function(){
-   this.$el.text( this.model.get('number') + '. ' + this.model.questionType + ' ');
+   this.$el.text( this.model.get('number') + '. ' + this.model.questionText + ' ');
    this.model.set('rendered', true);
    return this;
   }

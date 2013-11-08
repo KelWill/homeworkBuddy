@@ -11,6 +11,7 @@
         method: 'get', 
         url: '/allteachers'
       }).success(function(data, status){
+        console.log(data);
         $scope.teachers = data;
         $scope.show = true;
       }).error(function(error){
@@ -24,6 +25,7 @@
           method: 'get', 
           url: '/getassignments/' + name
         }).success(function(data, status){
+          console.log(data);
           $scope.assignments = data;
           $scope.show = false;
         }).error(function(error){
@@ -44,7 +46,7 @@
       <li ng-repeat = "teacher in teachers | filter:searchTeacher"><a href = "#" ng-click = 'getAssignments(teacher.name)'>{{teacher.name}}</a></li>
     </ul>
     <ul ng-show = "!show">
-      <li ng-repeat = "assignment in assignments | filter:searchAssignment"><a ng-href = "/student/{{teacher}}/{{assignment.name}}">{{assignment.name}}</a></li>
+      <li ng-repeat = "assignment in assignments | filter:searchAssignment"><a ng-href = "/student/{{teacher}}/{{assignment.assignmentName}}">{{assignment.assignmentName}}</a></li>
     </ul>
   </div>
 </body>

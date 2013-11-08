@@ -11,8 +11,6 @@ homeworkBuddy.Models = homeworkBuddy.Models || {};
 
     //MC questions, Fill in the blank questions, and short answer questions all inherit from 
     //the question model, but have their own particular data
-    //these models are all designed for use on the teacher creation side, and so don't include 
-    //options for student answer
     homeworkBuddy.Models.MCCreationModel = homeworkBuddy.Models.QuestionModel.extend({
       defaults: {//these are important for editing
         question: "", 
@@ -22,33 +20,55 @@ homeworkBuddy.Models = homeworkBuddy.Models || {};
 
       initialize: function(options){
       },
+      saveQuestion: function(options){
+        this.set(options);
+      },
 
-      questionType: "MC"
+      questionType: "MC", 
+      questionText: "Multiple Choice"
     });
 
 
     homeworkBuddy.Models.FillBlankCreationModel = homeworkBuddy.Models.QuestionModel.extend({
       initialize: function(options){
-        if (options){
-          this.preBlankQuestion = options.preBlankQuestion;
-          this.postBlankQuestion = option.postBlankQuestion;
-          this.blankLength = options.blankLength || 10;
-          this.correctAnswer = options.correctAnswer;
-        }
       }, 
-      questionType: "FillBlank"
+
+      defaults: {
+        preText: "", 
+        postText: "", 
+        answer: ""
+      },
+
+      saveQuestion: function(options){
+        this.set(options);
+      },
+      questionType: "FillBlank", 
+      questionText: "Fill in the Blank"
     });
 
 
     homeworkBuddy.Models.ShortAnswerCreationModel = homeworkBuddy.Models.QuestionModel.extend({
       initialize: function(options){
-        if (options){
-          this.question = options.question;
-          this.minimumLength = options.minimumLength || 0;
-          this.maximumLength = options.maximumLength;
-        } 
-      }, 
-      questionType: "ShortAnswer"
+      },
+
+      defaults: {
+        min: 0,
+        max: 100, 
+        question: ""
+      },
+      saveQuestion: function(options){
+        options.min = parseInt(options.min);
+        options.max = parseInt(options.max)
+        if (Number.isNaN(options.min)) {
+          options.min = 0;
+        }
+        if (Number.isNaN(options.max) || options.min > options.max){
+          options.max = options.min + 100;
+        }
+        this.set(options);
+      },
+      questionType: "ShortAnswer", 
+      questionText: "Short Answer"
     });
 
 

@@ -9,13 +9,19 @@ var assignments = require('./helpers/assignments');
 //creating connection with database
 var db = mysql.createConnection({
   host     : 'localhost',
-  user     : 'Will',
-  password : 'amba90w.',
+  user     : 'will',
+  password : 'secret',
 });
 
 //connecting to database and using correct table
-db.connect();
-db.query('use homeworkBuddy', function(){});
+db.connect(function(err){
+  console.log(err);
+});
+
+db.query('USE hwBud', function(err){
+  console.log(err);
+  console.log('successfully using hwBud!');
+});
 
 var app = express();
 //configuring express app
@@ -100,7 +106,6 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-  console.log('deserializing!');
   db.query('SELECT * FROM teachers WHERE id = ?', [id], function(err, rows, fields){
     done(err, rows[0]);
   });

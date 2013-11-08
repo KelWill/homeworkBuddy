@@ -12,24 +12,17 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
         'click button': 'saveQuestion',
       }, 
 
+      click: function(){
+        debugger;
+      },
+
       render: function(){
       },
 
       saveQuestion: function(){
         //for now just handles MC questions
         //TODO refactor into different views
-        
-        //getting the values from the input boxes
-        var question = $('#question').val();
-        var answerOptions = [];
-        answerOptions.push($('.A').val());
-        answerOptions.push($('.B').val());
-        answerOptions.push($('.C').val());
-        answerOptions.push($('.D').val());
-        var correctAnswer = $('input:radio[name=correct]:checked').val();
-
-        //updating the model
-        this.model.set({question: question, answerOptions: answerOptions, correctAnswer: correctAnswer});
+        this.save();
 
         //finishing editing the form
         this.model.trigger('stopEdit');
@@ -38,8 +31,21 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
 
     });
 
+    //can refactor to put initialize and render in the parent view, and leave template in the child
     homeworkBuddy.Views.MCCreationView = homeworkBuddy.Views.QuestionCreationView.extend({
         template: _.template(homeworkBuddy.templates.MCCreation),
+
+        save: function(){
+          var question = $('.text.MC').val();
+          var answerOptions = [];
+          answerOptions.push($('.A').val());
+          answerOptions.push($('.B').val());
+          answerOptions.push($('.C').val());
+          answerOptions.push($('.D').val());
+          var correctAnswer = $('input:radio[name=correct]:checked').val();
+
+          this.model.saveQuestion({question: question, answerOptions: answerOptions, correctAnswer: correctAnswer});
+        },
         
         initialize: function(){
           //when done editing hide this view
@@ -54,8 +60,17 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
         }
     });
 
-    homeworkBuddy.Views.FillBlankCreationView = Backbone.View.extend({
+    homeworkBuddy.Views.FillBlankCreationView = homeworkBuddy.Views.QuestionCreationView.extend({
         template: _.template(homeworkBuddy.templates.FillBlankCreation),
+
+        save: function(){
+          var preText = $('.preText').val();
+          var postText = $('.postText').val();
+          var answer = $('.answer').val();
+
+          this.model.saveQuestion({preText: preText, postText: postText, answer: answer});
+        },
+
         initialize: function(){
           this.model.on('stopEdit', function(){ 
             this.$el.remove(); 
@@ -67,8 +82,17 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
         }
     });
 
-    homeworkBuddy.Views.ShortAnswerCreationView = Backbone.View.extend({
+    homeworkBuddy.Views.ShortAnswerCreationView = homeworkBuddy.Views.QuestionCreationView.extend({
         template: _.template(homeworkBuddy.templates.ShortAnswerCreation),
+
+        save: function(){
+          var min = $('.min').val();
+          var max = $('.max').val();
+          var question = $('.text.question').val();
+
+          this.model.saveQuestion({min: min, max: max, question: question});
+        },
+        
         initialize: function(){
           this.model.on('stopEdit', function(){ 
             this.$el.remove();

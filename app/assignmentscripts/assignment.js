@@ -8,13 +8,6 @@ $(document).ready(function(){
   var Assignment = Backbone.Collection.extend({});
 
   var AssignmentView = Backbone.View.extend({
-    // events: {
-    //   'click div.questions button.go'  : 'click'
-    // },
-
-    // click: function(){
-    //   console.log('clicker!');
-    // },
 
     initialize: function(){
      this.$el = $('#container');
@@ -24,6 +17,7 @@ $(document).ready(function(){
 
       this.collection.on('questionsAdded', function(){
         this.forEach(function(paragraph){
+          paragraph.trigger('complete');
           paragraph.trigger('renderQuestions');
         })
       })
@@ -57,6 +51,7 @@ $(document).ready(function(){
        url: '/getassignment/' + url, 
        success: function(data){
          data = JSON.parse(data);
+         console.log(data);
          var paragraphs = JSON.parse(data.paragraphs);
          var questions = JSON.parse(data.questions);
          router.createCollectionsAndViews(paragraphs, questions);
@@ -72,12 +67,16 @@ $(document).ready(function(){
     },
 
     createCollectionsAndViews: function(paragraphs, questions){
+      console.log(paragraphs);
+      console.log(questions);
       this.assignment = new Assignment({model: Paragraph});
       this.assignmentView = new AssignmentView({collection: this.assignment});
       var currentText = '';
       for ( var i = 0; i < paragraphs.length; i++ ){
+        if (paragraphs[i].paragraph_id){
           var paragraph = new Paragraph(paragraphs[i]);
           this.assignment.add(paragraph);
+        }
       }
       paragraph = this.assignment.at(0);
       for ( var i = 0; i < questions.length; i++ ) {
@@ -91,8 +90,17 @@ $(document).ready(function(){
         }
         paragraph.get('questionSet').push(question);
       }
+      var urls = [];
+      this.assignment.forEach(function(p){
+        var a = p.get('paragraph_id');
+        if (a){
+          urls.push(a);
+        }
+      });
+      urls.sort();
+      this.urls = urls;
       this.assignment.trigger('questionsAdded');
-      this.navigate('/p/1', {trigger: true});
+      this.navigate('p/' + urls[0], {trigger: true});
     },
 
     showParagraph: function(paragraph_id){
@@ -103,7 +111,7 @@ $(document).ready(function(){
     },
 
     showQuestions: function(paragraph_id){
-      paragraph = assignment.find(function(item){
+      paragraph = this.assignment.find(function(item){
         return item.get('paragraph_id') === paragraph_id;
       });
       paragraph.trigger('showQuestions');
@@ -126,11 +134,14 @@ $(document).ready(function(){
      var view = this;
 
      this.url = '/p/' + this.model.get('paragraph_id'),
-     this.render();
 
      this.model.on('renderQuestions', function(){
        this.renderQuestions();
      }, this);
+
+     this.model.on('complete', function(){
+       this.render();
+     }, this)
      
      this.model.on('showMe', function(){
        $('#container').html('');
@@ -155,13 +166,11 @@ $(document).ready(function(){
     },
 
     doQuestions: function(){
-      console.log('button clicked');
       app.navigate(this.url + '/q');
       this.$el.children().toggleClass('hide');
     },
 
     returnParagraph: function(){
-      console.log('button clicked');
       app.navigate(this.url);
       this.$el.children().toggleClass('hide');
     }, 
@@ -169,9 +178,12 @@ $(document).ready(function(){
     render: function(){
       this.$el.html('<div class = "questions" >' + this.model.get('text') + '</div>');
       this.$el.append('<div class = "questionSet questions hide"></div>');
-      this.$el.append('<button class = "questions go">Ready for some questions?</button>');
+      // if (this.model.get('questionSet').length) { 
+        this.$el.append('<button class = "questions go">Ready for some questions?</button>');
+      // } else {
+      //   this.$el.append('<button class = "submit">Submit Entire Assignment!</button>');
+      // }
       this.$el.append('<button class = "questions return hide">Return to text</button><button class = "submit hide">Submit Answers</button>');
-      console.log(this.el);
       return this;
     },
 
@@ -182,7 +194,6 @@ $(document).ready(function(){
       <div class = "D answer option">D: <%= answerOptions[3] %></div>'),
 
     renderQuestions: function(){
-      console.log('render questions is running');
       var questionSet = this.model.get('questionSet');
       for ( var i = 0; i < questionSet.length; i++ ) {
         question = JSON.parse(questionSet[i].QuestionText);

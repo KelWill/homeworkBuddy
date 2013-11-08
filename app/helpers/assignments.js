@@ -28,24 +28,30 @@ module.exports.createAssignment = function(request, response, db){
           }
           question = JSON.stringify(question);
           thingsToInsert++;
-          db.query('INSERT INTO questions (id_Assignments, QuestionText, QuestionAnswer, paragraph_id) VALUES (?, ?, ?, ?)', [assignment_id, question, answer, p_id], function(error, result){
-            thingsInserted++;
-            if (error) { console.log (error); } 
-            finish(thingsInserted, thingsToInsert, response);
+          db.query('INSERT INTO questions (id_Assignments, QuestionText, QuestionAnswer, paragraph_id) VALUES (?, ?, ?, ?)', 
+            [assignment_id, question, answer, p_id], 
+            function(error, result){
+              thingsInserted++;
+              if (error) { console.log (error); } 
+              finish(thingsInserted, thingsToInsert, response);
           });
         }
       }
       thingsToInsert++;
-      db.query('INSERT INTO paragraphs (id_Assignments, paragraph_id, text) VALUES (?, ?, ?)', [assignment_id, p_id, text], function(){
-        thingsInserted++;
-        finish(thingsInserted, thingsToInsert, response);
+      db.query('INSERT INTO paragraphs (id_Assignments, paragraph_id, text) VALUES (?, ?, ?)', 
+        [assignment_id, p_id, text], 
+        function(error){
+          if (error) { console.log('inserting into paragraphs failed', error); }
+          thingsInserted++;
+          finish(thingsInserted, thingsToInsert, response);
       });
     }
   };
 
 
-  db.query('INSERT INTO assignments (id_teachers, name) VALUES (?, ?)', [teacher_id, assignmentName], function(error, result){
+  db.query('INSERT INTO assignments (id_teachers, assignmentName) VALUES (?, ?)', [teacher_id, assignmentName], function(error, result){
     if (error){
+      console.log('inserting into assignment failed');
       console.log(error);
     } else {
       insertAll(assignment, result.insertId);
@@ -75,7 +81,7 @@ module.exports.retrieveAssignment = function(request, response, db){
     } 
     if (rows.length) {
       console.log(rows);
-      db.query('SELECT * FROM assignments where id_Teachers = ? and name = ?', [rows[0].id, assignmentName], function(error, rows, fields){
+      db.query('SELECT * FROM assignments where id_Teachers = ? and assignmentName = ?', [rows[0].id, assignmentName], function(error, rows, fields){
         if (error){
           console.log(error);
           response.writeHead(500);
@@ -130,12 +136,13 @@ var getParagraphsAndQuestions = function(request, response, db, assignmentId){
 
 module.exports.retrieveTeacherAssignments = function(request, response, db){
   var teacher = request.params.teacher;
-  db.query('SELECT assignments.name, assignments.id FROM teachers JOIN assignments on teachers.id = id_Teachers WHERE teachers.name = ?', [teacher], function(error, rows, fields){
+  db.query('SELECT assignments.assignmentName, assignments.id FROM teachers JOIN assignments on teachers.id = id_Teachers WHERE teachers.name = ?', [teacher], function(error, rows, fields){
     if (error) {
       console.log(error);
       response.end('We messed up! Sorry! Try again in a few minutes');
     } 
     if (rows.length) {
+      console.log('Return assignments');
       console.log(rows);
       response.end(JSON.stringify(rows));
     } else {
@@ -147,6 +154,8 @@ module.exports.retrieveTeacherAssignments = function(request, response, db){
 
 module.exports.getAllTeachers = function(request, response, db){
   db.query('SELECT name FROM TEACHERS', function(error, rows, fields){
+    if (error) { console.log(error); }
+    console.log(rows);
     response.end(JSON.stringify(rows));
   });
 }

@@ -2,7 +2,7 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
 
 homeworkBuddy.templates.MCCreation = 
 '<div class = "MC"> \
-  Question: <input type = "text" class = "MC text" id = "question" value = "<%=question%>"/> <br>\
+  Question: <input type = "text" class = "MC text" value = "<%=question%>"/> <br>\
   <span>A:</span> <input type = text" class = "MC option A"  value = "<%=answerOptions[0]%>"/> <br>\
   <span>B:</span> <input type = text" class = "MC option B" value = "<%=answerOptions[1]%>"/> <br>\
   <span>C:</span> <input type = text" class = "MC option C" value = "<%=answerOptions[2]%>"/> <br>\
@@ -13,6 +13,6 @@ homeworkBuddy.templates.MCCreation =
     C<input type="radio" name="correct" value="C" <% if (correctAnswer === "C") { print("checked=true")} %> />\
     D<input type="radio" name="correct" value="D" <% if (correctAnswer === "D") { print("checked=true")} %> />\
   </form></span>\
-  <button value = "Done" class = "submit">Done!</button>\
+  <button class = "submit">Done</button>\
 </div>'
 

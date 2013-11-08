@@ -11,12 +11,12 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
         // template: new ejs({url: 'app/scripts/templates/QuestionSetView.ejs'}), 
         events:{
           'click a.MC': 'addMC', 
-          'click a.addShortAnswer': 'addShortAnswer', 
-          'click a.addFillBlank': 'addFillBlank', 
+          'click a.ShortAnswer': 'addShortAnswer', 
+          'click a.FillBlank': 'addFillBlank', 
         },
 
-        questionOptions: '<span class = "questionOptions"><a href = "#" class = "MC question">Add MC</a><br><a class = "ShortAnswer question">Add Short Answer</a><br>\
-                        <a class = "FillBlank question">Add Fill in the Blank<br></a></span><span class = "addedQuestions"></span>\
+        questionOptions: '<span class = "questionOptions"><a href = "#" class = "MC question">Add Multiple Choice</a><br><a href = "#" class = "ShortAnswer question">Add Short Answer</a><br>\
+                        <a href = "#" class = "FillBlank question">Add Fill in the Blank<br></a></span><span class = "addedQuestions"></span>\
                         <div class = "questionForm"></div>',
 
         initialize: function(){
@@ -44,7 +44,6 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
         },
 
         render: function(){
-          //this.$el.find('span.questionOptions').html('');
           this.$el.find('span.questionOptions').html(this.questionOptions);
         },
 

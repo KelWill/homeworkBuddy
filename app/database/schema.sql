@@ -1,7 +1,3 @@
-
---might need to drop the whole database and then redo it
-
-
 -- ---
 -- Globals
 -- ---
@@ -17,7 +13,7 @@
 DROP TABLE IF EXISTS `Teachers`;
     
 CREATE TABLE `Teachers` (
-  `id` TINYINT NULL AUTO_INCREMENT DEFAULT NULL,
+  `id` SMALLINT NULL AUTO_INCREMENT DEFAULT NULL,
   `name` VARCHAR(30) NULL DEFAULT NULL,
   `email` VARCHAR(30) NULL DEFAULT NULL,
   `password_hash` VARCHAR(30) NULL DEFAULT NULL,
@@ -33,8 +29,8 @@ CREATE TABLE `Teachers` (
 DROP TABLE IF EXISTS `Assignments`;
     
 CREATE TABLE `Assignments` (
-  `id` TINYINT NULL AUTO_INCREMENT DEFAULT NULL,
-  `id_Teachers` TINYINT NULL DEFAULT NULL,
+  `id` SMALLINT NULL AUTO_INCREMENT DEFAULT NULL,
+  `id_Teachers` SMALLINT NULL DEFAULT NULL,
   `FileName` VARCHAR(30) NULL DEFAULT NULL,
   `assignmentName` VARCHAR(30),
   PRIMARY KEY (`id`)
@@ -48,19 +44,22 @@ CREATE TABLE `Assignments` (
 DROP TABLE IF EXISTS `Questions`;
     
 CREATE TABLE `Questions` (
-  `id` TINYINT NULL AUTO_INCREMENT DEFAULT NULL,
-  `id_Assignments` TINYINT NULL DEFAULT NULL,
+  `id` SMALLINT NULL AUTO_INCREMENT DEFAULT NULL,
+  `id_Assignments` INT NULL DEFAULT NULL,
   `QuestionText` BLOB NULL DEFAULT NULL,
   `QuestionAnswer` VARCHAR(10) NULL DEFAULT NULL,
+  `paragraph_id` VARCHAR(30) NULL DEFAULT NULL,
+
   PRIMARY KEY (`id`)
 );
 
 DROP TABLE IF EXISTS `Paragraphs`;
     
 CREATE TABLE `Paragraphs` (
-  `id` TINYINT NULL AUTO_INCREMENT DEFAULT NULL,
-  `id_Assignments` TINYINT NULL DEFAULT NULL,
+  `id` SMALLINT NULL AUTO_INCREMENT DEFAULT NULL,
+  `id_Assignments` SMALLINT NULL DEFAULT NULL,
   `text` BLOB NULL DEFAULT NULL,
+  `paragraph_id` VARCHAR(30) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -72,13 +71,13 @@ CREATE TABLE `Paragraphs` (
 DROP TABLE IF EXISTS `Student_Questions`;
     
 CREATE TABLE `Student_Questions` (
-  `id` TINYINT NULL AUTO_INCREMENT DEFAULT NULL,
-  `id_Questions` TINYINT NULL DEFAULT NULL,
-  `id_Students` TINYINT NULL DEFAULT NULL,
+  `id` SMALLINT NULL AUTO_INCREMENT DEFAULT NULL,
+  `id_Questions` SMALLINT NULL DEFAULT NULL,
+  `id_Students` SMALLINT NULL DEFAULT NULL,
   `LastAttempted` TIMESTAMP NULL DEFAULT NULL,
   `TimesAnswered` INT NULL DEFAULT NULL,
-  `TimesCorrect` TINYINT NULL DEFAULT NULL,
-  `TimesIncorrect` TINYINT NULL DEFAULT NULL,
+  `TimesCorrect` SMALLINT NULL DEFAULT NULL,
+  `TimesIncorrect` SMALLINT NULL DEFAULT NULL,
   `NextScheduledAttempt` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
@@ -91,7 +90,7 @@ CREATE TABLE `Student_Questions` (
 DROP TABLE IF EXISTS `Students`;
     
 CREATE TABLE `Students` (
-  `id` TINYINT NULL AUTO_INCREMENT DEFAULT NULL,
+  `id` SMALLINT NULL AUTO_INCREMENT DEFAULT NULL,
   `name` VARCHAR(30) NULL DEFAULT NULL,
   `email` VARCHAR(30) NULL DEFAULT NULL,
   `password_hash` VARCHAR(30) NULL DEFAULT NULL,
@@ -104,12 +103,12 @@ CREATE TABLE `Students` (
 -- 
 -- ---
 
-DROP TABLE IF EXISTS `Classes (SS_Teachers)`;
+DROP TABLE IF EXISTS `Student_Teachers`;
     
-CREATE TABLE `Classes (SS_Teachers)` (
-  `id` TINYINT NULL AUTO_INCREMENT DEFAULT NULL,
-  `id_Teachers` TINYINT NULL DEFAULT NULL,
-  `id_Students` TINYINT NULL DEFAULT NULL,
+CREATE TABLE `Student_Teachers` (
+  `id` SMALLINT NULL AUTO_INCREMENT DEFAULT NULL,
+  `id_Teachers` SMALLINT NULL DEFAULT NULL,
+  `id_Students` SMALLINT NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -122,8 +121,8 @@ ALTER TABLE `Paragraphs` ADD FOREIGN KEY (id_Assignments) REFERENCES `Assignment
 ALTER TABLE `Questions` ADD FOREIGN KEY (id_Assignments) REFERENCES `Assignments` (`id`);
 ALTER TABLE `Student_Questions` ADD FOREIGN KEY (id_Questions) REFERENCES `Questions` (`id`);
 ALTER TABLE `Student_Questions` ADD FOREIGN KEY (id_Students) REFERENCES `Students` (`id`);
-ALTER TABLE `Classes (SS_Teachers)` ADD FOREIGN KEY (id_Teachers) REFERENCES `Teachers` (`id`);
-ALTER TABLE `Classes (SS_Teachers)` ADD FOREIGN KEY (id_Students) REFERENCES `Students` (`id`);
+ALTER TABLE `Student_Teachers` ADD FOREIGN KEY (id_Teachers) REFERENCES `Teachers` (`id`);
+ALTER TABLE `Student_Teachers` ADD FOREIGN KEY (id_Students) REFERENCES `Students` (`id`);
 -- ---
 -- Table Properties
 -- ---
@@ -139,8 +138,8 @@ ALTER TABLE `Classes (SS_Teachers)` ADD FOREIGN KEY (id_Students) REFERENCES `St
 -- Test Data
 -- ---
 
--- INSERT INTO `Teachers` (`id`,`name`,`email`,`password_hash`,`password_salt`) VALUES
--- ('','','','','');
+-- INSERT INTO `Teachers` (`name`,`email`,`password_hash`,`password_salt`) VALUES
+-- ('teacher','teacher','teacher','');
 -- INSERT INTO `Assignments` (`id`,`id_Teachers`,`FileName`) VALUES
 -- ('','','');
 -- INSERT INTO `Questions` (`id`,`id_Assignments`,`QuestionText`,`QuestionAnswer`) VALUES

@@ -10,10 +10,11 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
 
   submitHomework: function(){
     var assignmentName = this.assignmentName;
+    console.log(assignmentName);
     var data = this.processData(this.toJSON());
-    console.log(data);
     data = JSON.stringify(data);
     console.log('submitting homework');
+    console.log(data);
 
     $.ajax({
      method: 'POST', 
@@ -32,7 +33,7 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
     var temp = '';
     var results = [];
     for ( var i = data.length - 1; i >= 0; i-- ){
-      if (data[i].questionSet){
+      if (data[i].questionSet || i === 0){
         data[i].text = data[i].text + '\n' + temp;
         temp = '';
         results.push(data[i]);

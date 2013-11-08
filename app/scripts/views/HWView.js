@@ -20,23 +20,30 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
       submit: function(){
         var temp, paragraph;
         var assignmentName = $('input#assignmentName').val();
-        //need to add in check here
 
-        var text = $('textarea.newAssignment').val();
-        var array = encodeURIComponent(text).split('%0A');
+        if (!assignmentName){
+          $('h1').text("Please enter an assignment name");
+          assignmentName = prompt("Please enter a title for your assignment");
+        }
+        if (assignmentName){
+          var text = $('textarea.newAssignment').val();
+          var array = encodeURIComponent(text).split('%0A');
 
-        homeworkBuddy.assignment = new homeworkBuddy.Collections.Assignment({name: assignmentName});
-        homeworkBuddy.assignmentView = new homeworkBuddy.Views.AssignmentView({collection: homeworkBuddy.assignment});
+          homeworkBuddy.assignment = new homeworkBuddy.Collections.Assignment({name: assignmentName});
+          homeworkBuddy.assignmentView = new homeworkBuddy.Views.AssignmentView({collection: homeworkBuddy.assignment});
 
-        var id = 0;
-        for (var i = 0; i < array.length; i++){
-          if (array[i].length) {
-            id = id + 1;
-            temp = decodeURIComponent(array[i]);
-            paragraph = new homeworkBuddy.Models.Paragraph({text: temp, id: id});
-            homeworkBuddy.assignment.add(paragraph);
+          var id = 0;
+          for (var i = 0; i < array.length; i++){
+            if (array[i].length) {
+              id = id + 1;
+              temp = decodeURIComponent(array[i]);
+              paragraph = new homeworkBuddy.Models.Paragraph({text: temp, id: id});
+              homeworkBuddy.assignment.add(paragraph);
+            }
           }
         }
+        //need to add in check here
+
       },
 
       render: function(){
