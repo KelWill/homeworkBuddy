@@ -7,12 +7,12 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
   initialize: function(options){
     this.assignmentName = options.name;
   },
+
   submitHomework: function(){
     var assignmentName = this.assignmentName;
-    delete this.assignmentName;
-    var data = this.toJSON();
-    data = JSON.stringify(data);
+    var data = this.processData(this.toJSON());
     console.log(data);
+    data = JSON.stringify(data);
     console.log('submitting homework');
 
     $.ajax({
@@ -24,6 +24,22 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
       console.log(text);
      }
     });
+  },
 
+
+//Need to concatenate all the paragraphs in order so that articles will show up in the right place on the student server
+  processData: function(data){
+    var temp = '';
+    var results = [];
+    for ( var i = data.length - 1; i >= 0; i-- ){
+      if (data[i].questionSet){
+        data[i].text = data[i].text + '\n' + temp;
+        temp = '';
+        results.push(data[i]);
+      } else {
+        temp =  data[i].text + '\n' + temp; 
+      }
+    }
+    return results;
   }
 })

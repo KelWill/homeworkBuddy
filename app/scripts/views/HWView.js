@@ -20,7 +20,7 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
       submit: function(){
         var temp, paragraph;
         var assignmentName = $('input#assignmentName').val();
-        //need to add in check here 
+        //need to add in check here
 
         var text = $('textarea.newAssignment').val();
         var array = encodeURIComponent(text).split('%0A');

@@ -1,45 +1,56 @@
-console.log('loaded successfully');
 
-(function(){
+$(document).ready(function(){
   var currentParagraph = 0;
   var currentQuestion = 0;
   var textNotQuestions = true;
 
-  var app = new (Backbone.Router.extend({
-    routes: {
-      '': 'getAssignment'
-    },
+  //   Initializing Collections and Collection Views   //
+  var Assignment = Backbone.Collection.extend({});
 
-    renderPage: function(paragraphs, questions){
-      var assignment = new Assignment({model: Paragraph});
-      var assignmentView = new AssignmentView({collection: assignment});
+  var AssignmentView = Backbone.View.extend({
+    // events: {
+    //   'click div.questions button.go'  : 'click'
+    // },
 
-      for ( var i = 0; i < paragraphs.length; i++ ){
-        console.log(paragraphs[i]);
-        var paragraph = new Paragraph(paragraphs[i]);
-        assignment.add(paragraph);
-      }
-      paragraph = assignment.at(0);
-      for ( var i = 0; i < questions.length; i++ ) {
-        var question = questions[i];
+    // click: function(){
+    //   console.log('clicker!');
+    // },
 
-        //only search the collection for the new paragraph if the current paragraph isn't correct
-        if (paragraph.get('paragraph_id') !== questions[i].paragraph_id) {
-          paragraph = assignment.find(function(item){
-            return item.get('paragraph_id') === questions[i].paragraph_id;
-          });
-        }
-        console.log(paragraph);
-        console.log(questions[i]);
-      }
+    initialize: function(){
+     this.$el = $('#container');
+      this.collection.on('add', function(p){
+        this.addOne(p);
+      }, this);
+
+      this.collection.on('questionsAdded', function(){
+        this.forEach(function(paragraph){
+          paragraph.trigger('renderQuestions');
+        })
+      })
     }, 
 
-    getAssignment: function(){
+    addOne: function(paragraph){
+      var paragraphView = new ParagraphView({model: paragraph});
+      paragraphView.render();
+      this.$el.append(paragraphView.el);
+    }
+  });
+
+  //   Setting up the Router   //
+  var app = new (Backbone.Router.extend({
+    baseURL: document.URL,
+    routes: {
+      'p/:id' : 'showParagraph',
+      'p/:id/q' : 'showQuestions'
+    },
+
+    initialize: function(){
       router = this;
-      var url = document.URL;
-      var i = url.indexOf('/student/') + '/student/'.length;
+      var url = this.baseURL;
+      var i = url.indexOf('/student/');
+      this.rootURL = url.slice(i);
+      i = i + '/student/'.length;
       url = url.slice(i);
-      console.log(url);
 
       $.ajax({
        method: 'get', 
@@ -48,47 +59,139 @@ console.log('loaded successfully');
          data = JSON.parse(data);
          var paragraphs = JSON.parse(data.paragraphs);
          var questions = JSON.parse(data.questions);
-         console.log('paragraphs', paragraphs);
-         console.log('questions', questions);
-         router.renderPage(paragraphs, questions);
+         router.createCollectionsAndViews(paragraphs, questions);
        }, 
        failure: function(error){
          console.log(error);
        }
       })
+    },
+
+    landing: function(){
+      //this.navigate('p/1', {trigger: true});
+    },
+
+    createCollectionsAndViews: function(paragraphs, questions){
+      this.assignment = new Assignment({model: Paragraph});
+      this.assignmentView = new AssignmentView({collection: this.assignment});
+      var currentText = '';
+      for ( var i = 0; i < paragraphs.length; i++ ){
+          var paragraph = new Paragraph(paragraphs[i]);
+          this.assignment.add(paragraph);
+      }
+      paragraph = this.assignment.at(0);
+      for ( var i = 0; i < questions.length; i++ ) {
+        var question = questions[i];
+
+        //only search the collection for the new paragraph if the current paragraph isn't correct
+        if (paragraph.get('paragraph_id') !== questions[i].paragraph_id) {
+          paragraph = this.assignment.find(function(item){
+            return item.get('paragraph_id') === questions[i].paragraph_id;
+          });
+        }
+        paragraph.get('questionSet').push(question);
+      }
+      this.assignment.trigger('questionsAdded');
+      this.navigate('/p/1', {trigger: true});
+    },
+
+    showParagraph: function(paragraph_id){
+      paragraph = this.assignment.find(function(item){
+        return (item.get('paragraph_id') + '' ===  paragraph_id);
+      });
+      paragraph.trigger('showMe');
+    },
+
+    showQuestions: function(paragraph_id){
+      paragraph = assignment.find(function(item){
+        return item.get('paragraph_id') === paragraph_id;
+      });
+      paragraph.trigger('showQuestions');
     }
+
   }));
+  //End router
+
+  //   Model and View initialization   //
   var Paragraph = Backbone.Model.extend({
     initialize: function(options){
-      this.paragraph_id = options.paragraph_id; 
-      this.text = options.text;
+      this.set('paragraph_id', options.paragraph_id); 
+      this.set('text', options.text);
+      this.set('questionSet', []);
     }
   });
 
   var ParagraphView = Backbone.View.extend({
-    render: function(){
-      this.$el.text(this.model.text);
-      this.$el.append('<button class = "questions">Ready for some questions?</button>')
-      $('#container').html(this.$el);
-      return this;
-    }
-  })
-
-  var Assignment = Backbone.Collection.extend({ });
-  var AssignmentView = Backbone.View.extend({
     initialize: function(){
-      this.collection.on('add', function(p){
-        this.addOne(p);
-      }, this);
+     var view = this;
+
+     this.url = '/p/' + this.model.get('paragraph_id'),
+     this.render();
+
+     this.model.on('renderQuestions', function(){
+       this.renderQuestions();
+     }, this);
+     
+     this.model.on('showMe', function(){
+       $('#container').html('');
+       $('#container').append(view.el);
+
+       view.$el.find(".go").on('click', function(){
+         view.doQuestions();
+       });
+       view.$el.find(".return").on('click', function(){
+         view.returnParagraph();
+       });
+       view.$el.find(".submit").on('click', function(){
+         view.submit();
+       })
+     });
+    },
+
+    submit: function(){
+      //save the answer asynchronously to a database
+      //navigate to the next paragraph or to the end
+
+    },
+
+    doQuestions: function(){
+      console.log('button clicked');
+      app.navigate(this.url + '/q');
+      this.$el.children().toggleClass('hide');
+    },
+
+    returnParagraph: function(){
+      console.log('button clicked');
+      app.navigate(this.url);
+      this.$el.children().toggleClass('hide');
     }, 
-    addOne: function(paragraph){
-      var paragraphView = new ParagraphView({model: paragraph});
-      paragraphView.render();
-      console.log(paragraphView.el);
-      this.$el.append(paragraphView.el);
+
+    render: function(){
+      this.$el.html('<div class = "questions" >' + this.model.get('text') + '</div>');
+      this.$el.append('<div class = "questionSet questions hide"></div>');
+      this.$el.append('<button class = "questions go">Ready for some questions?</button>');
+      this.$el.append('<button class = "questions return hide">Return to text</button><button class = "submit hide">Submit Answers</button>');
+      console.log(this.el);
+      return this;
+    },
+
+    questionTemplate: _.template('<%= number %><h4><%= question %></h4>\
+      <div class = "A answer option">A: <%= answerOptions[0] %></div>\
+      <div class = "B answer option">B: <%= answerOptions[1] %></div>\
+      <div class = "C answer option">C: <%= answerOptions[2] %></div>\
+      <div class = "D answer option">D: <%= answerOptions[3] %></div>'),
+
+    renderQuestions: function(){
+      console.log('render questions is running');
+      var questionSet = this.model.get('questionSet');
+      for ( var i = 0; i < questionSet.length; i++ ) {
+        question = JSON.parse(questionSet[i].QuestionText);
+        this.$el.find('div.questionSet').append(this.questionTemplate(question));
+      }
     }
   });
 
-  Backbone.history.start({pushstate: true});
 
-})()
+  Backbone.history.start({pushState: true, root: app.rootURL});
+
+});

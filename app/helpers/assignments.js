@@ -14,7 +14,9 @@ module.exports.createAssignment = function(request, response, db){
       p_id = paragraph.id;
       text = paragraph.text;
       questionSet = paragraph.questionSet;
-
+      if (assignment[i].name){
+        continue;
+      }
       if (questionSet){
         for ( var j = 0; j < questionSet.length; j++ ) {
           question = questionSet[j];
@@ -32,7 +34,6 @@ module.exports.createAssignment = function(request, response, db){
             finish(thingsInserted, thingsToInsert, response);
           });
         }
-
       }
       thingsToInsert++;
       db.query('INSERT INTO paragraphs (id_Assignments, paragraph_id, text) VALUES (?, ?, ?)', [assignment_id, p_id, text], function(){

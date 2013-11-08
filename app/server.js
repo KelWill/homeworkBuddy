@@ -42,7 +42,7 @@ app.get('/student/:teacher/yaynohomework', function(request, response){
   response.redirect('http://www.zoombo.com');
 });
 
-app.get('/student/:teacher/:assignmentid', function(request, response){
+app.get('/student/:teacher/:assignmentid/:optional?*', function(request, response){
   response.sendfile('assignment.html');
 })
 
@@ -140,7 +140,7 @@ app.post('/signup', function(request, response){
 
 
 //   Getting Assignments   //
-app.get('/getassignment/:teacher/:assignmentName', function(request, response){
+app.get('/getassignment/:teacher/:assignmentName/:optional?*', function(request, response){
   assignments.retrieveAssignment(request, response, db);
 });
 
