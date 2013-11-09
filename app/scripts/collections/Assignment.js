@@ -30,15 +30,17 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
 
 //Need to concatenate all the paragraphs in order so that articles will show up in the right place on the student server
   processData: function(data){
+    console.log(data);
     var temp = '';
     var results = [];
-    for ( var i = data.length - 1; i >= 0; i-- ){
-      if (data[i].questionSet || i === 0){
-        data[i].text = data[i].text + '\n' + temp;
-        temp = '';
+
+
+    for ( var i = 0; i < data.length ; i++ ){
+      temp = temp + data[i].text;
+      if ((data[i].questionSet && data[i].questionSet.length) || i < data.length - 1){
+        data[i].text = temp;
         results.push(data[i]);
-      } else {
-        temp =  data[i].text + '\n' + temp; 
+        temp = '';
       }
     }
     return results;

@@ -169,9 +169,11 @@ $(document).ready(function(){
        view.$el.find(".return").on('click', function(){
          view.returnParagraph();
        });
-       console.log(view.$el.find('.submit'));
        view.$el.find(".submit").on('click', function(){
          view.submit();
+       });
+       view.$el.find(".assignment").on('click', function(){
+         view.submitAssignment();
        });
      });
     },
@@ -191,17 +193,22 @@ $(document).ready(function(){
       console.log('return paragraph has been clicked')
       app.navigate(this.url);
       this.$el.children().toggleClass('hide');
-    }, 
+    },
+
+    submitAssignment: function(){
+      console.log('you are submitting the assignment! How cool is that???');
+    },
 
     render: function(){
       this.$el.html('<div class = "questions" >' + this.model.get('text') + '</div>');
       this.$el.append('<div class = "questionSet questions hide"></div>');
-      // if (this.model.get('questionSet').length) { 
       this.$el.append('<button class = "questions go">Ready for some questions?</button>');
-      // } else {
-      //   this.$el.append('<button class = "submit">Submit Entire Assignment!</button>');
-      // }
-      this.$el.append('<button class = "questions return hide">Return to text</button><button class = "submit hide">Submit Answers</button>');
+      this.$el.append('<button class = "questions return hide">Return to text</button>');
+      if (router.currentIndex < router.urls.length - 1 ) {
+        this.$el.append('<button class = "submit hide">Submit Answers</button>');
+      } else {
+        this.$el.append('<button class = "assignment hide">Submit Entire Assignment</butt>');
+      }
       return this;
     },
 
