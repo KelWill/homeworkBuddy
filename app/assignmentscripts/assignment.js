@@ -5,13 +5,14 @@ $(document).ready(function(){
   var textNotQuestions = true;
 
   //   Initializing Collections and Collection Views   //
-  var Assignment = Backbone.Collection.extend({});
+  var Assignment = Backbone.Collection.extend();
 
   var AssignmentView = Backbone.View.extend({
 
     initialize: function(){
      this.$el = $('#container');
-      this.collection.on('add', function(p){
+
+     this.collection.on('add', function(p){
         this.addOne(p);
       }, this);
 
@@ -19,14 +20,13 @@ $(document).ready(function(){
         this.forEach(function(paragraph){
           paragraph.trigger('complete');
           paragraph.trigger('renderQuestions');
-        })
+        });
       })
     }, 
 
     addOne: function(paragraph){
       var paragraphView = new ParagraphView({model: paragraph});
       paragraphView.render();
-      this.$el.append(paragraphView.el);
     }
   });
 
@@ -41,17 +41,31 @@ $(document).ready(function(){
     initialize: function(){
       router = this;
       var url = this.baseURL;
-      var i = url.indexOf('/student/');
-      this.rootURL = url.slice(i);
-      i = i + '/student/'.length;
-      url = url.slice(i);
+      var i = url.indexOf('/student/') + '/student/'.length;
+      var run = true, slashCount = 0, j = i;
+
+      //the below formats the rootUrl correctly
+      //and extracts the correct url to ask for the whole assessment
+      while (run){
+        j++
+        if (j === url.length){
+          run = false;
+        }
+        if ('/' === url[j]){
+          slashCount++; 
+          if (slashCount === 2){
+            run = false;
+          }
+        }
+      }
+      this.rootURL = '/student/' + url.slice(i, j);
+      url = url.slice(i, j);  
 
       $.ajax({
        method: 'get', 
        url: '/getassignment/' + url, 
        success: function(data){
          data = JSON.parse(data);
-         console.log(data);
          var paragraphs = JSON.parse(data.paragraphs);
          var questions = JSON.parse(data.questions);
          router.createCollectionsAndViews(paragraphs, questions);
@@ -67,15 +81,17 @@ $(document).ready(function(){
     },
 
     createCollectionsAndViews: function(paragraphs, questions){
-      console.log(paragraphs);
-      console.log(questions);
+      this.urls = [];
+      this.currentIndex = 0;
+
       this.assignment = new Assignment({model: Paragraph});
       this.assignmentView = new AssignmentView({collection: this.assignment});
       var currentText = '';
-      for ( var i = 0; i < paragraphs.length; i++ ){
+      for ( var i = paragraphs.length - 1; i >= 0; i-- ){
         if (paragraphs[i].paragraph_id){
           var paragraph = new Paragraph(paragraphs[i]);
           this.assignment.add(paragraph);
+          this.urls.push(paragraph.get('paragraph_id'));
         }
       }
       paragraph = this.assignment.at(0);
@@ -90,31 +106,28 @@ $(document).ready(function(){
         }
         paragraph.get('questionSet').push(question);
       }
-      var urls = [];
-      this.assignment.forEach(function(p){
-        var a = p.get('paragraph_id');
-        if (a){
-          urls.push(a);
-        }
-      });
-      urls.sort();
-      this.urls = urls;
       this.assignment.trigger('questionsAdded');
-      this.navigate('p/' + urls[0], {trigger: true});
+      this.navigate('p/' + this.urls[this.currentIndex], {trigger: true});
     },
 
     showParagraph: function(paragraph_id){
-      paragraph = this.assignment.find(function(item){
-        return (item.get('paragraph_id') + '' ===  paragraph_id);
-      });
-      paragraph.trigger('showMe');
+      console.log('show paragraph is running with ', paragraph_id);
+      if (this.assignment){
+        paragraph = this.assignment.find(function(p){
+          return p.get('paragraph_id') + '' === paragraph_id + '';
+        });
+        console.log('paragraph is', paragraph);
+        paragraph.trigger('showMe');
+      }
     },
 
     showQuestions: function(paragraph_id){
-      paragraph = this.assignment.find(function(item){
-        return item.get('paragraph_id') === paragraph_id;
-      });
-      paragraph.trigger('showQuestions');
+      if (this.assignment){
+        paragraph = this.assignment.find(function(item){
+          return item.get('paragraph_id') === paragraph_id;
+        });
+        paragraph.trigger('showQuestions');
+      }
     }
 
   }));
@@ -135,15 +148,18 @@ $(document).ready(function(){
 
      this.url = '/p/' + this.model.get('paragraph_id'),
 
-     this.model.on('renderQuestions', function(){
+     this.listenTo(this.model, 'renderQuestions', function(){
+       console.log('renderQuestions has been triggered');
        this.renderQuestions();
      }, this);
 
-     this.model.on('complete', function(){
+     this.listenTo(this.model, 'complete', function(){
+       console.log('complete has been triggered')
        this.render();
-     }, this)
+     }, this);
      
-     this.model.on('showMe', function(){
+     this.listenTo(this.model, 'showMe', function(){
+       console.log('show me is running');
        $('#container').html('');
        $('#container').append(view.el);
 
@@ -153,24 +169,26 @@ $(document).ready(function(){
        view.$el.find(".return").on('click', function(){
          view.returnParagraph();
        });
+       console.log(view.$el.find('.submit'));
        view.$el.find(".submit").on('click', function(){
          view.submit();
-       })
+       });
      });
     },
 
     submit: function(){
-      //save the answer asynchronously to a database
-      //navigate to the next paragraph or to the end
-
+      router.currentIndex++;
+      router.navigate('/p/' + router.urls[router.currentIndex], {trigger: true});
     },
 
     doQuestions: function(){
+      console.log('doquestion has been clicked');
       app.navigate(this.url + '/q');
       this.$el.children().toggleClass('hide');
     },
 
     returnParagraph: function(){
+      console.log('return paragraph has been clicked')
       app.navigate(this.url);
       this.$el.children().toggleClass('hide');
     }, 
@@ -179,7 +197,7 @@ $(document).ready(function(){
       this.$el.html('<div class = "questions" >' + this.model.get('text') + '</div>');
       this.$el.append('<div class = "questionSet questions hide"></div>');
       // if (this.model.get('questionSet').length) { 
-        this.$el.append('<button class = "questions go">Ready for some questions?</button>');
+      this.$el.append('<button class = "questions go">Ready for some questions?</button>');
       // } else {
       //   this.$el.append('<button class = "submit">Submit Entire Assignment!</button>');
       // }

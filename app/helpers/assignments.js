@@ -60,7 +60,7 @@ module.exports.createAssignment = function(request, response, db){
 
   var finish = function(thingsInserted, thingsToInsert, response){
     if (thingsInserted === thingsToInsert){
-      response.end('WHOOHOOO');
+      response.end(JSON.stringify('WHOOHOOO'));
     }
   }
 };
@@ -77,7 +77,7 @@ module.exports.retrieveAssignment = function(request, response, db){
   db.query('SELECT * FROM TEACHERS WHERE name = ?', [teacher], function(error, rows, fields){
     if (error) {
       console.log(error);
-      response.end('We messed up! Sorry! Try again in a few minutes');
+      response.end(JSON.stringify('We messed up! Sorry! Try again in a few minutes'));
     } 
     if (rows.length) {
       console.log(rows);
@@ -85,10 +85,10 @@ module.exports.retrieveAssignment = function(request, response, db){
         if (error){
           console.log(error);
           response.writeHead(500);
-          response.end('We messed up! Sorry! Try again in a few minutes');
+          response.end(JSON.stringify('We messed up! Sorry! Try again in a few minutes'));
         } else if (!rows.length){
           console.log('assignment not found');
-          response.end('Assignment not found.')
+          response.end(JSON.stringify('Assignment not found.'))
         } else {
           console.log('success!');
           console.log(rows);
