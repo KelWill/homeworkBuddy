@@ -108,26 +108,27 @@ app.get('/login', function(request, response){
 });
 
 //   Signing Up   //
-app.post('/signup/teacher', function(request, response){
+app.post('/signup/:teacherOrStudent', function(request, response){
   var userData = '';
+  var teacherOrStudent;
+  if (request.params.teacherOrStudent == "teacher"){
+    teacherOrStudent = 1;
+  } else {
+    teacherOrStudent = 0;
+  }
 
-  request.on('data', function(chunk){
-    userData+=chunk;
-  });
+  console.log(request.body);
 
-  request.on('end', function(){
-    userData = JSON.parse(userData);
-
-    db.query('SELECT * FROM Users where name = ?', [userData.username] , function(err, rows, fields) {
-      if ( rows.length === 0 ) {
-        db.query('INSERT INTO Users (name, email, password_hash, isTeacher) VALUES (?, ?, ?, ?)', [userData.username, userData.username, userData.password, 1], function(err){
-          response.end('You signed up successfully');
-        });
-      } else {
-        response.writeHead(401);
-        response.end('User already exists');
-      }
-    });
+  db.query('SELECT * FROM Users where name = ?', [userData.username] , function(err, rows, fields) {
+    if ( rows.length === 0 ) {
+      db.query('INSERT INTO Users (name, email, password_hash, isTeacher) VALUES (?, ?, ?, ?)', 
+               [request.body.username, request.body.email, request.body.password, teacherOrStudent], function(err){
+        response.end('You signed up successfully');
+      });
+    } else {
+      response.writeHead(401);
+      response.end('User already exists');
+    }
   });
 });
 

@@ -167,7 +167,7 @@ module.exports.retrieveTeacherAssignments = function(request, response, db){
 };
 
 module.exports.getAllTeachers = function(request, response, db){
-  db.query('SELECT name FROM TEACHERS', function(error, rows, fields){
+  db.query('SELECT name FROM Users where isTeacher = 1', function(error, rows, fields){
     if (error) { console.log(error); }
     console.log(rows);
     response.end(JSON.stringify(rows));

@@ -112,6 +112,10 @@ $(document).ready(function(){
      this.listenTo(this.model, 'complete', function(){
        this.render();
      }, this);
+
+     this.listenTo(this.model, 'showQuestions', function(){
+       console.log('show questions has been triggered');
+     });
      
      this.listenTo(this.model, 'showMe', function(){
        $('#container').html('');
@@ -299,6 +303,7 @@ $(document).ready(function(){
         paragraph.get('questionSet').push(question);
       }
       this.assignment.trigger('questionsAdded');
+
       this.navigate('p/' + this.urls[this.currentIndex], {trigger: true});
     },
 
@@ -314,6 +319,7 @@ $(document).ready(function(){
     },
 
     showQuestions: function(paragraph_id){
+      console.log('showQuestions has been triggered');
       if (this.assignment){
         paragraph = this.assignment.find(function(item){
           return item.get('paragraph_id') === paragraph_id;
