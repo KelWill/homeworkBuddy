@@ -10,16 +10,31 @@
 -- 
 -- ---
 
-DROP TABLE IF EXISTS `Teachers`;
+
+DROP TABLE IF EXISTS `Users`;
     
-CREATE TABLE `Teachers` (
+CREATE TABLE `Users` (
   `id` SMALLINT NULL AUTO_INCREMENT DEFAULT NULL,
   `name` VARCHAR(30) NULL DEFAULT NULL,
   `email` VARCHAR(30) NULL DEFAULT NULL,
+  `isTeacher` TINYINT(1) NULL DEFAULT 0,
   `password_hash` VARCHAR(30) NULL DEFAULT NULL,
   `password_salt` VARCHAR(30) NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
+
+
+--this table is used to keep track of all the teachers
+--shouldn't be necessary with isTeacher value
+-- DROP TABLE IF EXISTS `Teachers`;
+    
+-- CREATE TABLE `Teachers` (
+--   `id` SMALLINT NULL AUTO_INCREMENT DEFAULT NULL,
+--   `name` VARCHAR(30) NULL DEFAULT NULL,
+--   `email` VARCHAR(30) NULL DEFAULT NULL,
+--   `id_Users` SMALLINT NULL AUTO_INCREMENT DEFAULT NULL,
+--   PRIMARY KEY (`id`)
+-- );
 
 -- ---
 -- Table 'Assignments'
@@ -45,7 +60,7 @@ DROP TABLE IF EXISTS `Questions`;
     
 CREATE TABLE `Questions` (
   `id` SMALLINT NULL AUTO_INCREMENT DEFAULT NULL,
-  `id_Assignments` INT NULL DEFAULT NULL,
+  `id_Assignments` SMALLINT NULL DEFAULT NULL,
   `QuestionText` BLOB NULL DEFAULT NULL,
   `QuestionAnswer` VARCHAR(10) NULL DEFAULT NULL,
   `paragraph_id` VARCHAR(30) NULL DEFAULT NULL,
@@ -72,8 +87,8 @@ DROP TABLE IF EXISTS `Student_Questions`;
     
 CREATE TABLE `Student_Questions` (
   `id` SMALLINT NULL AUTO_INCREMENT DEFAULT NULL,
-  `id_Questions` SMALLINT NULL DEFAULT NULL,
-  `id_Students` SMALLINT NULL DEFAULT NULL,
+  `id_Questions` SMALLINT DEFAULT NULL,
+  `id_Students` SMALLINT DEFAULT NULL,
   `LastAttempted` TIMESTAMP NULL DEFAULT NULL,
   `TimesAnswered` INT NULL DEFAULT NULL,
   `TimesCorrect` SMALLINT NULL DEFAULT NULL,
@@ -82,24 +97,9 @@ CREATE TABLE `Student_Questions` (
   PRIMARY KEY (`id`)
 );
 
--- ---
--- Table 'Students'
--- 
--- ---
-
-DROP TABLE IF EXISTS `Students`;
-    
-CREATE TABLE `Students` (
-  `id` SMALLINT NULL AUTO_INCREMENT DEFAULT NULL,
-  `name` VARCHAR(30) NULL DEFAULT NULL,
-  `email` VARCHAR(30) NULL DEFAULT NULL,
-  `password_hash` VARCHAR(30) NULL DEFAULT NULL,
-  `password_salt` VARCHAR(30) NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-);
 
 -- ---
--- Table 'Classes (SS_Teachers)'
+-- Table 'Student_Teachers'
 -- 
 -- ---
 
@@ -116,13 +116,13 @@ CREATE TABLE `Student_Teachers` (
 -- Foreign Keys 
 -- ---
 
-ALTER TABLE `Assignments` ADD FOREIGN KEY (id_Teachers) REFERENCES `Teachers` (`id`);
+ALTER TABLE `Assignments` ADD FOREIGN KEY (id_Teachers) REFERENCES `Users` (`id`);
 ALTER TABLE `Paragraphs` ADD FOREIGN KEY (id_Assignments) REFERENCES `Assignments` (`id`);
 ALTER TABLE `Questions` ADD FOREIGN KEY (id_Assignments) REFERENCES `Assignments` (`id`);
 ALTER TABLE `Student_Questions` ADD FOREIGN KEY (id_Questions) REFERENCES `Questions` (`id`);
-ALTER TABLE `Student_Questions` ADD FOREIGN KEY (id_Students) REFERENCES `Students` (`id`);
-ALTER TABLE `Student_Teachers` ADD FOREIGN KEY (id_Teachers) REFERENCES `Teachers` (`id`);
-ALTER TABLE `Student_Teachers` ADD FOREIGN KEY (id_Students) REFERENCES `Students` (`id`);
+ALTER TABLE `Student_Questions` ADD FOREIGN KEY (id_Students) REFERENCES `Users` (`id`);
+ALTER TABLE `Student_Teachers` ADD FOREIGN KEY (id_Teachers) REFERENCES `Users` (`id`);
+ALTER TABLE `Student_Teachers` ADD FOREIGN KEY (id_Students) REFERENCES `Users` (`id`);
 -- ---
 -- Table Properties
 -- ---

@@ -74,7 +74,7 @@ module.exports.retrieveAssignment = function(request, response, db){
   console.log(assignmentName);
 
   //can refactor to use an inner join
-  db.query('SELECT * FROM TEACHERS WHERE name = ?', [teacher], function(error, rows, fields){
+  db.query('SELECT * FROM Users WHERE name = ? and isTeacher = 1', [teacher], function(error, rows, fields){
     if (error) {
       console.log(error);
       response.end(JSON.stringify('We messed up! Sorry! Try again in a few minutes'));
@@ -150,7 +150,7 @@ var parseQuestions = function(rows){
 
 module.exports.retrieveTeacherAssignments = function(request, response, db){
   var teacher = request.params.teacher;
-  db.query('SELECT assignments.assignmentName, assignments.id FROM teachers JOIN assignments on teachers.id = id_Teachers WHERE teachers.name = ?', [teacher], function(error, rows, fields){
+  db.query('SELECT assignments.assignmentName, assignments.id FROM Users JOIN assignments on Users.id = id_Teachers WHERE Users.name = ?', [teacher], function(error, rows, fields){
     if (error) {
       console.log(error);
       response.end('We messed up! Sorry! Try again in a few minutes');

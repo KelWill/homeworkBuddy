@@ -43,6 +43,9 @@ app.get('/', function(request, response){
 app.get('/student', function(request, response){
   response.sendfile('student.html');
 });
+app.get('/student/:teacher', function(request, response){
+  response.sendfile('student.html');
+});
 
 app.get('/student/:teacher/yaynohomework', function(request, response){
   response.redirect('http://www.zoombo.com');
@@ -55,7 +58,7 @@ app.get('/student/:teacher/:assignmentid/:optional?*', function(request, respons
 //   Passport   //
 var isValidUserPassword = function(username, password, done){
   console.log('isValidUserPassword is running');
-  db.query('SELECT * FROM teachers WHERE email = ?', username, function(err, rows, fields){
+  db.query('SELECT * FROM Users WHERE name = ?', username, function(err, rows, fields){
     console.log('database query!');
     console.log(rows);
     if (err){
@@ -71,25 +74,10 @@ var isValidUserPassword = function(username, password, done){
       console.log('you logged in!');
       return done(null, rows[0]);
     }
-  })
+  });
 };
 
 var LocalStrategy = require('passport-local').Strategy;
-
-passport.use(new LocalStrategy(
-  function(username, password, done) {
-    User.findOne({ username: username }, function (err, user) {
-      if (err) { return done(err); }
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
-      }
-      if (!user.validPassword(password)) {
-        return done(null, false, { message: 'Incorrect password.' });
-      }
-      return done(null, user);
-    });
-  }
-));
 
 passport.use(new LocalStrategy({
           usernameField: 'username',
@@ -106,7 +94,7 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-  db.query('SELECT * FROM teachers WHERE id = ?', [id], function(err, rows, fields){
+  db.query('SELECT * FROM Users WHERE id = ?', [id], function(err, rows, fields){
     done(err, rows[0]);
   });
 });
@@ -120,7 +108,7 @@ app.get('/login', function(request, response){
 });
 
 //   Signing Up   //
-app.post('/signup', function(request, response){
+app.post('/signup/teacher', function(request, response){
   var userData = '';
 
   request.on('data', function(chunk){
@@ -130,9 +118,9 @@ app.post('/signup', function(request, response){
   request.on('end', function(){
     userData = JSON.parse(userData);
 
-    db.query('SELECT * FROM teachers where name = ?', [userData.username] , function(err, rows, fields) {
+    db.query('SELECT * FROM Users where name = ?', [userData.username] , function(err, rows, fields) {
       if ( rows.length === 0 ) {
-        db.query('INSERT INTO teachers (name, email, password_hash) VALUES (?, ?, ?)', [userData.username, userData.username, userData.password], function(err){
+        db.query('INSERT INTO Users (name, email, password_hash, isTeacher) VALUES (?, ?, ?, ?)', [userData.username, userData.username, userData.password, 1], function(err){
           response.end('You signed up successfully');
         });
       } else {
