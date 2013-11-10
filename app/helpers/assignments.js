@@ -146,7 +146,7 @@ var parseQuestions = function(rows){
     }
   }
   return rows;
-}
+};
 
 module.exports.retrieveTeacherAssignments = function(request, response, db){
   var teacher = request.params.teacher;
@@ -160,7 +160,7 @@ module.exports.retrieveTeacherAssignments = function(request, response, db){
       console.log(rows);
       response.end(JSON.stringify(rows));
     } else {
-      var data = JSON.stringify([{name: "This teacher hasn\'t created any assignments. No homework for you!", id: 'yaynohomework'}]);
+      var data = JSON.stringify([{assignmentName: "This teacher hasn\'t created any assignments. No homework for you!", id: 'yaynohomework'}]);
       response.end(data);
     }
   })
@@ -172,7 +172,45 @@ module.exports.getAllTeachers = function(request, response, db){
     console.log(rows);
     response.end(JSON.stringify(rows));
   });
+};
+
+module.exports.joinClass = function(request, response, db){
+  var student = request.user;
+  var teacher = request.params.teacher;
+  console.log(request.user);
+  db.query('SELECT id FROM USERS WHERE name = ?', [teacher], function(error, rows, fields){
+   if (error){
+     response.end(error);
+   } else {
+      db.query('INSERT INTO Student_Teachers (id_Teachers, id_Students) VALUES (?, ?)', [rows[0].id, student.id], function(error){
+        if (error){ 
+          console.log(error); 
+          response.end("Error joining class");
+        }
+        else { 
+          console.log("Success");
+          response.end("Joined class successfully.");
+        }
+      });
+    }
+  });
+};
+
+module.exports.allClasses = function(request, response, db){
+  //I want to get all the names that are associated with that user
+  db.query('SELECT name FROM Users JOIN Student_Teachers on Users.id = Student_Teachers.id_teachers where Student_Teachers.id_students = ?', 
+    [request.user.id], function(error, rows, fields){
+      if (error){
+        console.log(error);
+        response.end(error);
+      } else {
+        console.log('classes', rows);
+        response.end(JSON.stringify(rows));
+      }
+    })
 }
+
+
 
 // SELECT column_name(s)
 // FROM table1

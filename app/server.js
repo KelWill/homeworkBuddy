@@ -101,7 +101,8 @@ passport.deserializeUser(function(id, done) {
 
 //   User authentication   //
 //   Login   //
-app.post('/login', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login'})  );
+app.post('/login/teacher', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login'})  );
+app.post('/login/student', passport.authenticate('local', { successRedirect: '/student', failureRedirect: '/login'})  );
 
 app.get('/login', function(request, response){
   response.sendfile(__dirname + '/login.html');
@@ -131,6 +132,30 @@ app.post('/signup/:teacherOrStudent', function(request, response){
     }
   });
 });
+
+//   logging out   //
+app.get('/logout', function(req, res){
+  req.logout();
+  res.redirect('/login');
+});
+
+//   Getting and Joining Classes   //
+app.post('/students/joinclass/:teacher', function(request, response){
+  if (request.user){
+    assignments.joinClass(request, response, db);
+  } else {
+    response.writeHead(401);
+    response.end('Are you logged in?');
+  }
+});
+
+app.get('/allclasses', function(request, response){
+  if (request.user){
+    assignments.allClasses(request, response, db);
+  } else {
+    response.end();
+  }
+})
 
 
 //   Getting Assignments   //

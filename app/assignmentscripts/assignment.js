@@ -113,10 +113,7 @@ $(document).ready(function(){
        this.render();
      }, this);
 
-     this.listenTo(this.model, 'showQuestions', function(){
-       console.log('show questions has been triggered');
-     });
-     
+
      this.listenTo(this.model, 'showMe', function(){
        $('#container').html('');
        $('#container').append(view.el);
