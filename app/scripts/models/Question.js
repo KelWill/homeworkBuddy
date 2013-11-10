@@ -15,7 +15,8 @@ homeworkBuddy.Models = homeworkBuddy.Models || {};
       defaults: {//these are important for editing
         question: "", 
         correctAnswer: "",
-        answerOptions:["", "", "", ""]
+        answerOptions:["", "", "", ""], 
+        questionType: "MC"
       },
 
       initialize: function(options){
@@ -36,7 +37,8 @@ homeworkBuddy.Models = homeworkBuddy.Models || {};
       defaults: {
         preText: "", 
         postText: "", 
-        answer: ""
+        answer: "", 
+        questionType: "FillBlank"
       },
 
       saveQuestion: function(options){
@@ -54,7 +56,8 @@ homeworkBuddy.Models = homeworkBuddy.Models || {};
       defaults: {
         min: 0,
         max: 100, 
-        question: ""
+        question: "", 
+        questionType: "ShortAnswer"
       },
       saveQuestion: function(options){
         options.min = parseInt(options.min);

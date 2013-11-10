@@ -36,8 +36,11 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
 
 
     for ( var i = 0; i < data.length ; i++ ){
-      temp = temp + data[i].text;
-      if ((data[i].questionSet && data[i].questionSet.length) || i < data.length - 1){
+      if (!data[i].text){
+        continue;
+      }
+      temp = temp + '\n' + data[i].text;
+      if (data[i].questionSet && data[i].questionSet.length){
         data[i].text = temp;
         results.push(data[i]);
         temp = '';

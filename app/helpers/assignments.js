@@ -124,7 +124,8 @@ var getParagraphsAndQuestions = function(request, response, db, assignmentId){
   db.query('SELECT id, paragraph_id, CONVERT(QuestionText USING utf8) as QuestionText FROM questions WHERE id_Assignments = ? ORDER BY paragraph_id DESC', [assignmentId], function(error, rows, fields){
     if (error) { console.log(error); }
     query++;
-    questions = JSON.stringify(rows);
+    var qs= parseQuestions(rows);
+    questions = JSON.stringify(qs);
     if ( query === 2){
       data.questions = questions;
       data.paragraphs =  paragraphs;
@@ -133,6 +134,19 @@ var getParagraphsAndQuestions = function(request, response, db, assignmentId){
     }
   });
 };
+
+var parseQuestions = function(rows){
+  console.log(rows);
+  for (var i = 0; i < rows.length; i++){
+    //optimize for speed later
+    for ( var key in rows[i]){
+      if (key === "correctAnswer" || key === "answer" || key === "rendered"){
+        delete rows[i][key];
+      }
+    }
+  }
+  return rows;
+}
 
 module.exports.retrieveTeacherAssignments = function(request, response, db){
   var teacher = request.params.teacher;
