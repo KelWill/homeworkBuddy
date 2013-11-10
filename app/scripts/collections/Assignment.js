@@ -39,11 +39,14 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
       if (!data[i].text){
         continue;
       }
-      temp = temp + '\n' + data[i].text;
+      temp = temp + '<br>' + data[i].text;
       if (data[i].questionSet && data[i].questionSet.length){
         data[i].text = temp;
         results.push(data[i]);
         temp = '';
+      } else if (i === data.length - 1){
+        data[i].text = temp;
+        results.push(data[i]);
       }
     }
     return results;
