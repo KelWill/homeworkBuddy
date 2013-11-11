@@ -163,20 +163,8 @@ app.get('/getassignments/:teacher', function(request, response){
 
 //   submitting an assignment   //
 app.post('/submitassignment/student/:teacher/:assignmentName', function(request, response){
-  if (request.user || true){
-    console.log('submitting assignment');
-    //var id_students = request.user.id;
-    //console.log(id_students);
-    console.log('request.body', request.body);
-    var hw = '';
-    request.on('data', function(chunk){
-      console.log('chunk!');
-      hw += chunk;
-    });
-    request.on('end', function(){
-      console.log('request done!');
-      assignments.submitAssignment(request, response, db, hw);
-    })
+  if (request.user){
+    assignments.submitAssignment(request, response, db, request.body);
   } else {
     response.writeHead(401);
     response.end('You are not logged in. Sorry!');

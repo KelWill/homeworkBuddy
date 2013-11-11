@@ -8,7 +8,8 @@ module.exports.createAssignment = function(request, response, db){
   
   var insertAll = function(assignment, assignment_id){
     var text, answer, questionSet, question, paragraph, p_id;
-
+    
+    var correctAnswers = [];
     for ( var i = 0 ; i < assignment.length; i++) {
       paragraph = assignment[i];
       p_id = paragraph.id;
@@ -20,6 +21,7 @@ module.exports.createAssignment = function(request, response, db){
       if (questionSet){
         for ( var j = 0; j < questionSet.length; j++ ) {
           question = questionSet[j];
+          correctAnswers.push(question);
           if (question.correctAnswer){
             answer = question.correctAnswer;
             delete question.correctAnswer;
@@ -49,7 +51,7 @@ module.exports.createAssignment = function(request, response, db){
   };
 
 
-  db.query('INSERT INTO assignments (id_teachers, assignmentName) VALUES (?, ?)', [teacher_id, assignmentName], function(error, result){
+  db.query('INSERT INTO assignments (id_teachers, assignmentName, CorrectAnswers) VALUES (?, ?, ?)', [teacher_id, assignmentName, CorrectAnswers], function(error, result){
     if (error){
       console.log('inserting into assignment failed');
       console.log(error);
@@ -145,12 +147,31 @@ var parseQuestions = function(rows){
   return rows;
 };
 
+
 module.exports.submitAssignment = function(request, response, db, hw){
-  console.log('submit assignment is happening');
-  console.log(hw);
-  hw = JSON.parse(hw);
-  console.log(hw);
-  response.end('done');
+  var studentId = request.user.id;
+  var assignmentName = request.params.assignmentName;
+  var insertIntoHW = function(assignmentId){
+    db.query('INSERT INTO HW (id_Students, id_Assignments, StudentAnswers) VALUES (?, ?, ?)', 
+      [studentId, assignmentId, hw], function(error){
+        if (error) { 
+          response.writeHead(500);
+          response.end('Insertion into database failed'); 
+        }
+        else {
+          insertAllQuestions();
+        }
+      });
+  };
+
+  var insertAllQuestions = function(){
+
+  }
+
+  db.query('SELECT * FROM Assignments where name = ?', [assignmentName], function(error, rows){
+    if (error) {  console.log(error) ; }
+    else { insertIntoHW(rows[0].id); }
+  });
 };
 
 module.exports.retrieveTeacherAssignments = function(request, response, db){

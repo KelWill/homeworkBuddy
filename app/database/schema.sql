@@ -46,10 +46,22 @@ DROP TABLE IF EXISTS `Assignments`;
 CREATE TABLE `Assignments` (
   `id` SMALLINT NULL AUTO_INCREMENT DEFAULT NULL,
   `id_Teachers` SMALLINT NULL DEFAULT NULL,
-  `FileName` VARCHAR(30) NULL DEFAULT NULL,
+  `CorrectAnswers` BLOB NULL DEFAULT NULL,
   `assignmentName` VARCHAR(30),
   PRIMARY KEY (`id`)
 );
+
+DROP TABLE IF EXISTS `HW`;
+    
+CREATE TABLE `HW` (
+  `id` SMALLINT NULL AUTO_INCREMENT DEFAULT NULL,
+  `id_Students` SMALLINT NULL DEFAULT NULL,
+  `id_Assignments` SMALLINT NULL DEFAULT NULL,
+  `StudentAnswers` BLOB DEFAULT NULL,
+  PRIMARY KEY (`id`)
+);
+
+
   
 -- ---
 -- Table 'Questions'
@@ -89,11 +101,9 @@ CREATE TABLE `Student_Questions` (
   `id` SMALLINT NULL AUTO_INCREMENT DEFAULT NULL,
   `id_Questions` SMALLINT DEFAULT NULL,
   `id_Students` SMALLINT DEFAULT NULL,
-  `LastAttempted` TIMESTAMP NULL DEFAULT NULL,
-  `TimesAnswered` INT NULL DEFAULT NULL,
+  `TimesAnswered` SMALLINT NULL DEFAULT NULL,
   `TimesCorrect` SMALLINT NULL DEFAULT NULL,
   `TimesIncorrect` SMALLINT NULL DEFAULT NULL,
-  `NextScheduledAttempt` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -123,6 +133,9 @@ ALTER TABLE `Student_Questions` ADD FOREIGN KEY (id_Questions) REFERENCES `Quest
 ALTER TABLE `Student_Questions` ADD FOREIGN KEY (id_Students) REFERENCES `Users` (`id`);
 ALTER TABLE `Student_Teachers` ADD FOREIGN KEY (id_Teachers) REFERENCES `Users` (`id`);
 ALTER TABLE `Student_Teachers` ADD FOREIGN KEY (id_Students) REFERENCES `Users` (`id`);
+ALTER TABLE `HW` ADD FOREIGN KEY (id_Students) REFERENCES `Users` (`id`);
+ALTER TABLE `HW` ADD FOREIGN KEY (id_Assignments) REFERENCES `Assignments` (`id`);
+
 -- ---
 -- Table Properties
 -- ---
