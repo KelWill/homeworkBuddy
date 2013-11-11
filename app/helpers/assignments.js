@@ -70,9 +70,6 @@ module.exports.retrieveAssignment = function(request, response, db){
   var teacher = request.params.teacher;
   var assignmentName = request.params.assignmentName;
 
-  console.log(teacher);
-  console.log(assignmentName);
-
   //can refactor to use an inner join
   db.query('SELECT * FROM Users WHERE name = ? and isTeacher = 1', [teacher], function(error, rows, fields){
     if (error) {
@@ -148,6 +145,14 @@ var parseQuestions = function(rows){
   return rows;
 };
 
+module.exports.submitAssignment = function(request, response, db, hw){
+  console.log('submit assignment is happening');
+  console.log(hw);
+  hw = JSON.parse(hw);
+  console.log(hw);
+  response.end('done');
+};
+
 module.exports.retrieveTeacherAssignments = function(request, response, db){
   var teacher = request.params.teacher;
   db.query('SELECT assignments.assignmentName, assignments.id FROM Users JOIN assignments on Users.id = id_Teachers WHERE Users.name = ?', [teacher], function(error, rows, fields){
@@ -157,7 +162,6 @@ module.exports.retrieveTeacherAssignments = function(request, response, db){
     } 
     if (rows.length) {
       console.log('Return assignments');
-      console.log(rows);
       response.end(JSON.stringify(rows));
     } else {
       var data = JSON.stringify([{assignmentName: "This teacher hasn\'t created any assignments. No homework for you!", id: 'yaynohomework'}]);
@@ -169,7 +173,6 @@ module.exports.retrieveTeacherAssignments = function(request, response, db){
 module.exports.getAllTeachers = function(request, response, db){
   db.query('SELECT name FROM Users where isTeacher = 1', function(error, rows, fields){
     if (error) { console.log(error); }
-    console.log(rows);
     response.end(JSON.stringify(rows));
   });
 };
@@ -177,7 +180,6 @@ module.exports.getAllTeachers = function(request, response, db){
 module.exports.joinClass = function(request, response, db){
   var student = request.user;
   var teacher = request.params.teacher;
-  console.log(request.user);
   db.query('SELECT id FROM USERS WHERE name = ?', [teacher], function(error, rows, fields){
    if (error){
      response.end(error);
@@ -188,7 +190,6 @@ module.exports.joinClass = function(request, response, db){
           response.end("Error joining class");
         }
         else { 
-          console.log("Success");
           response.end("Joined class successfully.");
         }
       });
@@ -204,7 +205,6 @@ module.exports.allClasses = function(request, response, db){
         console.log(error);
         response.end(error);
       } else {
-        console.log('classes', rows);
         response.end(JSON.stringify(rows));
       }
     })

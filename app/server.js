@@ -20,7 +20,6 @@ db.connect(function(err){
 
 db.query('USE hwBud', function(err){
   console.log(err);
-  console.log('successfully using hwBud!');
 });
 
 var app = express();
@@ -57,7 +56,6 @@ app.get('/student/:teacher/:assignmentid/:optional?*', function(request, respons
 
 //   Passport   //
 var isValidUserPassword = function(username, password, done){
-  console.log('isValidUserPassword is running');
   db.query('SELECT * FROM Users WHERE name = ?', username, function(err, rows, fields){
     console.log('database query!');
     console.log(rows);
@@ -88,8 +86,6 @@ passport.use(new LocalStrategy({
 
 
 passport.serializeUser(function(user, done) {
-  console.log('serializing!');
-  console.log('user', user);
   done(null, user.id);
 });
 
@@ -117,8 +113,6 @@ app.post('/signup/:teacherOrStudent', function(request, response){
   } else {
     teacherOrStudent = 0;
   }
-
-  console.log(request.body);
 
   db.query('SELECT * FROM Users where name = ?', [userData.username] , function(err, rows, fields) {
     if ( rows.length === 0 ) {
@@ -166,6 +160,28 @@ app.get('/getassignment/:teacher/:assignmentName/:optional?*', function(request,
 app.get('/getassignments/:teacher', function(request, response){
   assignments.retrieveTeacherAssignments(request, response, db);
 });
+
+//   submitting an assignment   //
+app.post('/submitassignment/student/:teacher/:assignmentName', function(request, response){
+  if (request.user || true){
+    console.log('submitting assignment');
+    //var id_students = request.user.id;
+    //console.log(id_students);
+    console.log('request.body', request.body);
+    var hw = '';
+    request.on('data', function(chunk){
+      console.log('chunk!');
+      hw += chunk;
+    });
+    request.on('end', function(){
+      console.log('request done!');
+      assignments.submitAssignment(request, response, db, hw);
+    })
+  } else {
+    response.writeHead(401);
+    response.end('You are not logged in. Sorry!');
+  }
+})
 
 //   Getting List of Teachers   //
 app.get('/allteachers', function(request, response){

@@ -17,14 +17,11 @@ $(document).ready(function(){
     renderQuestion: function(q){
       var qView;
       if (q.get('questionType') === "MC"){
-        console.log('creating an MC question');
         qView = new MCQuestionView({model: q});
       } else if (q.get('questionType') === "ShortAnswer"){
         qView = new ShortAnswerQuestionView({model: q});
-        console.log('creating a short answer question');
       } else if (q.get('questionType') === "FillBlank"){
         qView = new FillBlankQuestionView({model: q});
-        console.log('creating a fill in the blank question');
       }
       qView.render();
       this.$el.append(qView.el);
@@ -33,6 +30,24 @@ $(document).ready(function(){
   var QuestionView = Backbone.View.extend({});
 
   var MCQuestionView = QuestionView.extend({
+    events: {
+      'click div.answer.option' : 'select'
+    }, 
+
+    select: function(event){
+      $('div.answer.option').removeClass('selected');
+      $(event.currentTarget).addClass('selected');
+    },
+
+    initialize: function(){
+      this.model.on('save', function(){
+        var selected = this.$el.find('.selected');
+        if (selected.length){
+          var answer = selected.attr('class')[0];
+          this.model.set('answer', answer);
+        }
+      }, this)
+    },
     //<% if (selected === "A") { print("selected") }%>
     questionTemplate: _.template('<%= number %><h4><%= question %></h4>\
       <div class = "A answer option">A: <%= answerOptions[0] %></div>\
@@ -47,6 +62,12 @@ $(document).ready(function(){
   });
 
   var ShortAnswerQuestionView = QuestionView.extend({
+    initialize: function(){
+      this.model.on('save', function(){
+        var answer = this.$el.find('.answer').val();
+        this.model.set('answer', answer);
+      }, this)
+    },
     questionTemplate: _.template('<%= number %><h4><%= question %></h4>\
       <textarea class = "answer" value = "<%=answer%>" />'), 
 
@@ -57,6 +78,13 @@ $(document).ready(function(){
   });
 
   var FillBlankQuestionView = QuestionView.extend({
+    initialize: function(){
+      this.model.on('save', function(){
+        var answer = this.$el.find('.answer').val();
+        this.model.set('answer', answer);
+      }, this)
+    },
+
     questionTemplate: _.template('<%= number %><h4><%= preText %><input type = "text" class = "answer" value = "<%=answer%>"><%= postText %></h4>'),
 
     render: function(){
@@ -134,6 +162,14 @@ $(document).ready(function(){
     },
 
     submit: function(){
+      //saving values
+      var paragraph = router.assignment.find(function(item){
+        return item.get('paragraph_id') + '' === router.urls[router.currentIndex] + '';
+      });
+      paragraph.questionSet.forEach(function(question){
+        question.trigger('save');
+      });
+
       router.currentIndex++;
       if (router.currentIndex < router.urls.length){
         router.navigate('/p/' + router.urls[router.currentIndex], {trigger: true});
@@ -154,7 +190,26 @@ $(document).ready(function(){
     },
 
     submitAssignment: function(){
-      console.log('you are submitting the assignment! How cool is that???');
+      var data = [];
+      router.assignment.forEach(function(paragraph){
+        if (paragraph.attributes.questionSet){
+          paragraph.questionSet.forEach(function(question){
+            var toSave = {};
+            toSave.question_id = question.get('questionId');
+            toSave.answer = question.get('answer');
+            data.push(toSave);
+          });
+        }
+      })
+      data = JSON.stringify(data);
+
+      console.log('data', data);
+      $.ajax({
+        method: "POST", 
+        data: data,
+        url: '/submitAssignment' + router.rootURL, 
+        contentType: 'application/JSON'
+      });
     },
 
     render: function(){
@@ -168,15 +223,17 @@ $(document).ready(function(){
     },
 
     renderQuestions: function(){
-      this.questionSet = new QuestionSet();
-      this.questionSetView = new QuestionSetView({collection: this.questionSet});
+      this.model.questionSet = new QuestionSet();
+      this.model.questionSetView = new QuestionSetView({collection: this.model.questionSet});
       for (var i = 0; i < this.model.get('questionSet').length; i++){
         var q = this.model.get('questionSet')[i]
+        var id = q.id;
         q = JSON.parse(q.QuestionText);
         q = new Question(q);
-        this.questionSet.add(q);
+        q.set({questionId: id});
+        this.model.questionSet.add(q);
       }
-      this.$el.find('div.questionSet').append(this.questionSetView.el);
+      this.$el.find('div.questionSet').append(this.model.questionSetView.el);
       
     }
 
@@ -184,40 +241,32 @@ $(document).ready(function(){
   
   var Question = Backbone.Model.extend({
     initialize: function(){
-      this.set('selected', '');
-      this.set('answer', '');
-    }
-  });
-
-  var MCQuestion = Question.extend({
-    initialize: function(){
-      this.set('selected', "");
-    }, 
-
-    save: function(answer){
-      this.set('selected', answer);
-    }
-  });
-
-  var ShortAnswerQuestion = Question.extend({
-    initialize: function(){
       this.set('answer', '');
     }, 
 
-     save: function(answer){
-       this.set('answer', answer);
-     }
   });
 
-  var FillBlankQuestion = Question.extend({
-     initialize: function(){
-      this.set('answer', '');
-     }, 
+  // var MCQuestion = Question.extend({
+  //   initialize: function(){
+  //     this.set('selected', "");
+  //   } 
+  // });
 
-     save: function(answer){
-       this.set('answer', answer);
-     }
-  });
+  // var ShortAnswerQuestion = Question.extend({
+  //   initialize: function(){
+  //     this.set('answer', '');
+  //   }
+  // });
+
+  // var FillBlankQuestion = Question.extend({
+  //    initialize: function(){
+  //     this.set('answer', '');
+  //    }, 
+
+  //    save: function(answer){
+  //      this.set('answer', answer);
+  //    }
+  // });
 
 
 
@@ -289,7 +338,6 @@ $(document).ready(function(){
       paragraph = this.assignment.at(0);
       for ( var i = 0; i < questions.length; i++ ) {
         var question = questions[i];
-        console.log(question);
 
         //only search the collection for the new paragraph if the current paragraph isn't correct
         if (paragraph.get('paragraph_id') !== questions[i].paragraph_id) {
@@ -305,18 +353,15 @@ $(document).ready(function(){
     },
 
     showParagraph: function(paragraph_id){
-      console.log('show paragraph is running with ', paragraph_id);
       if (this.assignment){
         paragraph = this.assignment.find(function(p){
           return p.get('paragraph_id') + '' === paragraph_id + '';
         });
-        console.log('paragraph is', paragraph);
         paragraph.trigger('showMe');
       }
     },
 
     showQuestions: function(paragraph_id){
-      console.log('showQuestions has been triggered');
       if (this.assignment){
         paragraph = this.assignment.find(function(item){
           return item.get('paragraph_id') === paragraph_id;
