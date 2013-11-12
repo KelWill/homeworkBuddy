@@ -35,7 +35,7 @@ $(document).ready(function(){
     }, 
 
     select: function(event){
-      $('div.answer.option').removeClass('selected');
+      this.$el.find('div.answer.option').removeClass('selected');
       $(event.currentTarget).addClass('selected');
     },
 

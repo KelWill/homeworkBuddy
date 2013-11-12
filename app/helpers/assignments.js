@@ -215,7 +215,7 @@ module.exports.submitAssignment = function(request, response, db, hw){
 
               //inserting into Student_Questions which tracks student relationships with questions
               db.query('INSERT INTO Student_Questions (id_Questions, id_Students, Correct, StudentAnswer, fromAssignment) VALUES (?, ?, ?, ?, ?)', 
-                [hw[i].id, studentId, correct, hw[i].answer, fromAssignment], 
+                [hw[i].question_id, studentId, correct, hw[i].answer, fromAssignment], 
                 function(error){
                   if (error) { 
                    console.log( error); 
