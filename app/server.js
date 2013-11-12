@@ -193,7 +193,12 @@ app.get('/teacher/grade/:assignmentName', function(request, response){
 });
 
 app.get('/teacher/grade', function(request, response){
-  assignments.getAssignmentsForTeacher(request, response, db);
+  if (request.user){
+    assignments.getAssignmentsForTeacher(request, response, db);
+  } else {
+    response.writeHead(401);
+    response.end();
+  }
 });
 
 //   Starting Server   //

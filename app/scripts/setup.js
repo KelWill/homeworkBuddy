@@ -9,6 +9,7 @@ window.homeworkBuddy = {
     }
 };
 
+//   This is the router for the teacher's part of the application
 homeworkBuddy.Router = Backbone.Router.extend({
   routes: {
     'create': 'renderCreate',
@@ -25,6 +26,7 @@ homeworkBuddy.Router = Backbone.Router.extend({
     homeworkBuddy.hwCreationView = new homeworkBuddy.Views.HWCreationView({model: homeworkBuddy.hwCreationModel});
   },
 
+  //  This shows all the assignments that the teacher can "grade"
   grades: function(){
     $('.assignments').removeClass('hide');
   },
@@ -33,9 +35,6 @@ homeworkBuddy.Router = Backbone.Router.extend({
     var router = this;
     console.log('Router is on makeAssignment, url is \'\'')
     $('.container').append(homeworkBuddy.hwCreationView.el);
-
-    //   Creating Header and Registering Events   //
-    
   }, 
 
   renderCreate: function() {
@@ -44,23 +43,11 @@ homeworkBuddy.Router = Backbone.Router.extend({
 
   addQuestions: function() {
     console.log('Router is on create/addquestions')
-  },
-
-
-  grade: function(assignmentName) {
-    $.ajax({
-      method: "GET",
-      url: '/grade/' + assignmentName, 
-      success: function(data){
-        console.log(data);
-      },
-      error: function(error){
-        console.log(error);
-      }
-    })
   }
 });
 
+//  this gets student data and all the questions for an assignment
+//  updates the router, and renders the grading view
 homeworkBuddy.Models.Header = Backbone.Model.extend({
   getAssignment: function(url){
     $.ajax({
@@ -68,6 +55,7 @@ homeworkBuddy.Models.Header = Backbone.Model.extend({
       url: url, 
       success: function(data){
         console.log(data);
+        homeworkBuddy.createGradingView(data);
       }, 
       error: function(error){
         console.log(error);
@@ -76,6 +64,7 @@ homeworkBuddy.Models.Header = Backbone.Model.extend({
   }
 });
 
+//  This is the standard header/menu view for teachers
 homeworkBuddy.Views.HeaderView = Backbone.View.extend({
   initialize: function(){
     this.$el.append(this.template({}));
@@ -99,27 +88,36 @@ homeworkBuddy.Views.HeaderView = Backbone.View.extend({
 
   template: _.template('\
     <div class = "header">\
-    <a href = "#" class = "logout">Logout</a>\
+    <a href = "/logout" class = "logout">Logout</a>\
     <button class = "createNew">Create New Homework!</button>\
     <button class = "grades">Grades!</button>\
-    <div class = "hide assignments"><ul></ul></div>\
+    <div class = "hide assignments"><ul><li>Try clicking again in a second, we\'re still fetching your data. Sorry!</li></ul></div>\
     </div>'),
 
+
+  //  This fetches all the assignments that the teacher can grade
+  //  This happens after page load
   fetchAssignments: function(){
     var view = this;
-    var linkTemplate = _.template('<li><a class = "assignment" href = "grades/<%=assignmentName%>"><%=assignmentName%></a></li>')
+    var $list = view.$el.find('div.assignments ul');
+    var linkTemplate = _.template('<li><a class = "assignment" href = "grade/<%=assignmentName%>"><%=assignmentName%></a></li>')
     $.ajax({
       method: "GET", 
       url: 'teacher/grade', 
       success: function(data){
         data = JSON.parse(data);
         console.log(data);
-        var $list = view.$el.find('div.assignments ul');
+        $list.empty();
+        if (!data.length){
+          $list.append('<li>Make some homework first!</li>')
+        }
         for (var i = 0; i < data.length; i++){
           $list.append(linkTemplate(data[i]));
         }
       }, 
       error: function(error){
+        $list.empty();
+        $list.append('<li>There was an error fetching your data. Are you logged in? <a href = "/login">Login</a>');
         console.log(error)
       }
     })
@@ -130,7 +128,8 @@ homeworkBuddy.Views.HeaderView = Backbone.View.extend({
     var url = e.target.href;
     this.model.getAssignment(url);
   }
-})
+});
+
 
 $(document).ready(function () {
     'use strict';
@@ -139,4 +138,4 @@ $(document).ready(function () {
     homeworkBuddy.router.header = new homeworkBuddy.Models.Header();
     homeworkBuddy.router.headerView = new homeworkBuddy.Views.HeaderView({model: homeworkBuddy.router.header});
     Backbone.history.start({pushState: true, root: '/teacher'})
-});
+}); 

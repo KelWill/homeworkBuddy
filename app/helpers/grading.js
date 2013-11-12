@@ -1,11 +1,14 @@
 module.exports.grade = function(request, response, db){
   var assignment = request.params.assignmentName;
   var teacherId = request.user.id
+  var results = {};
+  results.assignmentName = assignment;
   db.query("SELECT Assignments.id FROM Assignments JOIN Users on Assignments.id_Teachers = Users.id where Users.id = ? and Assignments.assignmentName = ?",  
     [teacherId, assignment], function(error, rows, fields){
       if (error) { console.log(error); }
       console.log(rows);
       if (rows && rows.length){
+        results.assignmentId = rows[0].id;
         getGrades(rows[0].id);
       } else {
         response.writeHead(401);
@@ -16,16 +19,33 @@ module.exports.grade = function(request, response, db){
   //maybe split this query into two--I'm sending a copy of the questionText for each to the students, and that's too much data
   //should probably also grab students' names
   var getGrades = function(assignmentId){
-    db.query('SELECT CONVERT(QuestionText USING UTF8) as QuestionText, id_Students, CONVERT(StudentAnswer USING UTF8) as StudentAnswer, correct FROM Student_Questions JOIN Questions on Student_Questions.id_Questions = Questions.id where Questions.id_Assignments = ? and fromAssignment = 1', 
+    db.query('SELECT CONVERT(QuestionText USING UTF8) as QuestionText, paragraph_id, id FROM Questions where id_Assignments = ?', 
       [assignmentId], 
       function(error, rows, fields){
         if (error) { 
          console.log("ERROR");
          console.log(error);
          response.writeHead(500);
+         response.end('We messed up, sorry. Try again later.')
         }
-        console.log(rows);
-        response.end(JSON.stringify(rows));
+        else {
+          results.questions = rows;
+          db.query('SELECT CONVERT (StudentAnswer USING UTF8) as StudentAnswer, Student_Questions.id_questions\
+                   , correct, Users.name FROM Student_Questions JOIN Questions ON Questions.id = Student_Questions.id_Questions\
+                   JOIN Users ON Users.id = Student_Questions.id_Students WHERE \
+                   Student_Questions.fromAssignment = 1 and Questions.id_Assignments = ?', [assignmentId], function(error, rows, fields){
+              if (error) { 
+                console.log("ERROR");
+                console.log(error);
+                response.writeHead(500);
+                response.end('We messed up, sorry. Try again later.')
+               } else {
+                results.studentData = rows;
+                results = JSON.stringify(results);
+                response.end(results);
+               }
+            });
+        }
     });
   };
 }

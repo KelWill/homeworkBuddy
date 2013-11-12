@@ -4,6 +4,10 @@ Paragraph and question navigation has some bugs, that I can go back and fix late
 
 Mysql questions id might not go up to a big enough number.
 
-Saving questions to database + generating something that can be used as a report for assignment
-
 It'd be nice to have some more details on questions available on the database (i.e MC, FillBlank, ShortAnswer)
+
+Setting up teacherView with a router so that you can create homework, examine grades, and do all that other fun stuff. 
+  0. refactor db requests to give data in better form to return to router
+  1. Make a model + collection to render hw data
+
+refactor stuff so that blobs are stored in separate table
