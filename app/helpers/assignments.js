@@ -174,6 +174,7 @@ module.exports.submitAssignment = function(request, response, db, hw){
   var studentId = request.user.id;
   var assignmentName = request.params.assignmentName;
   var teacherName = request.params.teacher;
+  var fromAssignment = 1;
 
   db.query('Select Assignments.id from Assignments join Users on Assignments.id_Teachers = Users.id where Assignments.assignmentName = ? and Users.name = ?', 
     [assignmentName, teacherName], function(error, rows, fields){
@@ -213,8 +214,8 @@ module.exports.submitAssignment = function(request, response, db, hw){
               j = rows.length;
 
               //inserting into Student_Questions which tracks student relationships with questions
-              db.query('INSERT INTO Student_Questions (id_Questions, id_Students, Correct, StudentAnswer) VALUES (?, ?, ?, ?)', 
-                [hw[i].id, studentId, correct, hw[i].answer], 
+              db.query('INSERT INTO Student_Questions (id_Questions, id_Students, Correct, StudentAnswer, fromAssignment) VALUES (?, ?, ?, ?, ?)', 
+                [hw[i].id, studentId, correct, hw[i].answer, fromAssignment], 
                 function(error){
                   if (error) { 
                    console.log( error); 
