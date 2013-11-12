@@ -20,27 +20,33 @@ homeworkBuddy.createGradingView = function(data){
   var questions = data.questions;
   var student_questions = data.studentData;
   var breadcrumbs = homeworkBuddy.students.breadcrumbs
-  var question, name, student;
+  var question, name, student, formattedQuestion, temp;
   for ( var i = 0; i < questions.length; i++ ){
     question = questions[i];
-    console.log('question', question);
+    formattedQuestion = {};
+    formattedQuestion.id = question.id;
+    formattedQuestion.QuestionAnswer = question.QuestionAnswer || undefined;
+    temp = JSON.parse(question.QuestionText);
+    formattedQuestion = _.extend(formattedQuestion, temp);
+    formattedQuestion.number = i + 1;
+    console.log('question', formattedQuestion);
+
+    homeworkBuddy.allQuestions.add(formattedQuestion);
   }
   for ( var i = student_questions.length - 1; i >= 0; i-- ){
     question = student_questions[i];
     name = student_questions[i].name;
-    console.log('name', name);
     if (homeworkBuddy.students.breadcrumbs[name]){
-      console.log("name is on breadcrumb, adding to student model");
       student = homeworkBuddy.students.breadcrumbs[name];
       student.questions.addQuestion(student_questions[i]);
     } else {
       homeworkBuddy.students.add([{'name': name}]);
       student = homeworkBuddy.students.at(homeworkBuddy.students.length - 1);
       homeworkBuddy.students.breadcrumbs[name] = student;
-      debugger;
-      console.log('this should be a backbone model of a student', student);
     }
   }
+  debugger;
+  $('.container').html(homeworkBuddy.allQuestionsView.el);
 };
 
 homeworkBuddy.Models.Student = Backbone.Model.extend({
@@ -53,8 +59,79 @@ homeworkBuddy.Models.Student = Backbone.Model.extend({
 homeworkBuddy.Collections.AllQuestions = Backbone.Collection.extend({
 });
 
-homeworkBuddy.Collections.Question = Backbone.Collection.extend({
+homeworkBuddy.Models.Question = Backbone.Model.extend({
+  initialize: function(){
+    console.log('a new question has been added')
+  }
 });
+
+homeworkBuddy.Views.AllQuestionsView = Backbone.View.extend({
+   initialize: function(){
+     this.collection.on('add', function(q){
+       this.renderQuestion(q);
+     }, this);
+   },
+
+   renderQuestion: function(q){
+     console.log('rendering a question!')
+     var qView;
+     if (q.get('questionType') === "MC"){
+       qView = new homeworkBuddy.Views.GradingMCQuestionView({model: q});
+     } else if (q.get('questionType') === "ShortAnswer"){
+       qView = new homeworkBuddy.Views.GradingShortAnswerQuestionView({model: q});
+     } else if (q.get('questionType') === "FillBlank"){
+       qView = new homeworkBuddy.Views.GradingFillBlankQuestionView({model: q});
+     }
+     qView.render();
+     this.$el.append(qView.el);
+   }
+ });
+
+homeworkBuddy.Views.GradingQuestionView = Backbone.View.extend({
+});
+
+homeworkBuddy.Views.GradingMCQuestionView = homeworkBuddy.Views.GradingQuestionView.extend({
+   initialize: function(){
+   },
+
+   questionTemplate: _.template('<p><%= number %>. <%= question %></p>\
+     <div class = "A answer option">A: <%= answerOptions[0] %></div>\
+     <div class = "B answer option">B: <%= answerOptions[1] %></div>\
+     <div class = "C answer option">C: <%= answerOptions[2] %></div>\
+     <div class = "D answer option">D: <%= answerOptions[3] %></div>\
+     <div class = "answer"><% if (QuestionAnswer) { print ("Correct Answer: " + QuestionAnswer) } %></div>'),
+
+   render: function(){
+     this.$el.append(this.questionTemplate(this.model.attributes));
+
+     return this;
+   }
+ });
+
+homeworkBuddy.Views.GradingShortAnswerQuestionView = homeworkBuddy.Views.GradingQuestionView.extend({
+   initialize: function(){
+   },
+   questionTemplate: _.template('<%= number %><h4><%= question %></h4>\
+     <textarea class = "answer" value = "<%=answer%>" />'), 
+
+   render: function(){
+     this.$el.append(this.questionTemplate(this.model.attributes));
+     return this;
+   }
+ });
+
+homeworkBuddy.Views.GradingFillBlankQuestionView = homeworkBuddy.Views.GradingQuestionView.extend({
+   initialize: function(){
+   },
+
+   questionTemplate: _.template('<%= number %><h4><%= preText %><input type = "text" class = "answer" value = "<%=answer%>"><%= postText %></h4>'),
+
+   render: function(){
+     this.$el.append(this.questionTemplate(this.model.attributes));
+     return this;
+   }
+ });
+
 
 homeworkBuddy.Collections.StudentAnswers = Backbone.Collection.extend({
   initialize: function(){
@@ -87,3 +164,6 @@ homeworkBuddy.Collections.StudentAssignment = Backbone.Collection.extend({
 
 homeworkBuddy.students = new homeworkBuddy.Collections.Students();
 homeworkBuddy.students.model = homeworkBuddy.Models.Student;
+homeworkBuddy.allQuestions = new homeworkBuddy.Collections.AllQuestions();
+homeworkBuddy.allQuestions.model = homeworkBuddy.Models.Question;
+homeworkBuddy.allQuestionsView = new homeworkBuddy.Views.AllQuestionsView({collection: homeworkBuddy.allQuestions});
