@@ -1,0 +1,9 @@
+Current issues:
+
+Paragraph and question navigation has some bugs, that I can go back and fix later
+
+Mysql questions id might not go up to a big enough number.
+
+Saving questions to database + generating something that can be used as a report for assignment
+
+It'd be nice to have some more details on questions available on the database (i.e MC, FillBlank, ShortAnswer)

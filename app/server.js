@@ -15,11 +15,11 @@ var db = mysql.createConnection({
 
 //connecting to database and using correct table
 db.connect(function(err){
-  console.log(err);
+  if (err) { console.log(err); }
 });
 
 db.query('USE hwBud', function(err){
-  console.log(err);
+  if (err) { console.log(err); }
 });
 
 var app = express();

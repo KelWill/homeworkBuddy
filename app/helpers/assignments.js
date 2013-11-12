@@ -3,13 +3,14 @@ module.exports.createAssignment = function(request, response, db){
   var assignmentName = request.params.assignmentName;
   var thingsToInsert = 0;
   var thingsInserted = 0;
+  var assignment_id;
+  var correctAnswers = [];
   if (request.user) { var teacher_id = request.user.id; } else { teacher_id = 1; }
   //insert into the assignment body with a teacher's id
   
   var insertAll = function(assignment, assignment_id){
     var text, answer, questionSet, question, paragraph, p_id;
     
-    var correctAnswers = [];
     for ( var i = 0 ; i < assignment.length; i++) {
       paragraph = assignment[i];
       p_id = paragraph.id;
@@ -50,19 +51,39 @@ module.exports.createAssignment = function(request, response, db){
     }
   };
 
+//Making sure that assignment names are distinct for each teacher
+db.query('SELECT * FROM assignments WHERE assignmentName = ? and id_teachers = ?', [assignmentName, teacher_id], function(error, rows, fields){
+  if (error) {
+    console.log(error);
+    response.end();
+  }
+  if (!rows.length){
+    db.query('INSERT INTO assignments (id_teachers, assignmentName) VALUES (?, ?)', [teacher_id, assignmentName], function(error, result){
+      if (error){
+        console.log('inserting into assignment failed');
+        console.log(error);
+      } else {
+        assignment_id = result.insertId;
+        insertAll(assignment, result.insertId);
+      }
+    });
+  }
+  if (rows.length){
+    response.end('Need a distinct homework name');
+  }
+})
 
-  db.query('INSERT INTO assignments (id_teachers, assignmentName, CorrectAnswers) VALUES (?, ?, ?)', [teacher_id, assignmentName, CorrectAnswers], function(error, result){
-    if (error){
-      console.log('inserting into assignment failed');
-      console.log(error);
-    } else {
-      insertAll(assignment, result.insertId);
-    }
-  });
 
   var finish = function(thingsInserted, thingsToInsert, response){
     if (thingsInserted === thingsToInsert){
-      response.end(JSON.stringify('WHOOHOOO'));
+      db.query('UPDATE Assignments SET CorrectAnswers = ? Where id = ?', [JSON.stringify(correctAnswers), assignment_id], function(error){
+        if (error) { 
+          console.log(error);
+          response.writeHead(500);
+        }
+        response.end();
+
+      });
     }
   }
 };
@@ -149,29 +170,65 @@ var parseQuestions = function(rows){
 
 
 module.exports.submitAssignment = function(request, response, db, hw){
+  var correctAnswers;
   var studentId = request.user.id;
   var assignmentName = request.params.assignmentName;
-  var insertIntoHW = function(assignmentId){
-    db.query('INSERT INTO HW (id_Students, id_Assignments, StudentAnswers) VALUES (?, ?, ?)', 
-      [studentId, assignmentId, hw], function(error){
-        if (error) { 
-          response.writeHead(500);
-          response.end('Insertion into database failed'); 
+  var teacherName = request.params.teacher;
+
+  db.query('Select Assignments.id from Assignments join Users on Assignments.id_Teachers = Users.id where Assignments.assignmentName = ? and Users.name = ?', 
+    [assignmentName, teacherName], function(error, rows, fields){
+      if (error) { 
+        console.log(error); 
+        response.writeHead(500);
+      } else {
+        console.log(rows);
+        var assignmentId = rows[0].id;
+        getCorrectAnswers(assignmentId);
+      }
+    });
+
+
+  var getCorrectAnswers = function(id){
+    db.query('Select id, QuestionAnswer from Questions where id_Assignments = ?', id, function(error, rows, fields){
+      if (error) { 
+        console.log(error);
+        response.writeHead(500);
+      } else {
+        console.log(hw);
+        for ( var i = 0; i < hw.length; i++ ) {
+          for ( var j = 0; j < rows.length; j++ ){
+            if (hw[i].question_id === rows[j].id){
+              console.log('match');
+              if (hw[i].answer && rows[j].QuestionAnswer && hw[i].answer.toLowerCase() === rows[j].QuestionAnswer.toLowerCase()){
+                console.log('and it is correct!');
+                var correct = 1;
+              } else if (rows[j].QuestionAnswer === null) {
+                var correct = 1;
+                console.log('There is not a question answer');
+              } else {
+                var correct = 0;
+                console.log('And it is incorrect!');
+              }
+
+              j = rows.length;
+
+              //inserting into Student_Questions which tracks student relationships with questions
+              db.query('INSERT INTO Student_Questions (id_Questions, id_Students, Correct, StudentAnswer) VALUES (?, ?, ?, ?)', 
+                [hw[i].id, studentId, correct, hw[i].answer], 
+                function(error){
+                  if (error) { 
+                   console.log( error); 
+                  }
+                  response.end();
+                }
+              );
+            } 
+          }
         }
-        else {
-          insertAllQuestions();
-        }
-      });
+      }
+    });
   };
 
-  var insertAllQuestions = function(){
-
-  }
-
-  db.query('SELECT * FROM Assignments where name = ?', [assignmentName], function(error, rows){
-    if (error) {  console.log(error) ; }
-    else { insertIntoHW(rows[0].id); }
-  });
 };
 
 module.exports.retrieveTeacherAssignments = function(request, response, db){
