@@ -15,6 +15,11 @@
         <!-- endbuild -->
         <!-- build:js scripts/vendor/modernizr.js -->
         <script src="bower_components/modernizr/modernizr.js"></script>
+        <style>
+          .hide {
+            display: none;
+          }
+        </style>
         <!-- endbuild -->
     </head>
     <body>
@@ -22,7 +27,7 @@
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 
-
+        <header class = "header"></header>
         <h2 class = "title"></h2>
         <div class = "container"></div>
         <p>
@@ -73,6 +78,7 @@
 
         <!-- build:js({.tmp,app}) scripts/main.js -->
         <script src = "scripts/setup.js"></script>
+        <script src="scripts/templates/teacherHeader.js"></script>
         <script src="scripts/templates/MCCreationTemplate.js"></script>
         <script src="scripts/templates/HWCreationTemplate.js"></script>
         <script src="scripts/templates/FillBlankCreationTemplate.js"></script>

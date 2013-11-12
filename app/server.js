@@ -4,6 +4,7 @@ var express = require('express');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var assignments = require('./helpers/assignments');
+var grading = require('./helpers/grading')
 
 //   Database   //
 //creating connection with database
@@ -117,8 +118,9 @@ app.post('/signup/:teacherOrStudent', function(request, response){
   db.query('SELECT * FROM Users where name = ?', [userData.username] , function(err, rows, fields) {
     if ( rows.length === 0 ) {
       db.query('INSERT INTO Users (name, email, password_hash, isTeacher) VALUES (?, ?, ?, ?)', 
-               [request.body.username, request.body.email, request.body.password, teacherOrStudent], function(err){
-        response.end('You signed up successfully');
+        [request.body.username, request.body.email, request.body.password, teacherOrStudent], 
+        function(err){
+          response.end('You signed up successfully');
       });
     } else {
       response.writeHead(401);
@@ -181,6 +183,17 @@ app.get('/allteachers', function(request, response){
 //   Teacher View   //
 app.post('/newhw/:assignmentName', function(request, response){
   assignments.createAssignment(request, response, db);
+});
+
+
+
+//   Grading Homework   //
+app.get('/teacher/grade/:assignmentName', function(request, response){
+  grading.grade(request, response, db);
+});
+
+app.get('/teacher/grade', function(request, response){
+  assignments.getAssignmentsForTeacher(request, response, db);
 });
 
 //   Starting Server   //

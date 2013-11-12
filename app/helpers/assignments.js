@@ -276,8 +276,22 @@ module.exports.joinClass = function(request, response, db){
   });
 };
 
+module.exports.getAssignmentsForTeacher = function(request, response, db){
+  if (!request.user){
+    response.writeHead(401);
+    response.end('Are you logged in?');
+  }
+  var teacherId = request.user.id;
+  db.query("SELECT assignmentName from Assignments where id_teachers = ?", [teacherId], function(error, rows, fields){
+    if (error){
+      console.log(error);
+      response.writeHead(500);
+    }
+    response.end(JSON.stringify(rows));
+  });
+};
+
 module.exports.allClasses = function(request, response, db){
-  //I want to get all the names that are associated with that user
   db.query('SELECT name FROM Users JOIN Student_Teachers on Users.id = Student_Teachers.id_teachers where Student_Teachers.id_students = ?', 
     [request.user.id], function(error, rows, fields){
       if (error){

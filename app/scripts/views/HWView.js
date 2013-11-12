@@ -9,11 +9,16 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
       template: _.template(homeworkBuddy.templates.HWCreationTemplate),
 
       events: {
-        'click button.newAssignment': 'submit'
+        'click button.newAssignment': 'updateRouter'
       },
 
       initialize: function(){
         this.render();
+      },
+
+      updateRouter: function(){
+        homeworkBuddy.router.navigate('/create/addquestions', {trigger: true});
+        this.submit();
       },
 
       //maybe should communicate with router
