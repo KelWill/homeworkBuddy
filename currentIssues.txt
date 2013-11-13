@@ -11,3 +11,5 @@ Setting up teacherView with a router so that you can create homework, examine gr
   1. Make a model + collection to render hw data
 
 refactor stuff so that blobs are stored in separate table
+
+all the fill in the blanks seem to marked correct... (this might not be a bad thing, just grade MCs)

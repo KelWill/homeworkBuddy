@@ -58,6 +58,7 @@ homeworkBuddy.Models.Header = Backbone.Model.extend({
         homeworkBuddy.createGradingView(data);
       }, 
       error: function(error){
+        console.log("There was an error");
         console.log(error);
       }
     })
