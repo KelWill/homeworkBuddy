@@ -1,20 +1,4 @@
-  //
 homeworkBuddy.createGradingView = function(data){
-  //create a model that has one collection
-    //a collection of students with their test data and with test questions as attributes on the collection/as defaults
-
-    //each student has a collection of questions on it
-
-    //model views:
-      //questions + student answers
-      //grades for each student
-    //collection views
-      //list of students who completed / submitted the assignment
-      //list of question numbers + percentage who got it correct (do numbers with orderBy on server if necessary)
-      //stretch = graph
-
-  //notes: need to do some breadcrumbing so only get one assignment for each student
-  //(go backwards through data so just get most recent)
   data = JSON.parse(data);
   var assignmentName = data.assignmentName;
   var questions = data.questions;
@@ -49,13 +33,27 @@ homeworkBuddy.createGradingView = function(data){
   }
   $('.container').html(homeworkBuddy.allQuestionsView.el);
   homeworkBuddy.percentCorrectViews.render();
+  homeworkBuddy.completed = new homeworkBuddy.Views.Completed({collection: homeworkBuddy.students});
 };
 
 homeworkBuddy.Models.Student = Backbone.Model.extend({
   initialize: function(){
     this.questions = new homeworkBuddy.Collections.StudentAnswers();
+    //So that questions can update student grades
+    this.questions.student = this;
     console.log('a new student has been initialized');
+  }, 
+
+  defaults: {
+    questionsCorrect: 0, 
+    questionsAnswered: 0
+  }, 
+
+  updateTally: function(correct){
+    this.set('questionsCorrect', this.get('questionsCorrect') + correct);
+    this.set('questionsAnswered', this.get('questionsAnswered') + 1);
   }
+
 });
 
 homeworkBuddy.Collections.AllQuestions = Backbone.Collection.extend({
@@ -168,6 +166,7 @@ homeworkBuddy.Collections.StudentAnswers = Backbone.Collection.extend({
       delete question.name;
       this.add(question);
       homeworkBuddy.allQuestions.breadcrumbs[question.id_questions].updateTally(question.correct);
+      this.student.updateTally(question.correct);
     }
   }
 });
@@ -219,11 +218,52 @@ homeworkBuddy.Collections.StudentAssignment = Backbone.Collection.extend({
 
 });
 
+homeworkBuddy.Views.Completed = Backbone.View.extend({
+  initialize: function(){
+    this.$el.append('Students who submitted the assignment:')
+    console.log('completed is getting initialized with collection', this.collection);
+    this.collection.forEach(function(student){
+      var view = new homeworkBuddy.Views.CompletedStudent({model: student});
+      this.$el.append(view.render().el);
+    }, this);
+    this.render();
+  },
+
+  
+  render: function(){
+    $('.container').prepend(this.el);
+  }
+});
+
+homeworkBuddy.Views.CompletedStudent = Backbone.View.extend({
+  events: {
+    'click': 'displayStudentAnswers'
+  },
+
+  tagName: 'el',
+
+  displayStudentAnswers: function(){
+    $('.container').prepend('<h4>' + this.model.get('name') + '</h4>');
+    this.model.questions.forEach(function(question){
+      if (question.get('correct')){
+        console.log('correct');
+      } else {
+        console.log(question.get('StudentAnswer'));
+      }
+    });
+  },
+
+  render: function(){
+    this.$el.append(' <em>' + this.model.get('name') + ' (<em><strong> ' + this.model.get('questionsCorrect')  + ' / ' + this.model.get('questionsAnswered') + '</strong><em> )</em> || ');
+    return this;
+  }
+});
+
+
+
 homeworkBuddy.students = new homeworkBuddy.Collections.Students();
 homeworkBuddy.students.model = homeworkBuddy.Models.Student;
 homeworkBuddy.allQuestions = new homeworkBuddy.Collections.AllQuestions();
 homeworkBuddy.allQuestions.model = homeworkBuddy.Models.Question;
 homeworkBuddy.allQuestionsView = new homeworkBuddy.Views.AllQuestionsView({collection: homeworkBuddy.allQuestions});
 homeworkBuddy.percentCorrectViews = new homeworkBuddy.Views.PercentCorrectViews({collection: homeworkBuddy.allQuestions});
-//so, when I add a question to a student, I need to also trigger an event that will trickle up to the AllQuestionsModel
-//that has attributes on it that display percentage correct
