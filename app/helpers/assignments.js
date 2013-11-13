@@ -9,7 +9,7 @@ module.exports.createAssignment = function(request, response, db){
   //insert into the assignment body with a teacher's id
   
   var insertAll = function(assignment, assignment_id){
-    var text, answer, questionSet, question, paragraph, p_id;
+    var text, answer, questionSet, question, paragraph, p_id, type;
     
     for ( var i = 0 ; i < assignment.length; i++) {
       paragraph = assignment[i];
@@ -29,10 +29,11 @@ module.exports.createAssignment = function(request, response, db){
           } else {
             answer = null;
           }
+          type = question.questionType;
           question = JSON.stringify(question);
           thingsToInsert++;
-          db.query('INSERT INTO questions (id_Assignments, QuestionText, QuestionAnswer, paragraph_id) VALUES (?, ?, ?, ?)', 
-            [assignment_id, question, answer, p_id], 
+          db.query('INSERT INTO questions (id_Assignments, QuestionText, QuestionAnswer, paragraph_id, QuestionType) VALUES (?, ?, ?, ?, ?)', 
+            [assignment_id, question, answer, p_id, type], 
             function(error, result){
               thingsInserted++;
               if (error) { console.log (error); } 

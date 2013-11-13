@@ -76,6 +76,8 @@ CREATE TABLE `Questions` (
   `QuestionText` BLOB NULL DEFAULT NULL,
   `QuestionAnswer` VARCHAR(10) NULL DEFAULT NULL,
   `paragraph_id` VARCHAR(30) NULL DEFAULT NULL,
+  `QuestionType` VARCHAR(20) NULL DEFAULT NULL,
+
 
   PRIMARY KEY (`id`)
 );
@@ -103,6 +105,7 @@ CREATE TABLE `Student_Questions` (
   `id_Students` SMALLINT DEFAULT NULL,
   `Correct` TINYINT(1) NULL DEFAULT NULL,
   `StudentAnswer` BLOB NULL DEFAULT NULL,
+  `streak` TINYINT NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 

@@ -12,23 +12,31 @@ homeworkBuddy.Views.PercentCorrectViews = Backbone.View.extend({
     if (!this.sortedQuestions.length){
       this.collection.forEach(function(question){
         var qObj = {}
-        if (!question.timesAnswered){
-          qObj.percent = 0;
+        if (question.get('questionType') !== 'MC' or question.timesAnswered === 0){
+          qObj.percent = '?';
+          question.set('percentCorrect', '?');
         } else {
-          qObj.percent = question.timesCorrect / question.timesAnswered;
+          qObj.percent = (question.timesCorrect / question.timesAnswered * 100) + '%';
+          question.set('percentCorrect', (question.timesCorrect / question.timesAnswered));
         }
         qObj.number = question.get('number');
         this.sortedQuestions.push(qObj);
       }, this);
       this.sortedQuestions.sort(function(a, b){
-        return a.percent - b.percent;
+        if (a.percent === '?' && b.percent === '?'){
+          return 0;
+        } else if (a.percent === '?'){
+          return 1;
+        } else if (b.percent === '?'){
+          return -1
+        }
+        return b.percent - a.percent;
       });
-      console.log(this.sortedQuestions);
       this.renderSortedQuestions();
     }
   },
 
-  template: _.template('<%= number %>. <%= percent * 100 %>% || '),
+  template: _.template('<%= number %>. <%= percent %> || '),
 
   renderSortedQuestions: function(){
     var view = this;

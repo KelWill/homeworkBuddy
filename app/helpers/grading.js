@@ -16,8 +16,6 @@ module.exports.grade = function(request, response, db){
       }
     });
 
-  //maybe split this query into two--I'm sending a copy of the questionText for each to the students, and that's too much data
-  //should probably also grab students' names
   var getGrades = function(assignmentId){
     db.query('SELECT CONVERT(QuestionText USING UTF8) as QuestionText, paragraph_id, id, QuestionAnswer FROM Questions where id_Assignments = ?', 
       [assignmentId], 
