@@ -13,7 +13,6 @@ homeworkBuddy.createGradingView = function(data){
     temp = JSON.parse(question.QuestionText);
     formattedQuestion = _.extend(formattedQuestion, temp);
     formattedQuestion.number = i + 1;
-    console.log('question', formattedQuestion);
 
     homeworkBuddy.allQuestions.add(formattedQuestion);
     question = homeworkBuddy.allQuestions.at(homeworkBuddy.allQuestions.length - 1);
@@ -41,7 +40,6 @@ homeworkBuddy.Models.Student = Backbone.Model.extend({
     this.questions = new homeworkBuddy.Collections.StudentAnswers();
     //So that questions can update student grades
     this.questions.student = this;
-    console.log('a new student has been initialized');
   }, 
 
   defaults: {
@@ -66,7 +64,7 @@ homeworkBuddy.Models.Question = Backbone.Model.extend({
   initialize: function(){
     this.timesAnswered = 0; 
     this.timesCorrect = 0;
-  }, 
+  },
 
   updateTally: function(correct){
     this.timesAnswered++;
@@ -87,7 +85,6 @@ homeworkBuddy.Views.AllQuestionsView = Backbone.View.extend({
    },
 
    renderQuestion: function(q){
-     console.log('rendering a question!')
      var qView;
      if (q.get('questionType') === "MC"){
        qView = new homeworkBuddy.Views.GradingMCQuestionView({model: q});
@@ -102,13 +99,27 @@ homeworkBuddy.Views.AllQuestionsView = Backbone.View.extend({
  });
 
 homeworkBuddy.Views.GradingQuestionView = Backbone.View.extend({
+ 
 });
 
 homeworkBuddy.Views.GradingMCQuestionView = homeworkBuddy.Views.GradingQuestionView.extend({
    initialize: function(){
      this.model.on('addPercentageCorrect', function(){
        this.renderPercent();
-     }, this)
+     }, this);
+
+     this.model.on('studentAnswers', function(studentAnswer){
+      this.studentAnswers(studentAnswer);
+    }, this);
+   },
+
+   studentAnswers: function(studentAnswer){
+     this.$el.find('.answer.option').removeClass("correct").removeClass('incorrect');
+     if (studentAnswer.get('correct')){
+       this.$el.find('.' + studentAnswer.get('StudentAnswer')).addClass('correct');
+     } else {
+       this.$el.find('.' + studentAnswer.get('StudentAnswer')).addClass('incorrect');
+     }
    },
 
    questionTemplate: _.template('<p><%= number %>. <%= question %></p>\
@@ -116,10 +127,11 @@ homeworkBuddy.Views.GradingMCQuestionView = homeworkBuddy.Views.GradingQuestionV
      <div class = "B answer option">B: <%= answerOptions[1] %></div>\
      <div class = "C answer option">C: <%= answerOptions[2] %></div>\
      <div class = "D answer option">D: <%= answerOptions[3] %></div>\
-     <div class = "answer option"><% if (QuestionAnswer) { print ("Correct Answer: " + QuestionAnswer) } %></div>'
+     <div class = "answer option"><% if (QuestionAnswer) { print ("Correct Answer: " + QuestionAnswer) } %></div>\
+     <div class = "percentageCorrect answer option"></div>'
      ),
 
-   percentTemplate: _.template('<div class = "percentageCorrect answer option"><% if (timesAnswered) { print("Pecentage Correct: " + (timesCorrect/timesAnswered * 100) + "%") }%></div>'),
+   percentTemplate: _.template('<% if (timesAnswered) { print("Pecentage Correct: " + (timesCorrect/timesAnswered * 100) + "%") }%>'),
 
    render: function(){
      this.$el.append(this.questionTemplate(this.model.attributes));
@@ -127,7 +139,7 @@ homeworkBuddy.Views.GradingMCQuestionView = homeworkBuddy.Views.GradingQuestionV
      return this;
    },
    renderPercent: function(){
-     this.$el.append(this.percentTemplate(this.model));
+     this.$el.find('.percentageCorrect').html(this.percentTemplate(this.model));
     }
  });
 
@@ -168,7 +180,7 @@ homeworkBuddy.Collections.StudentAnswers = Backbone.Collection.extend({
       homeworkBuddy.allQuestions.breadcrumbs[question.id_questions].updateTally(question.correct);
       this.student.updateTally(question.correct);
     }
-  }
+  },
 });
 
 homeworkBuddy.Views.PercentCorrectViews = Backbone.View.extend({
@@ -221,7 +233,6 @@ homeworkBuddy.Collections.StudentAssignment = Backbone.Collection.extend({
 homeworkBuddy.Views.Completed = Backbone.View.extend({
   initialize: function(){
     this.$el.append('Students who submitted the assignment:')
-    console.log('completed is getting initialized with collection', this.collection);
     this.collection.forEach(function(student){
       var view = new homeworkBuddy.Views.CompletedStudent({model: student});
       this.$el.append(view.render().el);
@@ -243,13 +254,9 @@ homeworkBuddy.Views.CompletedStudent = Backbone.View.extend({
   tagName: 'el',
 
   displayStudentAnswers: function(){
-    $('.container').prepend('<h4>' + this.model.get('name') + '</h4>');
+    $('.currentView').html('<h4>' + this.model.get('name') + '</h4>');
     this.model.questions.forEach(function(question){
-      if (question.get('correct')){
-        console.log('correct');
-      } else {
-        console.log(question.get('StudentAnswer'));
-      }
+        homeworkBuddy.allQuestions.breadcrumbs[question.get('id_questions')].trigger('studentAnswers', question);
     });
   },
 
