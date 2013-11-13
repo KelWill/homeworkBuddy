@@ -20,6 +20,7 @@ CREATE TABLE `Users` (
   `isTeacher` TINYINT(1) NULL DEFAULT 0,
   `password_hash` VARCHAR(30) NULL DEFAULT NULL,
   `password_salt` VARCHAR(30) NULL DEFAULT NULL,
+  `review_session` TINYINT NULL DEFAULT 1,
   PRIMARY KEY (`id`)
 );
 

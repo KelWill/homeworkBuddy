@@ -275,7 +275,11 @@ $(document).ready(function(){
     baseURL: document.URL,
     routes: {
       'p/:id' : 'showParagraph',
-      'p/:id/q' : 'showQuestions'
+      'p/:id/q' : 'showQuestions', 
+    },
+
+    review: function(){
+      console.log("REVIEW HAS BEEN TRIGGERED!");
     },
 
     initialize: function(){

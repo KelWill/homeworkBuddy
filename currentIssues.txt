@@ -12,4 +12,4 @@ Setting up teacherView with a router so that you can create homework, examine gr
 
 refactor stuff so that blobs are stored in separate table
 
-all the fill in the blanks seem to marked correct... (this might not be a bad thing, just grade MCs)
+remove correct incorrect from short answers and fill in the blanks

@@ -4,7 +4,8 @@ var express = require('express');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var assignments = require('./helpers/assignments');
-var grading = require('./helpers/grading')
+var grading = require('./helpers/grading');
+var review = require('./helpers/review');
 
 //   Database   //
 //creating connection with database
@@ -43,6 +44,15 @@ app.get('/', function(request, response){
 app.get('/student', function(request, response){
   response.sendfile('student.html');
 });
+
+app.get('/student/review/getquestions', function(request, response){
+  review.getReviewQuestions(request, response, db);
+});
+
+app.post('/student/review', function(request, response){
+  review.saveReviewProgress(request, response, db);
+});
+
 app.get('/student/:teacher', function(request, response){
   response.sendfile('student.html');
 });

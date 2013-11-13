@@ -11,8 +11,8 @@ homeworkBuddy.Views.PercentCorrectViews = Backbone.View.extend({
   sortByDifficulty: function(){
     if (!this.sortedQuestions.length){
       this.collection.forEach(function(question){
-        var qObj = {}
-        if (question.get('questionType') !== 'MC' or question.timesAnswered === 0){
+        var qObj = {};
+        if (question.get('questionType') !== 'MC' || question.timesAnswered === 0){
           qObj.percent = '?';
           question.set('percentCorrect', '?');
         } else {
