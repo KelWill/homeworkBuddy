@@ -163,16 +163,16 @@ $(document).ready(function(){
 
     submit: function(){
       //saving values
-      var paragraph = router.assignment.find(function(item){
-        return item.get('paragraph_id') + '' === router.urls[router.currentIndex] + '';
+      var paragraph = app.assignment.find(function(item){
+        return item.get('paragraph_id') + '' === app.urls[router.currentIndex] + '';
       });
       paragraph.questionSet.forEach(function(question){
         question.trigger('save');
       });
 
-      router.currentIndex++;
-      if (router.currentIndex < router.urls.length){
-        router.navigate('/p/' + router.urls[router.currentIndex], {trigger: true});
+      app.currentIndex++;
+      if (app.currentIndex < app.urls.length){
+        app.navigate(app.rootURL + '/p/' + app.urls[app.currentIndex], {trigger: true});
       } else {
         this.submitAssignment();
         $('#container').html('<h1>YOU ARE DONE YOU LUCKY SON OF A BITCH</h1>')
@@ -180,12 +180,12 @@ $(document).ready(function(){
     },
 
     doQuestions: function(){
-      app.navigate(this.url + '/q');
+      app.navigate(app.rootURL + this.url + '/q');
       this.$el.children().toggleClass('hide');
     },
 
     returnParagraph: function(){
-      app.navigate(this.url);
+      app.navigate(app.rootURL + this.url);
       this.$el.children().toggleClass('hide');
     },
 
@@ -272,10 +272,11 @@ $(document).ready(function(){
 
   //   Setting up the Router   //
   var app = new (Backbone.Router.extend({
-    baseURL: document.URL,
+    url: document.URL,
     routes: {
-      'p/:id' : 'showParagraph',
-      'p/:id/q' : 'showQuestions', 
+       'student/:teacher/:assignment/p/:id' : 'showParagraph',
+      'student/:teacher/:assignment/p/:id/q' : 'showQuestions',
+      'student/review': 'review'
     },
 
     review: function(){
@@ -284,7 +285,7 @@ $(document).ready(function(){
 
     initialize: function(){
       router = this;
-      var url = this.baseURL;
+      var url = this.url;
       var i = url.indexOf('/student/') + '/student/'.length;
       var run = true, slashCount = 0, j = i;
 
@@ -353,10 +354,10 @@ $(document).ready(function(){
       }
       this.assignment.trigger('questionsAdded');
 
-      this.navigate('p/' + this.urls[this.currentIndex], {trigger: true});
+      this.navigate(this.rootURL + '/p/' + this.urls[this.currentIndex], {trigger: true});
     },
 
-    showParagraph: function(paragraph_id){
+    showParagraph: function(teacher, assignment, paragraph_id){
       if (this.assignment){
         paragraph = this.assignment.find(function(p){
           return p.get('paragraph_id') + '' === paragraph_id + '';
@@ -365,7 +366,7 @@ $(document).ready(function(){
       }
     },
 
-    showQuestions: function(paragraph_id){
+    showQuestions: function(teacher, assignment, paragraph_id){
       if (this.assignment){
         paragraph = this.assignment.find(function(item){
           return item.get('paragraph_id') === paragraph_id;
@@ -379,6 +380,6 @@ $(document).ready(function(){
 
 
 
-  Backbone.history.start({pushState: true, root: app.rootURL});
+  Backbone.history.start({pushState: true});
 
 });
