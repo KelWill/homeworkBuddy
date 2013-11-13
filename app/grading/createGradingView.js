@@ -48,7 +48,7 @@ homeworkBuddy.createGradingView = function(data){
     }
   }
   $('.container').html(homeworkBuddy.allQuestionsView.el);
-  homeworkBuddy.allQuestionsView.percentageCorrect();
+  homeworkBuddy.percentCorrectViews.render();
 };
 
 homeworkBuddy.Models.Student = Backbone.Model.extend({
@@ -68,7 +68,6 @@ homeworkBuddy.Models.Question = Backbone.Model.extend({
   initialize: function(){
     this.timesAnswered = 0; 
     this.timesCorrect = 0;
-    console.log('a new question has been added')
   }, 
 
   updateTally: function(correct){
@@ -109,6 +108,9 @@ homeworkBuddy.Views.GradingQuestionView = Backbone.View.extend({
 
 homeworkBuddy.Views.GradingMCQuestionView = homeworkBuddy.Views.GradingQuestionView.extend({
    initialize: function(){
+     this.model.on('addPercentageCorrect', function(){
+       this.renderPercent();
+     }, this)
    },
 
    questionTemplate: _.template('<p><%= number %>. <%= question %></p>\
@@ -119,11 +121,16 @@ homeworkBuddy.Views.GradingMCQuestionView = homeworkBuddy.Views.GradingQuestionV
      <div class = "answer option"><% if (QuestionAnswer) { print ("Correct Answer: " + QuestionAnswer) } %></div>'
      ),
 
+   percentTemplate: _.template('<div class = "percentageCorrect answer option"><% if (timesAnswered) { print("Pecentage Correct: " + (timesCorrect/timesAnswered * 100) + "%") }%></div>'),
+
    render: function(){
      this.$el.append(this.questionTemplate(this.model.attributes));
-
+     this.renderPercent();
      return this;
-   }
+   },
+   renderPercent: function(){
+     this.$el.append(this.percentTemplate(this.model));
+    }
  });
 
 homeworkBuddy.Views.GradingShortAnswerQuestionView = homeworkBuddy.Views.GradingQuestionView.extend({
@@ -160,7 +167,6 @@ homeworkBuddy.Collections.StudentAnswers = Backbone.Collection.extend({
       this.existingAnswers[question.id_questions] = true;
       delete question.name;
       this.add(question);
-      debugger;
       homeworkBuddy.allQuestions.breadcrumbs[question.id_questions].updateTally(question.correct);
     }
   }
@@ -172,12 +178,18 @@ homeworkBuddy.Views.PercentCorrectViews = Backbone.View.extend({
       var percentCorrectView = new homeworkBuddy.Views.PercentCorrectView({model: model});
       this.$el.append(percentCorrectView.render().el);
     }, this);
-  }
+  }, 
+
+  render: function(){
+    this.collection.forEach(function(question){
+      question.trigger('addPercentageCorrect');
+    });
+  },
 })
 
 homeworkBuddy.Views.PercentCorrectView = Backbone.View.extend({
   initialize: function(){
-    this.model.on('change', function(question){
+    this.model.on('upd', function(question){
       this.render();
     }, this)
   }, 
@@ -212,6 +224,6 @@ homeworkBuddy.students.model = homeworkBuddy.Models.Student;
 homeworkBuddy.allQuestions = new homeworkBuddy.Collections.AllQuestions();
 homeworkBuddy.allQuestions.model = homeworkBuddy.Models.Question;
 homeworkBuddy.allQuestionsView = new homeworkBuddy.Views.AllQuestionsView({collection: homeworkBuddy.allQuestions});
-// homeworkBuddy.percentCorrectView = new homeworkBuddy.Views.PercentCorrectViews({collection: homeworkBuddy.students.});
+homeworkBuddy.percentCorrectViews = new homeworkBuddy.Views.PercentCorrectViews({collection: homeworkBuddy.allQuestions});
 //so, when I add a question to a student, I need to also trigger an event that will trickle up to the AllQuestionsModel
 //that has attributes on it that display percentage correct
