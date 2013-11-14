@@ -5,13 +5,56 @@ $(document).ready(function(){
   var textNotQuestions = true;
 
   //   Initializing Collections and Collection Views   //
-  var QuestionSet = Backbone.Collection.extend({});
+  var QuestionSet = Backbone.Collection.extend({
+    checkAndSubmit: function(){
+      var results = [];
+      console.log('check and submit got triggered!');
+      this.forEach(function(question){
+        var q = {};
+        q.id = question.get('questionId');
+        var selected = question.get('selected');
+        var correctAnswer = question.get('correctAnswer');
+        if (selected === correctAnswer){
+          question.trigger('highlight', true, correctAnswer);
+          q.correct = 1;
+        } else {
+          question.trigger('highlight', false, correctAnswer);
+          q.correct = 0;
+        }
+        results.push(q);
+      });
+      console.log(results);
+      // $.ajax({
+      //   method: "PUT", 
+      //   url: '/student/review', 
+      //   data: JSON.stringify(results), 
+      //   success: function(){
+      //     console.log('success');
+      //   }, 
+      //   error: function(error){
+      //     console.log(error);
+      //   }
+      // });
+    }
+  });
 
   var QuestionSetView = Backbone.View.extend({
     initialize: function(){
       this.collection.on('add', function(q){
         this.renderQuestion(q);
       }, this);
+    },
+
+    addSubmit: function(){
+      this.$el.append("<button class = 'submit review'>Check and Submit</button>")
+    }, 
+
+    events: {
+      'click button.submit.review' : 'checkAndSubmit'
+    },
+
+    checkAndSubmit: function(){
+      this.collection.checkAndSubmit();
     },
 
     renderQuestion: function(q){
@@ -35,18 +78,29 @@ $(document).ready(function(){
     }, 
 
     select: function(event){
-      this.$el.find('div.answer.option').removeClass('selected');
+      var option = this.$el.find('div.answer.option');
+      var selected = option.attr('class')[0];
+      option.removeClass('selected');
       $(event.currentTarget).addClass('selected');
+      this.model.set('selected', selected);
     },
 
     initialize: function(){
       this.model.on('save', function(){
-        var selected = this.$el.find('.selected');
-        if (selected.length){
-          var answer = selected.attr('class')[0];
+        var option = this.$el.find('.selected');
+        if (option.length){
+          var answer = option.attr('class')[0];
           this.model.set('answer', answer);
         }
-      }, this)
+      }, this);
+      this.listenTo(this.model, 'highlight', function(correct, answer){
+        this.$el.find('.answer.option').removeClass('selected');
+        if (correct){
+          this.$el.find('.' + answer).addClass('correct');
+        } else {
+          this.$el.find('.' + answer).addClass('incorrect');
+        }
+      })
     },
     //<% if (selected === "A") { print("selected") }%>
     questionTemplate: _.template('<%= number %><h4><%= question %></h4>\
@@ -240,35 +294,15 @@ $(document).ready(function(){
   });
   
   var Question = Backbone.Model.extend({
+    defaults: {
+      'questionType': 'MC'
+    },
+
     initialize: function(){
       this.set('answer', '');
     }, 
 
   });
-
-  // var MCQuestion = Question.extend({
-  //   initialize: function(){
-  //     this.set('selected', "");
-  //   } 
-  // });
-
-  // var ShortAnswerQuestion = Question.extend({
-  //   initialize: function(){
-  //     this.set('answer', '');
-  //   }
-  // });
-
-  // var FillBlankQuestion = Question.extend({
-  //    initialize: function(){
-  //     this.set('answer', '');
-  //    }, 
-
-  //    save: function(answer){
-  //      this.set('answer', answer);
-  //    }
-  // });
-
-
 
   //   Setting up the Router   //
   var app = new (Backbone.Router.extend({
@@ -276,18 +310,47 @@ $(document).ready(function(){
     routes: {
        'student/:teacher/:assignment/p/:id' : 'showParagraph',
       'student/:teacher/:assignment/p/:id/q' : 'showQuestions',
+      'student/:teacher/:assignment' : 'landing',
       'student/review': 'review'
     },
 
     review: function(){
       console.log("REVIEW HAS BEEN TRIGGERED!");
+      $.ajax({
+        method: "GET", 
+        url: '/student/review/getquestions', 
+        success: function(data){
+          data = JSON.parse(data);
+          console.log(data);
+          app.questionSet = new QuestionSet();
+          app.questionSetView = new QuestionSetView({collection: app.questionSet});
+          for ( var i = 0; i < data.length; i++ ){
+            var questionText = JSON.parse(data[i].QuestionText);
+            var q = {};
+            q.questionType = "MC";
+            q.number = i + 1;
+            q.question = questionText.question;
+            q.answerOptions = questionText.answerOptions;
+            q.correctAnswer = data[i].QuestionAnswer;
+            q.questionId = data[i].id
+            app.questionSet.add(q);
+          }
+          app.questionSetView.addSubmit();
+          $("#container").html('');
+          $('#container').append(app.questionSetView.el);
+        },
+        error: function(error){
+          console.log(error)
+        }
+      })
     },
 
-    initialize: function(){
+    landing: function(){
       router = this;
       var url = this.url;
       var i = url.indexOf('/student/') + '/student/'.length;
       var run = true, slashCount = 0, j = i;
+
 
       //the below formats the rootUrl correctly
       //and extracts the correct url to ask for the whole assessment
@@ -313,17 +376,13 @@ $(document).ready(function(){
          data = JSON.parse(data);
          var paragraphs = JSON.parse(data.paragraphs);
          var questions = JSON.parse(data.questions);
-         
+
          router.createCollectionsAndViews(paragraphs, questions);
        }, 
        failure: function(error){
          console.log(error);
        }
       })
-    },
-
-    landing: function(){
-      //this.navigate('p/1', {trigger: true});
     },
 
     createCollectionsAndViews: function(paragraphs, questions){

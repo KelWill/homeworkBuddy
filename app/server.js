@@ -49,6 +49,10 @@ app.get('/student/review/getquestions', function(request, response){
   review.getReviewQuestions(request, response, db);
 });
 
+app.get('/student/review', function(request, response){
+  response.sendfile('assignment.html');
+})
+
 app.post('/student/review', function(request, response){
   review.saveReviewProgress(request, response, db);
 });
