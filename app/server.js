@@ -54,6 +54,7 @@ app.get('/student/review', function(request, response){
 })
 
 app.post('/student/review', function(request, response){
+  console.log("request received");
   review.saveReviewProgress(request, response, db);
 });
 

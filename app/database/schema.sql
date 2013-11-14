@@ -106,7 +106,7 @@ CREATE TABLE `Student_Questions` (
   `id_Students` SMALLINT DEFAULT NULL,
   `Correct` TINYINT(1) NULL DEFAULT NULL,
   `StudentAnswer` BLOB NULL DEFAULT NULL,
-  `streak` TINYINT NULL DEFAULT NULL,
+  `streak` TINYINT NULL DEFAULT 0,
   PRIMARY KEY (`id`)
 );
 

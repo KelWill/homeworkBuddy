@@ -8,33 +8,38 @@ $(document).ready(function(){
   var QuestionSet = Backbone.Collection.extend({
     checkAndSubmit: function(){
       var results = [];
-      console.log('check and submit got triggered!');
       this.forEach(function(question){
         var q = {};
         q.id = question.get('questionId');
+        q.streak = question.get('streak');
         var selected = question.get('selected');
         var correctAnswer = question.get('correctAnswer');
+        console.log("selected", selected);
+        console.log("correctAnswer", correctAnswer);
         if (selected === correctAnswer){
           question.trigger('highlight', true, correctAnswer);
           q.correct = 1;
+          q.streak = 1;
         } else {
           question.trigger('highlight', false, correctAnswer);
           q.correct = 0;
+          q.correct = -q.streak;
         }
         results.push(q);
       });
       console.log(results);
-      // $.ajax({
-      //   method: "PUT", 
-      //   url: '/student/review', 
-      //   data: JSON.stringify(results), 
-      //   success: function(){
-      //     console.log('success');
-      //   }, 
-      //   error: function(error){
-      //     console.log(error);
-      //   }
-      // });
+      $.ajax({
+        method: "POST", 
+        url: '/student/review', 
+        contentType: 'application/json',
+        data: JSON.stringify(results),
+        success: function(){
+          console.log('success');
+        }, 
+        error: function(error){
+          console.log(error);
+        }
+      });
     }
   });
 
@@ -79,9 +84,10 @@ $(document).ready(function(){
 
     select: function(event){
       var option = this.$el.find('div.answer.option');
-      var selected = option.attr('class')[0];
       option.removeClass('selected');
-      $(event.currentTarget).addClass('selected');
+      $currentTarget = $(event.currentTarget);
+      $currentTarget.addClass('selected');
+      var selected = $currentTarget.attr('class')[0];
       this.model.set('selected', selected);
     },
 
@@ -94,7 +100,6 @@ $(document).ready(function(){
         }
       }, this);
       this.listenTo(this.model, 'highlight', function(correct, answer){
-        this.$el.find('.answer.option').removeClass('selected');
         if (correct){
           this.$el.find('.' + answer).addClass('correct');
         } else {
@@ -332,7 +337,8 @@ $(document).ready(function(){
             q.question = questionText.question;
             q.answerOptions = questionText.answerOptions;
             q.correctAnswer = data[i].QuestionAnswer;
-            q.questionId = data[i].id
+            q.questionId = data[i].id;
+            q.streak = data[i].streak;
             app.questionSet.add(q);
           }
           app.questionSetView.addSubmit();
