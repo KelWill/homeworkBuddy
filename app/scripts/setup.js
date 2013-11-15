@@ -123,7 +123,7 @@ homeworkBuddy.Views.HeaderView = Backbone.View.extend({
       }, 
       error: function(error){
         $list.empty();
-        $list.append('<li>There was an error fetching your data. Are you logged in? <a href = "/login">Login</a>');
+        $list.append('<li>There was an error fetching your data. Are you logged in? <br><a class = "login" href = "/login">Login</a>');
         console.log(error)
       }
     })

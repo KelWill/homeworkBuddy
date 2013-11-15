@@ -5,11 +5,30 @@ body {
   padding: 0px;
 }
 
+a {
+  text-decoration: none;
+}
+
 .hide {
   display: none;
 }
 h1 {
   margin: 0;
+}
+
+span#hwbud {
+  position: absolute;
+  top: 0px;
+  left: 300px;
+  right: 300px;
+  text-align: center;
+  z-index: 1;
+  font-family: "Chewy", cursive;
+  font-size: 3em;
+}
+
+.header a.login {
+  float: none;
 }
 
 .correct {
@@ -121,7 +140,6 @@ h1 {
   left: 20%;
   right: 20%;
   bottom: 0px;
-
   text-align: center;
 
   border-radius: 10px;
@@ -169,7 +187,7 @@ h1 {
 }
 
 .container textarea:focus {
-  border: 3px solid black;
+  border: 3px solid blue;
 }
 
 button#completed {
@@ -281,13 +299,23 @@ h4 {
 
 .container div.grading.completion {
   position: absolute;
-  left: -500px;
+  left: -450px;
   top: 0px;
   width: 180px;
   padding: 10px;
   border-radius: 3px;
   -moz-border-radius: 3px;
   -webkit-border-radius: 3px;
+
+  background: rgb(206,220,231); /* Old browsers */
+  background: -moz-linear-gradient(left,  rgba(206,220,231,1) 0%, rgba(89,106,114,1) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(206,220,231,1)), color-stop(100%,rgba(89,106,114,1))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(left,  rgba(206,220,231,1) 0%,rgba(89,106,114,1) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(left,  rgba(206,220,231,1) 0%,rgba(89,106,114,1) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(left,  rgba(206,220,231,1) 0%,rgba(89,106,114,1) 100%); /* IE10+ */
+  background: linear-gradient(to right,  rgba(206,220,231,1) 0%,rgba(89,106,114,1) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cedce7', endColorstr='#596a72',GradientType=1 ); /* IE6-9 */
+
 }
 
 .container div.paragraph {
@@ -296,15 +324,140 @@ h4 {
   margin-right: 10%;
 }
 .container div.insert.question {
-  width: 70%;
-  margin-left: 15%;
-  margin-right: 15%;
+  width: 90%;
+  margin-left: 5%;
+  margin-right: 5%;
   text-align: right;
   margin-bottom: 30px;
+}
+
+.container div.questionSet {
+  position: relative;
+
+  width: 170%;
+  left: -35%;
+
+  background-color: rgba(200, 213, 216, 1);
+
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+
+  text-align: right;
+  
+  margin-top: -20px;
+  height: 330px;
+}
+
+.container div.questionSet div.MC {
+  float: left;
+  border: 3px solid gray;
+  border-radius: 6px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  height: 260px;
+  width: 260px;
+  text-align: left;
+  margin: 2px;
+}
+
+.container div.questionSet div.SA {
+  float: left;
+  border: 3px solid gray;
+  border-radius: 6px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  height: 260px;
+  width: 260px;
+  text-align: left;
+  margin: 2px;
+}
+
+.container div.questionSet div.SA textarea {
+  margin-left: 8px;
+  margin-top: 4px;
+  height: 175px;
+}
+.container div.questionSet div.FB {
+  float: left;
+  border: 3px solid gray;
+  border-radius: 6px;
+  -moz-border-radius: 6px;
+  -webkit-border-radius: 6px;
+  height: 260px;
+  width: 260px;
+  text-align: left;
+  margin: 2px;
+}
+
+.container div.questionSet div.FB textarea {
+  margin-left: 8px;
+  margin-top: 4px;
+  height: 65px;
+}
+
+.container div.questionSet div.FB input {
+  margin: 0px;
+  margin-left: 18px;
+}
+
+.container div.questionSet div input {
+  border: 2px solid gray;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+
+  outline: none;
+
+  margin-top: 3px;
+  margin-left: 5px;
+
+
+  height: 1.3em;
+  line-height: 1.3em;
+  font-size: 1.2em;
+  font-family: Helvetica, Garamond, sans-serif;
+  text-align: left;
+}
+
+.container div.questionSet div.MC input.text {
+  text-align: left;
+  line-height: 1.5em;
+  font-weight: bold;
+  width: 95%;
+}
+.container div.questionSet div input:focus {
+  border: 2px solid blue;
+}
+
+.container div.questionOptions  {
+  text-decoration: none;
+  color: blue;
+  font-style: italic;
+  font-weight: bold;
+  height: 60px;
+  text-align: right;
+  float: right;
+  margin-bottom: 1px;
+}
+
+.container div.addedQuestions {
+  text-align: left;
+  float: left;
+  height: 60px;
+  width: 70%;
+}
+
+.container div.addedQuestions span {
+  font-size: 1.3em;
+  font-weight: bold;
 }
 
 .container a.paragraph {
   text-decoration: none;
   text-align: right;
   font-family: "Chewy", cursive;
+}
+
+.container div button {
+  margin-left: 54px;
 }

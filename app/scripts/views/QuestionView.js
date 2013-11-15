@@ -63,6 +63,8 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
     homeworkBuddy.Views.FillBlankCreationView = homeworkBuddy.Views.QuestionCreationView.extend({
         template: _.template(homeworkBuddy.templates.FillBlankCreation),
 
+        className: "FB",
+
         save: function(){
           var preText = $('.preText').val();
           var postText = $('.postText').val();
@@ -84,6 +86,8 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
 
     homeworkBuddy.Views.ShortAnswerCreationView = homeworkBuddy.Views.QuestionCreationView.extend({
         template: _.template(homeworkBuddy.templates.ShortAnswerCreation),
+
+        className: "SA",
 
         save: function(){
           var min = $('.min').val();
