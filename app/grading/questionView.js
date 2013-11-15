@@ -23,10 +23,10 @@ homeworkBuddy.Views.GradingMCQuestionView = homeworkBuddy.Views.GradingQuestionV
    },
 
    questionTemplate: _.template('<h4><%= number %>. <%= question %></h4>\
-     <div class = "A answer option">A: <%= answerOptions[0] %></div>\
-     <div class = "B answer option">B: <%= answerOptions[1] %></div>\
-     <div class = "C answer option">C: <%= answerOptions[2] %></div>\
-     <div class = "D answer option">D: <%= answerOptions[3] %></div>\
+     <span class = "A answer option">A: <%= answerOptions[0] %></span><br>\
+     <span class = "B answer option">B: <%= answerOptions[1] %></span><br>\
+     <span class = "C answer option">C: <%= answerOptions[2] %></span><br>\
+     <span class = "D answer option">D: <%= answerOptions[3] %></span><br>\
      <div class = "answer option correctAnswer"><% if (QuestionAnswer) { print ("Correct Answer: " + QuestionAnswer) } %></div>\
      <div class = "percentageCorrect answer option"></div>'
      ),

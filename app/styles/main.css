@@ -18,6 +18,10 @@ body {
 
 .correct, .incorrect {
   font-weight: bold;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  padding-right: 25px;
 }
 
 .header span {
@@ -252,6 +256,7 @@ h4 {
 .container div.grading .option {
   margin-left: 30px;
   margin-right: 0px;
+  width: 50%;
 }
 
 .container div.grading .correctAnswer, .percentageCorrect {
@@ -269,4 +274,33 @@ h4 {
   font-weight: bold;
   font-size: 1.2em;
   margin-left: 20px;
+}
+
+.container div.grading.completion {
+  position: absolute;
+  left: -500px;
+  top: 0px;
+  width: 180px;
+  padding: 10px;
+  border-radius: 3px;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+}
+
+.container div.paragraph {
+  width: 70%;
+  margin-left: 15%;
+  margin-right: 15%;
+}
+.container div.insert.question {
+  width: 70%;
+  margin-left: 15%;
+  margin-right: 15%;
+  text-align: right;
+  margin-bottom: 30px;
+}
+
+.container a.paragraph {
+  text-decoration: none;
+  text-align: right;
 }

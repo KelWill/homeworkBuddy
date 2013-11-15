@@ -26,7 +26,7 @@ homeworkBuddy.Views.AllQuestionsView = Backbone.View.extend({
 homeworkBuddy.Views.Completed = Backbone.View.extend({
   className: "grading completion",
   initialize: function(){
-    this.$el.append('Students who submitted the assignment:')
+    this.$el.append('Students:<br><div class = "currentStudent"></div>')
     this.collection.forEach(function(student){
       var view = new homeworkBuddy.Views.CompletedStudent({model: student});
       this.$el.append(view.render().el);
@@ -49,14 +49,14 @@ homeworkBuddy.Views.CompletedStudent = Backbone.View.extend({
   className: "grading",
 
   displayStudentAnswers: function(){
-    this.$el.find('.currentStudent').html('<h4>' + this.model.get('name') + '</h4>');
+    this.$el.parent().find('.currentStudent').html('<h3>' + this.model.get('name') + '</h3>');
     this.model.questions.forEach(function(question){
         homeworkBuddy.allQuestions.breadcrumbs[question.get('id_questions')].trigger('studentAnswers', question);
     });
   },
 
   render: function(){
-    this.$el.append('<br> <em>' + this.model.get('name') + ' (<em><strong> ' + this.model.get('questionsCorrect')  + ' / ' + this.model.get('questionsAnswered') + '</strong><em> )</em> ');
+    this.$el.append(' <em>' + this.model.get('name') + ' (<em><strong> ' + this.model.get('questionsCorrect')  + ' / ' + this.model.get('questionsAnswered') + '</strong><em> )</em><br> ');
     return this;
   }
 });
