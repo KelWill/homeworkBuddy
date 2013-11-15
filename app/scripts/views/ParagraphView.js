@@ -15,7 +15,8 @@ homeworkBuddy.Views.ParagraphView = Backbone.View.extend({
     this.$el.append(this.template(this.model.attributes));
   }, 
 
-  startQuestionSet: function(){
+  startQuestionSet: function(e){
+    e.preventDefault();
     //hide the option to add a question
     this.$el.find('a.paragraph').hide();
 

@@ -8,6 +8,8 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
 
       template: _.template(homeworkBuddy.templates.HWCreationTemplate),
 
+      className: 'textarea',
+
       events: {
         'click button.newAssignment': 'updateRouter'
       },

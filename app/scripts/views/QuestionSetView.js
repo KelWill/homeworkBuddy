@@ -47,15 +47,18 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
           this.$el.find('span.questionOptions').html(this.questionOptions);
         },
 
-        addMC: function(){
+        addMC: function(e){
+          e.preventDefault();
           this.collection.addMC();
         }, 
         
-        addShortAnswer: function(){
+        addShortAnswer: function(e){
+          e.preventDefault();
           this.collection.addShortAnswer();
         }, 
         
-        addFillBlank: function(){
+        addFillBlank: function(e){
+          e.preventDefault();
           this.collection.addFillBlank();
         },
 

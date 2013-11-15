@@ -8,6 +8,9 @@ body {
 .hide {
   display: none;
 }
+h1 {
+  margin: 0;
+}
 
 .correct {
   background-color: green;
@@ -83,7 +86,7 @@ body {
 
 #assignmentName {
   text-align: center;
-  line-height: 2em;
+  line-height: 1.5em;
   width: 80%;
   background-color: inherit;
   -webkit-appearance: none;
@@ -136,7 +139,7 @@ body {
 }
 
 .container div.textarea{
-  height: 100%;
+  height: 90%;
 }
 
 .container textarea {
@@ -288,9 +291,9 @@ h4 {
 }
 
 .container div.paragraph {
-  width: 70%;
-  margin-left: 15%;
-  margin-right: 15%;
+  width: 80%;
+  margin-left: 10%;
+  margin-right: 10%;
 }
 .container div.insert.question {
   width: 70%;
@@ -303,4 +306,5 @@ h4 {
 .container a.paragraph {
   text-decoration: none;
   text-align: right;
+  font-family: "Chewy", cursive;
 }
