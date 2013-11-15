@@ -23,7 +23,7 @@ homeworkBuddy.Collections.StudentAnswers = Backbone.Collection.extend({
       delete question.name;
       this.add(question);
       homeworkBuddy.allQuestions.breadcrumbs[question.id_questions].updateTally(question.correct);
-      if (homeworkBuddy.allQuestions.breadcrumbs[question.id_questions].get('questionType')){
+      if (homeworkBuddy.allQuestions.breadcrumbs[question.id_questions].get('questionType') === "MC"){
         this.student.updateTally(question.correct);
       }
     }

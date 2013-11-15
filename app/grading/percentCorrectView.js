@@ -1,4 +1,5 @@
 homeworkBuddy.Views.PercentCorrectViews = Backbone.View.extend({
+  className: "grading percentCorrectView",
   initialize: function(){
     this.collection.forEach(function(model){
       var percentCorrectView = new homeworkBuddy.Views.PercentCorrectView({model: model});
@@ -44,7 +45,7 @@ homeworkBuddy.Views.PercentCorrectViews = Backbone.View.extend({
     _.each(this.sortedQuestions, function(item){
       view.$el.append(view.template(item));
     });
-    $('.currentView').append(this.el);
+    $('.container').prepend(this.el);
   },
 
   render: function(){

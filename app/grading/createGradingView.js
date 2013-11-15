@@ -1,4 +1,11 @@
 homeworkBuddy.createGradingView = function(data){
+  homeworkBuddy.students = new homeworkBuddy.Collections.Students();
+  homeworkBuddy.students.model = homeworkBuddy.Models.Student;
+  homeworkBuddy.allQuestions = new homeworkBuddy.Collections.AllQuestions();
+  homeworkBuddy.allQuestions.model = homeworkBuddy.Models.Question;
+  homeworkBuddy.allQuestionsView = new homeworkBuddy.Views.AllQuestionsView({collection: homeworkBuddy.allQuestions});
+  homeworkBuddy.percentCorrectViews = new homeworkBuddy.Views.PercentCorrectViews({collection: homeworkBuddy.allQuestions});
+
   data = JSON.parse(data);
   var assignmentName = data.assignmentName;
   var questions = data.questions;
@@ -36,10 +43,3 @@ homeworkBuddy.createGradingView = function(data){
   homeworkBuddy.percentCorrectViews.sortByDifficulty();
 };
 
-
-homeworkBuddy.students = new homeworkBuddy.Collections.Students();
-homeworkBuddy.students.model = homeworkBuddy.Models.Student;
-homeworkBuddy.allQuestions = new homeworkBuddy.Collections.AllQuestions();
-homeworkBuddy.allQuestions.model = homeworkBuddy.Models.Question;
-homeworkBuddy.allQuestionsView = new homeworkBuddy.Views.AllQuestionsView({collection: homeworkBuddy.allQuestions});
-homeworkBuddy.percentCorrectViews = new homeworkBuddy.Views.PercentCorrectViews({collection: homeworkBuddy.allQuestions});

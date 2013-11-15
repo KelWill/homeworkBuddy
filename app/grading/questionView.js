@@ -1,4 +1,5 @@
 homeworkBuddy.Views.GradingQuestionView = Backbone.View.extend({
+  className: "grading"
 });
 
 homeworkBuddy.Views.GradingMCQuestionView = homeworkBuddy.Views.GradingQuestionView.extend({
@@ -21,12 +22,12 @@ homeworkBuddy.Views.GradingMCQuestionView = homeworkBuddy.Views.GradingQuestionV
      }
    },
 
-   questionTemplate: _.template('<p><%= number %>. <%= question %></p>\
+   questionTemplate: _.template('<h4><%= number %>. <%= question %></h4>\
      <div class = "A answer option">A: <%= answerOptions[0] %></div>\
      <div class = "B answer option">B: <%= answerOptions[1] %></div>\
      <div class = "C answer option">C: <%= answerOptions[2] %></div>\
      <div class = "D answer option">D: <%= answerOptions[3] %></div>\
-     <div class = "answer option"><% if (QuestionAnswer) { print ("Correct Answer: " + QuestionAnswer) } %></div>\
+     <div class = "answer option correctAnswer"><% if (QuestionAnswer) { print ("Correct Answer: " + QuestionAnswer) } %></div>\
      <div class = "percentageCorrect answer option"></div>'
      ),
 

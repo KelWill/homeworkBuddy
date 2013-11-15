@@ -28,7 +28,6 @@ homeworkBuddy.Router = Backbone.Router.extend({
 
   //  This shows all the assignments that the teacher can "grade"
   grades: function(){
-    $('.assignments').removeClass('hide');
   },
 
   makeAssignment: function(){
@@ -55,6 +54,8 @@ homeworkBuddy.Models.Header = Backbone.Model.extend({
       url: url, 
       success: function(data){
         console.log(data);
+        $('.assignments').addClass('hide');
+        $('.container').removeClass('hide');
         homeworkBuddy.createGradingView(data);
       }, 
       error: function(error){
@@ -80,18 +81,22 @@ homeworkBuddy.Views.HeaderView = Backbone.View.extend({
   },
 
   navigateGrade: function(){
+    $('.assignments').toggleClass('hide');
+    $('.container').children().toggleClass('hide');
     homeworkBuddy.router.navigate('/grade', {trigger: true});
   }, 
 
   navigateCreateNew: function(){
+    $('.container').children().removeClass('hide');
+    $('.assignments').addClass('hide');
     homeworkBuddy.router.navigate('/create', {trigger: true});
   },
 
   template: _.template('\
     <div class = "header">\
-    <a href = "/logout" class = "logout">Logout</a>\
     <button class = "createNew">Create New Homework!</button>\
     <button class = "grades">Grades!</button>\
+    <a href = "/logout" class = "logout">Logout</a>\
     <div class = "hide assignments"><ul><li>Try clicking again in a second, we\'re still fetching your data. Sorry!</li></ul></div>\
     </div>'),
 
