@@ -11,7 +11,7 @@ window.homeworkBuddy = {
 
 homeworkBuddy.Router = Backbone.Router.extend({
   routes: {
-    'teacher/create': 'renderCreate',
+    'teacher/create': 'teacherView',
     'teacher/create/addquestions': 'addQuestions',
     'teacher/grade/:assignment': 'getGrades',
     'teacher/grade': 'grades',
@@ -19,11 +19,35 @@ homeworkBuddy.Router = Backbone.Router.extend({
     'signup/student': 'signupStudent',
     'signup/teacher': 'signupTeacher', 
     'login/student': 'loginStudent', 
-    'login/teacher': 'loginTeacher'
+    'login/teacher': 'loginTeacher',
   },
+
+  gradeAssignment: function(){
+
+  },
+
+  teacherView: function(){
+    if (!this.teacherViewInitialized){
+      homeworkBuddy.questionSet = new homeworkBuddy.Collections.QuestionSet({model: homeworkBuddy.Models.QuestionModel});
+      homeworkBuddy.questionSetView = new homeworkBuddy.Views.QuestionSetView({collection: homeworkBuddy.questionSet});
+      homeworkBuddy.hwCreationModel = new homeworkBuddy.Models.HWCreationModel();
+      homeworkBuddy.hwCreationView = new homeworkBuddy.Views.HWCreationView({model: homeworkBuddy.hwCreationModel});
+      $('#container').append(homeworkBuddy.hwCreationView.el).append('<div class = "assignments hide"><ul><li>Try clicking again in a second, we\'re still fetching your data. Sorry!</li></ul></div>');
+      homeworkBuddy.router.header = new homeworkBuddy.Models.Header();
+      homeworkBuddy.router.headerView = new homeworkBuddy.Views.HeaderView({model: homeworkBuddy.router.header});
+      $('.marketing').hide();
+      $('#header').append(this.headerView.el);
+      this.teacherViewInitialized = true;
+    } else {
+      $('#container').children().toggleClass('hide');
+    }
+  },
+
 
   landing: function(){
     homeworkBuddy.signup = new homeworkBuddy.Views.LoginView({});
+    $('#container').html(homeworkBuddy.templates.base);
+    $('.marketing').html(homeworkBuddy.templates.marketing);
     homeworkBuddy.signup.landing();
   },
 
@@ -54,15 +78,6 @@ homeworkBuddy.Router = Backbone.Router.extend({
     homeworkBuddy.signupForm.loginTeacher();
   },
 
-  renderCreate: function(){
-    console.log('render create is running');
-    homeworkBuddy.questionSet = new homeworkBuddy.Collections.QuestionSet({model: homeworkBuddy.Models.QuestionModel});
-    homeworkBuddy.questionSetView = new homeworkBuddy.Views.QuestionSetView({collection: homeworkBuddy.questionSet});
-    homeworkBuddy.hwCreationModel = new homeworkBuddy.Models.HWCreationModel();
-    homeworkBuddy.hwCreationView = new homeworkBuddy.Views.HWCreationView({model: homeworkBuddy.hwCreationModel});
-    $('.marketing').hide();
-    $('#container').html(homeworkBuddy.hwCreationView.el);
-  },
 
   //  This shows all the assignments that the teacher can "grade"
   grades: function(){
@@ -89,7 +104,6 @@ homeworkBuddy.Models.Header = Backbone.Model.extend({
       success: function(data){
         console.log(data);
         $('.assignments').addClass('hide');
-        $('#container').removeClass('hide');
         homeworkBuddy.createGradingView(data);
       }, 
       error: function(error){
@@ -104,83 +118,94 @@ homeworkBuddy.Models.Header = Backbone.Model.extend({
 homeworkBuddy.Views.HeaderView = Backbone.View.extend({
   initialize: function(){
     this.$el.append(this.template({}));
-    //$('#header').append(this.el)
     this.fetchAssignments();
   },
 
   className: "nav navbar-nav",
 
   events: {
-    'click a.assignment': 'renderAssignment', 
     'click a.grades': 'navigateGrade', 
     'click a.createNew': 'navigateCreateNew'
   },
 
   navigateGrade: function(){
-    $('.assignments').toggleClass('hide');
-    $('#container').children().toggleClass('hide');
-    homeworkBuddy.router.navigate('/grade', {trigger: true});
+    if (!this.onGrade){
+      $('#container').children().toggleClass('hide');
+      this.onGrade = true;
+      homeworkBuddy.router.navigate('/teacher/grade', {trigger: true});
+    }
   }, 
 
   navigateCreateNew: function(){
-    $('#container').children().removeClass('hide');
-    $('.assignments').addClass('hide');
-    homeworkBuddy.router.navigate('/create', {trigger: true});
+    this.onGrade = false;
+    homeworkBuddy.router.navigate('/teacher/create', {trigger: true});
   },
 
   template: _.template('\
-    <li><a class = "createNew" href = "/teacher/create">Create New Homework!</a></li>\
-    <li><a class = "grades" href = "/teacher/grades">Grades!</a></li>\
-    <li><a href = "/logout" class = "logout">Logout</a></li>\
-    <div class = "hide assignments"><ul><li>Try clicking again in a second, we\'re still fetching your data. Sorry!</li></ul></div>'),
-
+    <li><a class = "createNew">Create New Homework!</a></li>\
+    <li><a class = "grades">Grades!</a></li>\
+    <li><a href = "/logout" class = "logout">Logout</a></li>'),
 
   //  This fetches all the assignments that the teacher can grade
   //  This happens after page load
+
   fetchAssignments: function(){
     var view = this;
-    var $list = view.$el.find('div.assignments ul');
-    var linkTemplate = _.template('<li><a class = "assignment" href = "grade/<%=assignmentName%>"><%=assignmentName%></a></li>')
+    var $list = $('#container').find('div.assignments ul');
+    console.log($list);
     $.ajax({
       method: "GET", 
       url: '/teacher/grade', 
       success: function(data){
         data = JSON.parse(data);
-        console.log(data);
-        $list.empty();
-        if (!data.length){
-          $list.append('<li>Make some homework first!</li>')
-        }
-        for (var i = 0; i < data.length; i++){
-          $list.append(linkTemplate(data[i]));
-        }
+        var assignmentsListView = new homeworkBuddy.Views.assignmentsList();
+        assignmentsListView.createLinks(data);
+        assignmentsListView.render();
       }, 
       error: function(error){
         $list.empty();
-        $list.append('<li>There was an error fetching your data. Are you logged in? <br><a class = "login" href = "/login">Login</a>');
+        $list.append('<li>There was an error fetching your data. Are you logged in? <br><a class = "login" href = "/">Login</a>');
         console.log(error)
       }
     })
   },
 
+
+});
+
+homeworkBuddy.Views.assignmentsList = Backbone.View.extend({
+  createLinks: function(list){
+    if (!list.length){
+      this.$el.append('<li>Make some homework first!</li>')
+    }
+    for (var i = 0; i < list.length; i++){
+      console.log(list[i])
+      this.$el.append(this.linkTemplate(list[i]));
+    }
+  },
+
+  events: {
+    'click a.assignment': 'renderAssignment'
+  },
+
+  linkTemplate: _.template('<li><a class = "assignment" href = "grade/<%=assignmentName%>"><%=assignmentName%></a></li>'),
+
+ render: function(){
+   $('#container').find('div.assignments ul').html(this.el);
+   return this;
+ }, 
+
   renderAssignment: function(e){
     e.preventDefault();
     var url = e.target.href;
-    this.model.getAssignment(url);
+    homeworkBuddy.router.header.getAssignment(url);
   }
-});
+})
 
 
 $(document).ready(function () {
     'use strict';
     homeworkBuddy.init();
-    $('.dropdown-toggle').dropdown();
-  // Fix input element click problem
-    $('.dropdown input, .dropdown label').click(function(e) {
-      e.stopPropagation();
-    });
     homeworkBuddy.router = new homeworkBuddy.Router();
-    homeworkBuddy.router.header = new homeworkBuddy.Models.Header();
-    homeworkBuddy.router.headerView = new homeworkBuddy.Views.HeaderView({model: homeworkBuddy.router.header});
     Backbone.history.start({pushState: true})
 }); 

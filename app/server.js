@@ -152,7 +152,7 @@ app.post('/signup/:teacherOrStudent', function(request, response){
 //   logging out   //
 app.get('/logout', function(req, res){
   req.logout();
-  res.redirect('/login');
+  res.redirect('/');
 });
 
 //   Getting and Joining Classes   //

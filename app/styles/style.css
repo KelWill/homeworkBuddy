@@ -12,6 +12,8 @@ textarea.newAssignment {
 
   overflow: auto;
 
+  margin-bottom: 10px;
+
   height: 400px;
   width: 100%;
 }
