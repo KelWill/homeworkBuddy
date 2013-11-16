@@ -40,11 +40,11 @@ div.questions.grading h4 {
 
 div.questions.grading .percentageCorrect {
   font-weight: bold;
-  margin-left: 50px;
+  margin-left: 100px;
 }
 div.questions.grading .correctAnswer {
   font-weight: bold;
-  margin-left: 50px;
+  margin-left: 100px;
 }
 
 li.percents {

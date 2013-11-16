@@ -51,11 +51,6 @@ homeworkBuddy.Views.CompletedStudent = Backbone.View.extend({
 
   tagName: 'li',
 
-
-  initialize: function(){
-  },
-
-
   displayStudentAnswers: function(){
     this.$el.parent().children().removeClass('active');
     this.$el.addClass('active');

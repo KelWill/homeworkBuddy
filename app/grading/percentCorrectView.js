@@ -1,16 +1,17 @@
 homeworkBuddy.Views.PercentCorrectViews = Backbone.View.extend({
   className: "grading percentCorrectView list-inline pull-left",
   initialize: function(){
+    console.log('precent correct views is getting initialized');
     this.collection.forEach(function(model){
       var percentCorrectView = new homeworkBuddy.Views.PercentCorrectView({model: model});
       this.$el.append(percentCorrectView.render().el);
     }, this);
+    this.sortedQuestions = [];
   }, 
 
   tagName: "ul",
   className: "list-group list-inline pull-left text-center",
 
-  sortedQuestions: [],
 
   sortByDifficulty: function(){
     if (!this.sortedQuestions.length){
@@ -45,7 +46,6 @@ homeworkBuddy.Views.PercentCorrectViews = Backbone.View.extend({
   template: _.template('<li class = "list-group-item" style = "width:100px"><%= number %>. <%= percent %><%= symbol %></li>'),
 
   renderSortedQuestions: function(){
-    debugger;
     var view = this;
     // this.$el.append('<li class = "list-group-item" style ="width = 250px" >Questions by difficulty:</li>');
     _.each(this.sortedQuestions, function(item){

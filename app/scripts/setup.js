@@ -32,21 +32,22 @@ homeworkBuddy.Router = Backbone.Router.extend({
       homeworkBuddy.questionSetView = new homeworkBuddy.Views.QuestionSetView({collection: homeworkBuddy.questionSet});
       homeworkBuddy.hwCreationModel = new homeworkBuddy.Models.HWCreationModel();
       homeworkBuddy.hwCreationView = new homeworkBuddy.Views.HWCreationView({model: homeworkBuddy.hwCreationModel});
-      $('#container').append(homeworkBuddy.hwCreationView.el).append('<div class = "assignments hide"><ul><li>Try clicking again in a second, we\'re still fetching your data. Sorry!</li></ul></div>');
+      homeworkBuddy.$container.append(homeworkBuddy.hwCreationView.el);
       homeworkBuddy.router.header = new homeworkBuddy.Models.Header();
       homeworkBuddy.router.headerView = new homeworkBuddy.Views.HeaderView({model: homeworkBuddy.router.header});
       $('.marketing').hide();
       $('#header').append(this.headerView.el);
       this.teacherViewInitialized = true;
     } else {
-      $('#container').children().toggleClass('hide');
+      homeworkBuddy.$container.children().detach();
+      homeworkBuddy.$container.append(homeworkBuddy.Views.HWCreationView.el);
     }
   },
 
 
   landing: function(){
     homeworkBuddy.signup = new homeworkBuddy.Views.LoginView({});
-    $('#container').html(homeworkBuddy.templates.base);
+    homeworkBuddy.$container.html(homeworkBuddy.templates.base);
     $('.marketing').html(homeworkBuddy.templates.marketing);
     homeworkBuddy.signup.landing();
   },
@@ -85,8 +86,7 @@ homeworkBuddy.Router = Backbone.Router.extend({
 
   makeAssignment: function(){
     var router = this;
-    console.log('Router is on makeAssignment, url is \'\'')
-    $('#container').append(homeworkBuddy.hwCreationView.el);
+    homeworkBuddy.$container.append(homeworkBuddy.hwCreationView.el);
   }, 
 
   addQuestions: function() {
@@ -102,8 +102,7 @@ homeworkBuddy.Models.Header = Backbone.Model.extend({
       method: "GET", 
       url: url, 
       success: function(data){
-        console.log(data);
-        $('.assignments').addClass('hide');
+        homeworkBuddy.$container.children().detach();
         homeworkBuddy.createGradingView(data);
       }, 
       error: function(error){
@@ -129,16 +128,20 @@ homeworkBuddy.Views.HeaderView = Backbone.View.extend({
   },
 
   navigateGrade: function(){
+    homeworkBuddy.$container.children().detach();
+    homeworkBuddy.$container.append(homeworkBuddy.assignmentsListView.el);
     if (!this.onGrade){
-      $('#container').children().toggleClass('hide');
       this.onGrade = true;
-      homeworkBuddy.router.navigate('/teacher/grade', {trigger: true});
+      homeworkBuddy.router.navigate('/teacher/grade');
     }
+
   }, 
 
   navigateCreateNew: function(){
     this.onGrade = false;
-    homeworkBuddy.router.navigate('/teacher/create', {trigger: true});
+    homeworkBuddy.$container.children().detach();
+    homeworkBuddy.$container.append(homeworkBuddy.hwCreationView.el);
+    homeworkBuddy.router.navigate('/teacher/create');
   },
 
   template: _.template('\
@@ -151,30 +154,29 @@ homeworkBuddy.Views.HeaderView = Backbone.View.extend({
 
   fetchAssignments: function(){
     var view = this;
-    var $list = $('#container').find('div.assignments ul');
-    console.log($list);
+    homeworkBuddy.assignmentsList = new homeworkBuddy.Models.AssignmentsList({})
+    homeworkBuddy.assignmentsListView = new homeworkBuddy.Views.AssignmentsList({model: homeworkBuddy.assignmentsList});
     $.ajax({
       method: "GET", 
       url: '/teacher/grade', 
       success: function(data){
         data = JSON.parse(data);
-        var assignmentsListView = new homeworkBuddy.Views.assignmentsList();
-        assignmentsListView.createLinks(data);
-        assignmentsListView.render();
+        homeworkBuddy.assignmentsListView.createLinks(data);
       }, 
       error: function(error){
-        $list.empty();
-        $list.append('<li>There was an error fetching your data. Are you logged in? <br><a class = "login" href = "/">Login</a>');
+        homeworkBuddy.assignmentsListView.loggedIn();
         console.log(error)
       }
     })
   },
 
-
 });
 
-homeworkBuddy.Views.assignmentsList = Backbone.View.extend({
+homeworkBuddy.Models.AssignmentsList = Backbone.Model.extend({});
+
+homeworkBuddy.Views.AssignmentsList = Backbone.View.extend({
   createLinks: function(list){
+    this.$el.empty();
     if (!list.length){
       this.$el.append('<li>Make some homework first!</li>')
     }
@@ -184,6 +186,14 @@ homeworkBuddy.Views.assignmentsList = Backbone.View.extend({
     }
   },
 
+  loggedIn: function(){
+    this.$el.html('<li>There was an error fetching your data. Are you logged in? <br><a class = "login" href = "/">Login</a>');
+  },
+
+  initialize: function(){
+    this.$el.html('<ul><li>Try clicking again in a second, we\'re still fetching your data. Sorry!</li></ul>');
+  },
+
   events: {
     'click a.assignment': 'renderAssignment'
   },
@@ -191,7 +201,6 @@ homeworkBuddy.Views.assignmentsList = Backbone.View.extend({
   linkTemplate: _.template('<li><a class = "assignment" href = "grade/<%=assignmentName%>"><%=assignmentName%></a></li>'),
 
  render: function(){
-   $('#container').find('div.assignments ul').html(this.el);
    return this;
  }, 
 
@@ -206,6 +215,7 @@ homeworkBuddy.Views.assignmentsList = Backbone.View.extend({
 $(document).ready(function () {
     'use strict';
     homeworkBuddy.init();
+    homeworkBuddy.$container = $('#container');
     homeworkBuddy.router = new homeworkBuddy.Router();
     Backbone.history.start({pushState: true})
-}); 
+});
