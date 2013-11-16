@@ -31,14 +31,14 @@ span#hwbud {
   float: none;
 }
 
-.correct {
+.answer.option.correct {
   background-color: green;
 }
-.incorrect {
+.answer.option.incorrect {
   background-color: red;
 }
 
-.correct, .incorrect {
+.answer.option.correct, .answer.option.incorrect {
   font-weight: bold;
   border-radius: 5px;
   -moz-border-radius: 5px;

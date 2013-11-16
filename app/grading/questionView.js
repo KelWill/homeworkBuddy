@@ -1,5 +1,5 @@
 homeworkBuddy.Views.GradingQuestionView = Backbone.View.extend({
-  className: "grading"
+  className: "grading questions"
 });
 
 homeworkBuddy.Views.GradingMCQuestionView = homeworkBuddy.Views.GradingQuestionView.extend({

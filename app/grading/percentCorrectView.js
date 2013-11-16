@@ -1,11 +1,14 @@
 homeworkBuddy.Views.PercentCorrectViews = Backbone.View.extend({
-  className: "grading percentCorrectView",
+  className: "grading percentCorrectView list-inline pull-left",
   initialize: function(){
     this.collection.forEach(function(model){
       var percentCorrectView = new homeworkBuddy.Views.PercentCorrectView({model: model});
       this.$el.append(percentCorrectView.render().el);
     }, this);
   }, 
+
+  tagName: "ul",
+  className: "list-group list-inline pull-left text-center",
 
   sortedQuestions: [],
 
@@ -15,9 +18,11 @@ homeworkBuddy.Views.PercentCorrectViews = Backbone.View.extend({
         var qObj = {};
         if (question.get('questionType') !== 'MC' || question.timesAnswered === 0){
           qObj.percent = '?';
+          qObj.symbol = "";
           question.set('percentCorrect', '?');
         } else {
-          qObj.percent = (question.timesCorrect / question.timesAnswered * 100) + '%';
+          qObj.percent = (question.timesCorrect / question.timesAnswered * 100);
+          qObj.symbol = "%";
           question.set('percentCorrect', (question.timesCorrect / question.timesAnswered));
         }
         qObj.number = question.get('number');
@@ -31,21 +36,22 @@ homeworkBuddy.Views.PercentCorrectViews = Backbone.View.extend({
         } else if (b.percent === '?'){
           return -1
         }
-        return b.percent - a.percent;
+        return a.percent - b.percent;
       });
       this.renderSortedQuestions();
     }
   },
 
-  template: _.template('<%= number %>. <%= percent %> || '),
+  template: _.template('<li class = "list-group-item" style = "width:100px"><%= number %>. <%= percent %><%= symbol %></li>'),
 
   renderSortedQuestions: function(){
+    debugger;
     var view = this;
-    this.$el.append('Questions by difficulty: ');
+    // this.$el.append('<li class = "list-group-item" style ="width = 250px" >Questions by difficulty:</li>');
     _.each(this.sortedQuestions, function(item){
       view.$el.append(view.template(item));
     });
-    $('.container').prepend(this.el);
+    $('#container').prepend(this.el);
   },
 
   render: function(){

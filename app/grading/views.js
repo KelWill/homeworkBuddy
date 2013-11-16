@@ -24,19 +24,23 @@ homeworkBuddy.Views.AllQuestionsView = Backbone.View.extend({
  });
 
 homeworkBuddy.Views.Completed = Backbone.View.extend({
-  className: "grading completion",
+  className: "grading completion input-group-btn pull-right",
+  tagName: "div",
+
   initialize: function(){
-    this.$el.append('Students:<br><div class = "currentStudent"></div>')
+    this.$el.append('<button data-toggle = "dropdown" class = "btn btn-default btn-lg btn-primary dropdown-toggle pull-right">Students<span class="caret"></span></button>');
+    this.$el.append('<ul class="dropdown-menu pull-right"></ul>');
     this.collection.forEach(function(student){
       var view = new homeworkBuddy.Views.CompletedStudent({model: student});
-      this.$el.append(view.render().el);
+      this.$el.find('ul').append(view.render().el);
     }, this);
     this.render();
+    $('.dropdown-toggle').dropdown();
   },
 
   
   render: function(){
-    $('.container').prepend(this.el);
+    $('#container').prepend(this.el);
   }
 });
 
@@ -45,35 +49,23 @@ homeworkBuddy.Views.CompletedStudent = Backbone.View.extend({
     'click': 'displayStudentAnswers'
   },
 
-  tagName: 'el',
-  className: "grading",
+  tagName: 'li',
+
+
+  initialize: function(){
+  },
+
 
   displayStudentAnswers: function(){
-    this.$el.parent().find('.currentStudent').html('<h3>' + this.model.get('name') + '</h3>');
+    this.$el.parent().children().removeClass('active');
+    this.$el.addClass('active');
     this.model.questions.forEach(function(question){
         homeworkBuddy.allQuestions.breadcrumbs[question.get('id_questions')].trigger('studentAnswers', question);
     });
   },
 
   render: function(){
-    this.$el.append(' <em>' + this.model.get('name') + ' (<em><strong> ' + this.model.get('questionsCorrect')  + ' / ' + this.model.get('questionsAnswered') + '</strong><em> )</em><br> ');
+    this.$el.append('<a href = "#" class = "list-group-item">' + this.model.get('name') +  ' <span class = "badge"> ' + this.model.get('questionsCorrect')  + ' / ' + this.model.get('questionsAnswered') + '</span></a>');
     return this;
   }
 });
-
-
-// homeworkBuddy.Views.PercentCorrectView = Backbone.View.extend({
-//   initialize: function(){
-//     this.model.on('update', function(question){
-//       this.render();
-//     }, this)
-//   }, 
-
-//   template: _.template('<div class = "percentageCorrect answer option"><% if (timesAnswered) { print(timesAnswered/timesCorrect * 100) }%></div>'),
-
-
-//   render: function(){
-//     this.$el.html(this.template(this));
-//     return this;
-//   }
-// });

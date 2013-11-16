@@ -37,7 +37,7 @@ homeworkBuddy.createGradingView = function(data){
       homeworkBuddy.students.breadcrumbs[name] = student;
     }
   }
-  $('.container').html(homeworkBuddy.allQuestionsView.el);
+  $('#container').html(homeworkBuddy.allQuestionsView.el);
   homeworkBuddy.percentCorrectViews.render();
   homeworkBuddy.completed = new homeworkBuddy.Views.Completed({collection: homeworkBuddy.students});
   homeworkBuddy.percentCorrectViews.sortByDifficulty();

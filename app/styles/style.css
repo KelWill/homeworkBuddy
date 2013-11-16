@@ -18,6 +18,39 @@ textarea.newAssignment {
   width: 100%;
 }
 
+div.questions.grading {
+  clear: both;
+}
+
+div.questions.grading textarea {
+  height: 100px;
+  width: 70%;
+}
+
+div.questions.grading {
+  line-height: 1.5em;
+  font-size: 1em;
+}
+
+div.questions.grading h4 {
+  font-weight: bold;
+  font-family: "Chewy", inherit;
+  font-size: 24px;
+}
+
+div.questions.grading .percentageCorrect {
+  font-weight: bold;
+  margin-left: 50px;
+}
+div.questions.grading .correctAnswer {
+  font-weight: bold;
+  margin-left: 50px;
+}
+
+li.percents {
+  text-align: center;
+}
+
 .correct, .incorrect {
   font-weight: bold;
   border-radius: 5px;
