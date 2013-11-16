@@ -5,7 +5,13 @@ module.exports.createAssignment = function(request, response, db){
   var thingsInserted = 0;
   var assignment_id;
   var correctAnswers = [];
-  if (request.user) { var teacher_id = request.user.id; } else { teacher_id = 1; }
+  if (request.user) { 
+    var teacher_id = request.user.id;
+    var teacherName = request.user.username;
+  } else {
+    response.writeHead(401);
+    response.end();
+  }
   //insert into the assignment body with a teacher's id
   
   var insertAll = function(assignment, assignment_id){
@@ -47,7 +53,7 @@ module.exports.createAssignment = function(request, response, db){
         function(error){
           if (error) { console.log('inserting into paragraphs failed', error); }
           thingsInserted++;
-          finish(thingsInserted, thingsToInsert, response);
+          finish(thingsInserted, thingsToInsert, response, teacherName, assignmentName);
       });
     }
   };
@@ -70,20 +76,20 @@ db.query('SELECT * FROM assignments WHERE assignmentName = ? and id_teachers = ?
     });
   }
   if (rows.length){
-    response.end('Need a distinct homework name');
+    response.writeHead(400)
+    response.end(JSON.stringify({error: "You've already used that HW name"}));
   }
 })
 
 
-  var finish = function(thingsInserted, thingsToInsert, response){
+  var finish = function(thingsInserted, thingsToInsert, response, teacherName, assignmentName){
     if (thingsInserted === thingsToInsert){
       db.query('UPDATE Assignments SET CorrectAnswers = ? Where id = ?', [JSON.stringify(correctAnswers), assignment_id], function(error){
         if (error) { 
           console.log(error);
           response.writeHead(500);
         }
-        response.end();
-
+        response.end(JSON.stringify({teacherName: teacherName, assignmentName: assignmentName}));
       });
     }
   }

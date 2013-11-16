@@ -13,7 +13,7 @@ homeworkBuddy.Views.AssignmentView = Backbone.View.extend({
     'click button#completed':'submitHomework'
   },
 
-  completedButton: '<div class = "bottom"><button id = "completed">Homework Creation Complete!</div></div>', 
+  completedButton: '<div class = "bottom"><button id = "completed" class = "btn btn-success btn-lg pull-right">Homework Creation Complete!</button></div>', 
   
   render: function(){
    //clears out the old container and adds in assignment view

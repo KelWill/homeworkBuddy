@@ -1,5 +1,5 @@
 homeworkBuddy.templates.base = '<h1>Make Homework Awesome</h1>\
-        <p class="lead">Great homework comes from great teachers. Homework Bud just helps.</p>\
+        <p class="lead">Great homework comes from great teachers. Homework Bud just helps.  </p>\
         <p><a class="btn btn-lg btn-success" href="/why" role="button">Give it a try!</a></p>\
       </div>'
 

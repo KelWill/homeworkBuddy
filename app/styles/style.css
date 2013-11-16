@@ -72,9 +72,19 @@ li.percents {
 
 div.FillBlank, div.SA, div.MC {
   display: inline-block;
-  height: 30px;
+  height: 300px;
   width: 350px;
   border: 2px solid ;
+}
+
+div.SA textarea {
+  height: 244px;
+  width: 100%;
+}
+
+div.FillBlank textarea {
+  height: 30%;
+  width: 100%;
 }
 
 div.FillBlank input, div.MC input[type="text"] {
