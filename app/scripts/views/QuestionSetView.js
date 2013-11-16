@@ -17,7 +17,7 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
 
         className: "questionSet",
 
-        questionOptions: '<div class = "questionOptions"><a href = "#" class = "MC question">Add Multiple Choice</a><br><a href = "#" class = "ShortAnswer question">Add Short Answer</a><br>\
+        questionOptions: '<div class = "questionOptions pull-left"><a href = "#" class = "MC question">Add Multiple Choice</a><br><a href = "#" class = "ShortAnswer question">Add Short Answer</a><br>\
                         <a href = "#" class = "FillBlank question">Add Fill in the Blank<br></a></div><div class = "addedQuestions"></div>\
                         <div class = "questionForm"></div>',
 

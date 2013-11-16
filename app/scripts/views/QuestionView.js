@@ -32,11 +32,17 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
         save: function(){
           var question = $('.text.MC').val();
           var answerOptions = [];
-          answerOptions.push($('.A').val());
-          answerOptions.push($('.B').val());
-          answerOptions.push($('.C').val());
-          answerOptions.push($('.D').val());
-          var correctAnswer = $('input:radio[name=correct]:checked').val();
+          var temp;
+          var correctAnswer;
+          answerOptions.push(this.$el.find('.A').val());
+          answerOptions.push(this.$el.find('.B').val());
+          answerOptions.push(this.$el.find('.C').val());
+          answerOptions.push(this.$el.find('.D').val());
+
+          temp = this.$el.find('.active').attr("class");
+          if (temp && temp.length){
+            correctAnswer = temp[0];
+          }
 
           this.model.saveQuestion({question: question, answerOptions: answerOptions, correctAnswer: correctAnswer});
         },

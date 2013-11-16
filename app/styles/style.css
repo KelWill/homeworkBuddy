@@ -23,8 +23,8 @@ div.questions.grading {
 }
 
 div.questions.grading textarea {
-  height: 100px;
-  width: 70%;
+  height: 80%;
+  width: 100%;
 }
 
 div.questions.grading {
@@ -57,6 +57,42 @@ li.percents {
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   padding-right: 25px;
+}
+
+.questionSet {
+  border-top: 2px solid gray;
+  padding-top: 5px;
+  min-height: 350px;
+  width: 100%;
+}
+
+.questionSet .questionOptions {
+  margin-right: 30px;
+}
+
+div.FillBlank, div.SA, div.MC {
+  display: inline-block;
+  height: 30px;
+  width: 350px;
+  border: 2px solid ;
+}
+
+div.FillBlank input, div.MC input[type="text"] {
+  width: 100%;
+  outline: none;
+
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+
+div.addedQuestions {
+  line-height: 1.2em;
+}
+
+div.paragraph {
+  clear: both;
 }
 
 .correct {
