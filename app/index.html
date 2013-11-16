@@ -9,18 +9,52 @@
         <title>HW Bud</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
-        <link rel="stylesheet" href="styles/main.css">
-        <link href='http://fonts.googleapis.com/css?family=Chewy' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="/styles/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/styles/style.css" />
     </head>
     <body>
         <!--[if lt IE 10]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
-        <span id = "hwbud">HW Bud</span>    
-        <header class = "header"></header>
-        <h2 class = "title"></h2>
-        <div class = "currentView"><div class = "currentStudent"></div></div>
-        <div class = "container"></div>
+ <div class="container">
+      <div class="header">
+        <ul class="nav nav-pills pull-right" id = "header">
+        </ul>
+        <h1 class="text-muted chewy"><a href = "/">HW Bud</a></h1>
+      </div>
+
+      <div class="jumbotron container" id = "container">
+        <h1>Make Homework Awesome</h1>
+        <p class="lead">Great homework comes from great teachers. Homework Bud just helps.</p>
+        <p><a class="btn btn-lg btn-success" href="/why" role="button">Give it a try!</a></p>
+      </div>
+
+      <div class="row marketing">
+        <div class="col-lg-6">
+          <h4>Effectiveness of homework?</h4>
+          <p>Have you ever had the feeling that the homework you've created isn't helping students achieve? You're not alone, and <a href = "http://www.alfiekohn.org/teaching/HWach.htm">you might not be wrong</a></p>
+
+          <h4>Homework Bud is Different</h4>
+          <p>By allowing you to easily add questions to a reading passage or article, HW Bud helps you increase student engagement, and helps them retain the material better.</p>
+
+          <h4>Spaced Repitition and Spiraling Review</h4>
+          <p>Students can easily review questions from previous assignments using a built in Leitner Flashcard System.</p>
+        </div>
+
+        <div class="col-lg-6">
+          <h4>Improve your teaching</h4>
+          <p>By being able to quickly see what problems and concepts students struggled with, you can tailor your lessons to greater effect.</p>
+
+          <h4>Reading isn't enough</h4>
+          <p>Just reading something is one of the worst ways to learn. Testing and checks for understanding improve student results dramatically.</p>
+
+          <h4>Grading shouldn't be your priority</h4>
+          <p>Grading stacks of homework is the worst. Homework Bud will grade all of your multiple choice questions for you, and let's you concentrate on the important stuff.</p>
+        </div>
+      </div>
+
+    </div>
+    </div>
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <!-- // <script> 
         //     (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
@@ -32,54 +66,59 @@
         // </script> -->
 
         <!-- build:js scripts/vendor.js -->
-        <script src="bower_components/jquery/jquery.js"></script>
-        <script src="bower_components/underscore/underscore.js"></script>
-        <script src="bower_components/backbone/backbone.js"></script>
-        <script src="bower_components/ejs/ejs.min.js"></script>
+        <script src="/bower_components/jquery/jquery.js"></script>
+        <script src="/bower_components/underscore/underscore.js"></script>
+        <script src="/bower_components/backbone/backbone.js"></script>
+        <script src="/bower_components/ejs/ejs.min.js"></script>
         <!-- endbuild -->
 
         <!-- build:js scripts/plugins.js -->
-        <script src="bower_components/sass-bootstrap/js/affix.js"></script>
-        <script src="bower_components/sass-bootstrap/js/alert.js"></script>
-        <script src="bower_components/sass-bootstrap/js/dropdown.js"></script>
-        <script src="bower_components/sass-bootstrap/js/tooltip.js"></script>
-        <script src="bower_components/sass-bootstrap/js/modal.js"></script>
-        <script src="bower_components/sass-bootstrap/js/transition.js"></script>
-        <script src="bower_components/sass-bootstrap/js/button.js"></script>
-        <script src="bower_components/sass-bootstrap/js/popover.js"></script>
-        <script src="bower_components/sass-bootstrap/js/carousel.js"></script>
-        <script src="bower_components/sass-bootstrap/js/scrollspy.js"></script>
-        <script src="bower_components/sass-bootstrap/js/collapse.js"></script>
-        <script src="bower_components/sass-bootstrap/js/tab.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/affix.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/alert.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/dropdown.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/tooltip.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/modal.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/transition.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/button.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/popover.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/carousel.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/scrollspy.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/collapse.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/tab.js"></script>
 
         <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) scripts/main.js -->
-        <script src = "scripts/setup.js"></script>
-        <script src = "grading/collections.js"></script>
-        <script src = "grading/models.js"></script>
-        <script src = "grading/percentCorrectView.js"></script>
-        <script src = "grading/questionView.js"></script>
-        <script src = "grading/views.js"></script>
-        <script src = "grading/createGradingView.js"></script>
-        <script src="scripts/templates/MCCreationTemplate.js"></script>
-        <script src="scripts/templates/HWCreationTemplate.js"></script>
-        <script src="scripts/templates/FillBlankCreationTemplate.js"></script>
-        <script src="scripts/templates/ShortAnswerCreationTemplate.js"></script>
-        <script src="scripts/models/HWCreation.js"></script>
-        <script src="scripts/views/HWView.js"></script>
-        <script src="scripts/models/Question.js"></script>
-        <script src="scripts/views/QuestionView.js"></script>
-        <script src="scripts/collections/QuestionSet.js"></script>
-        <script src="scripts/views/QuestionSetView.js"></script>
-        <script src="scripts/views/ParagraphView.js"></script>
-        <script src="scripts/views/AssignmentView.js"></script>
-        <script src="scripts/views/CompletedQuestion.js"></script>
-        <script src="scripts/models/Paragraph.js"></script>
-        <script src="scripts/collections/Assignment.js"></script>
+        <script src = "/scripts/setup.js"></script>
+        <script src = "/login.js"></script>
+        <script src = "/scripts/templates/formTemplate.js"></script>
+        <script src = "/grading/collections.js"></script>
+        <script src = "/grading/models.js"></script>
+        <script src = "/grading/percentCorrectView.js"></script>
+        <script src = "/grading/questionView.js"></script>
+        <script src = "/grading/views.js"></script>
+        <script src = "/grading/createGradingView.js"></script>
+        <script src="/scripts/templates/MCCreationTemplate.js"></script>
+        <script src="/scripts/templates/HWCreationTemplate.js"></script>
+        <script src="/scripts/templates/FillBlankCreationTemplate.js"></script>
+        <script src="/scripts/templates/ShortAnswerCreationTemplate.js"></script>
+        <script src="/scripts/models/HWCreation.js"></script>
+        <script src="/scripts/views/HWView.js"></script>
+        <script src="/scripts/views/signupForm.js"></script>
+        <script src="/scripts/models/Question.js"></script>
+        <script src="/scripts/views/QuestionView.js"></script>
+        <script src="/scripts/collections/QuestionSet.js"></script>
+        <script src="/scripts/views/QuestionSetView.js"></script>
+        <script src="/scripts/views/ParagraphView.js"></script>
+        <script src="/scripts/views/AssignmentView.js"></script>
+        <script src="/scripts/views/CompletedQuestion.js"></script>
+        <script src="/scripts/models/Paragraph.js"></script>
+        <script src="/scripts/collections/Assignment.js"></script>
 
 
-        <script src="scripts/main.js"></script>
+        <script src="/scripts/main.js"></script>
+        <script src="/styles/js/bootstrap.js"></script>
+        <link href='http://fonts.googleapis.com/css?family=Chewy' rel='stylesheet' type='text/css'>
         <!-- endbuild -->
 </body>
 </html>

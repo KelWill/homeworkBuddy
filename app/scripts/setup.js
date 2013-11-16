@@ -9,21 +9,59 @@ window.homeworkBuddy = {
     }
 };
 
-//   This is the router for the teacher's part of the application
 homeworkBuddy.Router = Backbone.Router.extend({
   routes: {
-    'create': 'renderCreate',
-    'create/addquestions': 'addQuestions',
-    'grade/:assignment': 'getGrades',
-    'grade': 'grades',
-    '': 'makeAssignment'
+    'teacher/create': 'renderCreate',
+    'teacher/create/addquestions': 'addQuestions',
+    'teacher/grade/:assignment': 'getGrades',
+    'teacher/grade': 'grades',
+    '': 'landing',
+    'signup/student': 'signupStudent',
+    'signup/teacher': 'signupTeacher', 
+    'login/student': 'loginStudent', 
+    'login/teacher': 'loginTeacher'
   },
 
-  initialize: function(){
+  landing: function(){
+    homeworkBuddy.signup = new homeworkBuddy.Views.LoginView({});
+    homeworkBuddy.signup.landing();
+  },
+
+  signOrLogin: function(){
+    if (!homeworkBuddy.signupForm){
+      homeworkBuddy.signupForm = new homeworkBuddy.Views.signupForm({});
+    }
+  },
+
+  signupStudent: function(){
+    this.signOrLogin();
+    homeworkBuddy.signupForm.signupStudent();
+  },
+
+  signupTeacher: function(){
+    this.signOrLogin();
+
+    homeworkBuddy.signupForm.signupTeacher();
+  },
+
+  loginStudent: function(){
+    this.signOrLogin();
+    homeworkBuddy.signupForm.loginStudent();
+  },
+
+  loginTeacher: function(){
+    this.signOrLogin();
+    homeworkBuddy.signupForm.loginTeacher();
+  },
+
+  renderCreate: function(){
+    console.log('render create is running');
     homeworkBuddy.questionSet = new homeworkBuddy.Collections.QuestionSet({model: homeworkBuddy.Models.QuestionModel});
     homeworkBuddy.questionSetView = new homeworkBuddy.Views.QuestionSetView({collection: homeworkBuddy.questionSet});
     homeworkBuddy.hwCreationModel = new homeworkBuddy.Models.HWCreationModel();
     homeworkBuddy.hwCreationView = new homeworkBuddy.Views.HWCreationView({model: homeworkBuddy.hwCreationModel});
+    $('.marketing').hide();
+    $('#container').html(homeworkBuddy.hwCreationView.el);
   },
 
   //  This shows all the assignments that the teacher can "grade"
@@ -33,12 +71,8 @@ homeworkBuddy.Router = Backbone.Router.extend({
   makeAssignment: function(){
     var router = this;
     console.log('Router is on makeAssignment, url is \'\'')
-    $('.container').append(homeworkBuddy.hwCreationView.el);
+    $('#container').append(homeworkBuddy.hwCreationView.el);
   }, 
-
-  renderCreate: function() {
-    console.log("Router is on create running renderCreate");
-  },
 
   addQuestions: function() {
     console.log('Router is on create/addquestions')
@@ -55,7 +89,7 @@ homeworkBuddy.Models.Header = Backbone.Model.extend({
       success: function(data){
         console.log(data);
         $('.assignments').addClass('hide');
-        $('.container').removeClass('hide');
+        $('#container').removeClass('hide');
         homeworkBuddy.createGradingView(data);
       }, 
       error: function(error){
@@ -70,35 +104,35 @@ homeworkBuddy.Models.Header = Backbone.Model.extend({
 homeworkBuddy.Views.HeaderView = Backbone.View.extend({
   initialize: function(){
     this.$el.append(this.template({}));
-    $('.header').append(this.el)
+    //$('#header').append(this.el)
     this.fetchAssignments();
   },
 
+  className: "nav navbar-nav",
+
   events: {
     'click a.assignment': 'renderAssignment', 
-    'click button.grades': 'navigateGrade', 
-    'click button.createNew': 'navigateCreateNew'
+    'click a.grades': 'navigateGrade', 
+    'click a.createNew': 'navigateCreateNew'
   },
 
   navigateGrade: function(){
     $('.assignments').toggleClass('hide');
-    $('.container').children().toggleClass('hide');
+    $('#container').children().toggleClass('hide');
     homeworkBuddy.router.navigate('/grade', {trigger: true});
   }, 
 
   navigateCreateNew: function(){
-    $('.container').children().removeClass('hide');
+    $('#container').children().removeClass('hide');
     $('.assignments').addClass('hide');
     homeworkBuddy.router.navigate('/create', {trigger: true});
   },
 
   template: _.template('\
-    <div class = "header">\
-    <button class = "createNew">Create New Homework!</button>\
-    <button class = "grades">Grades!</button>\
-    <a href = "/logout" class = "logout">Logout</a>\
-    <div class = "hide assignments"><ul><li>Try clicking again in a second, we\'re still fetching your data. Sorry!</li></ul></div>\
-    </div>'),
+    <li><a class = "createNew" href = "/teacher/create">Create New Homework!</a></li>\
+    <li><a class = "grades" href = "/teacher/grades">Grades!</a></li>\
+    <li><a href = "/logout" class = "logout">Logout</a></li>\
+    <div class = "hide assignments"><ul><li>Try clicking again in a second, we\'re still fetching your data. Sorry!</li></ul></div>'),
 
 
   //  This fetches all the assignments that the teacher can grade
@@ -109,7 +143,7 @@ homeworkBuddy.Views.HeaderView = Backbone.View.extend({
     var linkTemplate = _.template('<li><a class = "assignment" href = "grade/<%=assignmentName%>"><%=assignmentName%></a></li>')
     $.ajax({
       method: "GET", 
-      url: 'teacher/grade', 
+      url: '/teacher/grade', 
       success: function(data){
         data = JSON.parse(data);
         console.log(data);
@@ -140,8 +174,13 @@ homeworkBuddy.Views.HeaderView = Backbone.View.extend({
 $(document).ready(function () {
     'use strict';
     homeworkBuddy.init();
+    $('.dropdown-toggle').dropdown();
+  // Fix input element click problem
+    $('.dropdown input, .dropdown label').click(function(e) {
+      e.stopPropagation();
+    });
     homeworkBuddy.router = new homeworkBuddy.Router();
     homeworkBuddy.router.header = new homeworkBuddy.Models.Header();
     homeworkBuddy.router.headerView = new homeworkBuddy.Views.HeaderView({model: homeworkBuddy.router.header});
-    Backbone.history.start({pushState: true, root: '/teacher'})
+    Backbone.history.start({pushState: true})
 }); 

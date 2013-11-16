@@ -1,0 +1,64 @@
+textarea.newAssignment {
+  outline: none;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+
+  font-family: helvetica, sans-serif, serif;
+  font-size: 1.2em;
+  line-height: 1.5em;
+
+  border: 3px solid gray;
+
+  overflow: auto;
+
+  height: 400px;
+  width: 100%;
+}
+
+.correct, .incorrect {
+  font-weight: bold;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  padding-right: 25px;
+}
+
+.correct {
+  background-color: green;
+}
+.incorrect {
+  background-color: red;
+}
+
+.chewy {
+  font-family: "Chewy", cursive;
+}
+
+#assignmentName {
+  text-align: center;
+  line-height: 1.5em;
+  width: 100%;
+  background-color: inherit;
+  -webkit-appearance: none;
+  border: 3px solid transparent;
+
+  font-size: 2em;
+  font-weight: bold;
+}
+
+#assignmentName::-webkit-input-placeholder { /* WebKit browsers */
+    color: #999;
+}
+#assignmentName:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color: #999;
+}
+#assignmentName::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: #999;
+}
+#assignmentName:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color: #999;
+}
+#assignmentName:focus{
+  outline: none;
+}

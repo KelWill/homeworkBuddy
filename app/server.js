@@ -41,6 +41,11 @@ app.configure(function() {;
 app.get('/', function(request, response){
   response.sendfile('index.html');
 });
+
+app.get('/teacher/create', function(request, response){
+  response.sendfile('index.html');
+});
+
 app.get('/student', function(request, response){
   response.sendfile('student.html');
 });
@@ -113,7 +118,7 @@ passport.deserializeUser(function(id, done) {
 
 //   User authentication   //
 //   Login   //
-app.post('/login/teacher', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login'})  );
+app.post('/login/teacher', passport.authenticate('local', { successRedirect: '/teacher/create', failureRedirect: '/login'})  );
 app.post('/login/student', passport.authenticate('local', { successRedirect: '/student', failureRedirect: '/login'})  );
 
 app.get('/login', function(request, response){

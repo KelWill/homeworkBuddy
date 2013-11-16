@@ -12,16 +12,10 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
         'click button': 'saveQuestion',
       }, 
 
-      click: function(){
-        debugger;
-      },
-
       render: function(){
       },
 
       saveQuestion: function(){
-        //for now just handles MC questions
-        //TODO refactor into different views
         this.save();
 
         //finishing editing the form

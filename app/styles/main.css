@@ -194,7 +194,7 @@ button#completed {
   clear: both;
 }
 
-button {
+button, input[type = "submit"] {
   /*display: inline-block;*/
   min-height: 60px;
   width: 150px;
