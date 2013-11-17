@@ -51,7 +51,7 @@ $(document).ready(function(){
     },
 
     addSubmit: function(){
-      this.$el.append("<button class = 'submit review btn-success btn'>Check and Submit</button>")
+      this.$el.append("<button class = 'submit review btn-success btn btn-lg pull-right'>Check and Submit</button>")
     }, 
 
     events: {
@@ -79,14 +79,15 @@ $(document).ready(function(){
 
   var MCQuestionView = QuestionView.extend({
     events: {
-      'click div.answer.option' : 'select'
-    }, 
+      'click a.answer.option' : 'select', 
+    },
 
     select: function(event){
-      var option = this.$el.find('div.answer.option');
-      option.removeClass('selected');
+      console.log('select is running');
+      var option = this.$el.find('a.answer.option');
+      option.removeClass('selected').removeClass('active');
       $currentTarget = $(event.currentTarget);
-      $currentTarget.addClass('selected');
+      $currentTarget.addClass('selected').addClass('active');
       var selected = $currentTarget.attr('class')[0];
       this.model.set('selected', selected);
     },
@@ -108,11 +109,13 @@ $(document).ready(function(){
       })
     },
     //<% if (selected === "A") { print("selected") }%>
-    questionTemplate: _.template('<h4><%= number %>. <%= question %></h4>\
-      <div class = "A answer option">A: <%= answerOptions[0] %></div>\
-      <div class = "B answer option">B: <%= answerOptions[1] %></div>\
-      <div class = "C answer option">C: <%= answerOptions[2] %></div>\
-      <div class = "D answer option">D: <%= answerOptions[3] %></div>'),
+    questionTemplate: _.template('<h2><%= number %>. <%= question %></h2\
+     <div class = "list-group">\
+       <a class = "A answer option list-group-item">A: <%= answerOptions[0] %></li>\
+       <a class = "B answer option list-group-item">B: <%= answerOptions[1] %></li>\
+       <a class = "C answer option list-group-item">C: <%= answerOptions[2] %></li>\
+       <a class = "D answer option list-group-item">D: <%= answerOptions[3] %></li>\
+     </div>'),
 
     render: function(){
       this.$el.append(this.questionTemplate(this.model.attributes));
@@ -127,7 +130,7 @@ $(document).ready(function(){
         this.model.set('answer', answer);
       }, this)
     },
-    questionTemplate: _.template('<h4><%= number %>. <%= question %></h4>\
+    questionTemplate: _.template('<h2><%= number %>. <%= question %></h2>\
       <textarea class = "answer" value = "<%=answer%>" />'), 
 
     render: function(){
@@ -144,7 +147,7 @@ $(document).ready(function(){
       }, this)
     },
 
-    questionTemplate: _.template('<h4><%= number %>. <%= preText %><input type = "text" class = "answer" value = "<%=answer%>"><%= postText %></h4>'),
+    questionTemplate: _.template('<h2><%= number %>. <%= preText %><input type = "text" class = "answer" value = "<%=answer%>"><%= postText %></h2>'),
 
     render: function(){
       this.$el.append(this.questionTemplate(this.model.attributes));
@@ -273,9 +276,9 @@ $(document).ready(function(){
     render: function(){
       this.$el.html('<div class = "questions" >' + this.model.get('text') + '</div>');
       this.$el.append('<div class = "questionSet questions hide"></div>');
-      this.$el.append('<button class = "questions go btn btn-success">Ready for some questions?</button>');
-      this.$el.append('<button class = "btn btn-warning questions return hide">Return to text</button>');
-      this.$el.append('<button class = "btn btn-success submit hide">Submit Answers</button>');
+      this.$el.append('<button class = "questions go btn btn-success btn-lg pull-right marTop">Ready for some questions?</button>');
+      this.$el.append('<button class = "btn btn-warning questions btn-lg return hide pull-left marTop">Return to text</button>');
+      this.$el.append('<button class = "btn btn-success btn-lg submit hide pull-right marTop">Submit Answers</button>');
       
       return this;
     },
