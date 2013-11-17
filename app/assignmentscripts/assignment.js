@@ -189,7 +189,6 @@ $(document).ready(function(){
   var ParagraphView = Backbone.View.extend({
     initialize: function(){
      var view = this;
-
      this.url = '/p/' + this.model.get('paragraph_id'),
 
      this.listenTo(this.model, 'renderQuestions', function(){
@@ -234,7 +233,7 @@ $(document).ready(function(){
         app.navigate(app.rootURL + '/p/' + app.urls[app.currentIndex], {trigger: true});
       } else {
         this.submitAssignment();
-        $('#container').html('<h1>YOU ARE DONE YOU LUCKY SON OF A BITCH</h1>')
+        $('#container').html('<h1>You\'re Done!!</h1>')
       }
     },
 
@@ -313,10 +312,10 @@ $(document).ready(function(){
   var app = new (Backbone.Router.extend({
     url: document.URL,
     routes: {
+      'student/review': 'review',
        'student/:teacher/:assignment/p/:id' : 'showParagraph',
       'student/:teacher/:assignment/p/:id/q' : 'showQuestions',
-      'student/:teacher/:assignment' : 'landing',
-      'student/review': 'review'
+      'student/:teacher/:assignment' : 'landing'
     },
 
     review: function(){
@@ -351,7 +350,7 @@ $(document).ready(function(){
       })
     },
 
-    landing: function(){
+    initialize: function(){
       router = this;
       var url = this.url;
       var i = url.indexOf('/student/') + '/student/'.length;

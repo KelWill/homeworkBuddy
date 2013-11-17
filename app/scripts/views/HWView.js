@@ -29,7 +29,6 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
         var assignmentName = $('input#assignmentName').val();
 
         if (!assignmentName){
-          $('h1').text("Please enter an assignment name");
           assignmentName = prompt("Please enter a title for your assignment");
         }
         if (assignmentName){
