@@ -112,10 +112,11 @@ module.exports.retrieveAssignment = function(request, response, db){
         if (error){
           console.log(error);
           response.writeHead(500);
-          response.end(JSON.stringify('We messed up! Sorry! Try again in a few minutes'));
+          response.end('We messed up! Sorry! Try again in a few minutes');
         } else if (!rows.length){
           console.log('assignment not found');
-          response.end(JSON.stringify('Assignment not found.'))
+          response.writeHead(500);
+          response.end("Assignment not found");
         } else {
           console.log('success!');
           console.log(rows);

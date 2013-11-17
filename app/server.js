@@ -120,6 +120,11 @@ passport.deserializeUser(function(id, done) {
 //   Login   //
 app.post('/login/teacher', passport.authenticate('local', { successRedirect: '/teacher/create', failureRedirect: '/login'})  );
 app.post('/login/student', passport.authenticate('local', { successRedirect: '/student', failureRedirect: '/login'})  );
+app.post('/login/user', passport.authenticate('local'), function(request, response){
+  response.end(JSON.stringify({loggedin: true}));
+})
+
+
 
 app.get('/login', function(request, response){
   response.sendfile(__dirname + '/login.html');
