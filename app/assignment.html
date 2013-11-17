@@ -15,17 +15,33 @@
     background-color: red;
   }
    </style>
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <ul class="nav nav-pills pull-right" id = "header">
+        <div class="nav navbar-nav">
+          <li><a href = "/student">Choose a different assignment</a></li>
+          <li><a href = "/student/review">Review!</a></li>
+          <li><a href = "/logout">Logout</a></li>
+        </div>
+      </ul>
+      <h1 class="text-muted chewy"><a href = "/">HW Bud</a></h1>
+    </div>
+  </div>
+  <div class="container">
+    <div class="jumbotron container" id = "container"></div>
+  </div>
   <script src="/bower_components/jquery/jquery.js"></script>
   <script src="/bower_components/underscore/underscore.js"></script>
   <script src="/bower_components/backbone/backbone.js"></script>
   <script src = "/assignmentscripts/assignment.js"></script>
   <script src = "/assignmentscripts/review.js"></script>
-</head>
-
-<body>
-  <a href = "/student/review">Review!</a>
-  <div id = "container">
-
-  </div>
+  <script src="/styles/js/bootstrap.js"></script>
+  <link rel="stylesheet" href="/styles/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/styles/assignmentStyles.css" />
+  <link href='http://fonts.googleapis.com/css?family=Chewy' rel='stylesheet' type='text/css'>
 </body>
 </html>

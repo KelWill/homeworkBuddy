@@ -23,9 +23,10 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
       url: 'http://localhost:8080/newhw/' + assignmentName, 
       success: function(urlObj){
       $('#container').children().detach();
-      $('.container').append('\
+      $('#container').append('\
         <h1>Homework Creation Successful!</h1>\
-        <p></p>\
+        <p>Nice job. Your homework is available at' +
+        urlObj + '</p>\
         ');
         console.log(urlObj);
       }, 

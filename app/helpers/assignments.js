@@ -7,7 +7,7 @@ module.exports.createAssignment = function(request, response, db){
   var correctAnswers = [];
   if (request.user) { 
     var teacher_id = request.user.id;
-    var teacherName = request.user.username;
+    var teacherName = request.user.name;
   } else {
     response.writeHead(401);
     response.end();
