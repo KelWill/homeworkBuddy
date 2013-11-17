@@ -1,4 +1,4 @@
-
+homeworkBuddy = {};
 $(document).ready(function(){
   var currentParagraph = 0;
   var currentQuestion = 0;
@@ -83,7 +83,6 @@ $(document).ready(function(){
     },
 
     select: function(event){
-      console.log('select is running');
       var option = this.$el.find('a.answer.option');
       option.removeClass('selected').removeClass('active');
       $currentTarget = $(event.currentTarget);
@@ -227,16 +226,17 @@ $(document).ready(function(){
       var paragraph = app.assignment.find(function(item){
         return item.get('paragraph_id') + '' === app.urls[router.currentIndex] + '';
       });
-      paragraph.questionSet.forEach(function(question){
-        question.trigger('save');
-      });
+      if (paragraph && paragraph.questionSet){
+        paragraph.questionSet.forEach(function(question){
+          question.trigger('save');
+        });
+      }
 
       app.currentIndex++;
       if (app.currentIndex < app.urls.length){
         app.navigate(app.rootURL + '/p/' + app.urls[app.currentIndex], {trigger: true});
       } else {
         this.submitAssignment();
-        $('#container').html('<h1>You\'re Done!!</h1>')
       }
     },
 
@@ -251,26 +251,33 @@ $(document).ready(function(){
     },
 
     submitAssignment: function(){
-      var data = [];
-      router.assignment.forEach(function(paragraph){
-        if (paragraph.attributes.questionSet){
-          paragraph.questionSet.forEach(function(question){
-            var toSave = {};
-            toSave.question_id = question.get('questionId');
-            toSave.answer = question.get('answer');
-            data.push(toSave);
-          });
-        }
-      })
-      data = JSON.stringify(data);
+      if (router.loggedin){
+        var data = [];
+        router.assignment.forEach(function(paragraph){
+          if (paragraph.attributes.questionSet){
+            paragraph.questionSet.forEach(function(question){
+              var toSave = {};
+              toSave.question_id = question.get('questionId');
+              toSave.answer = question.get('answer');
+              data.push(toSave);
+            });
+          }
+        })
+        data = JSON.stringify(data);
 
-      console.log('data', data);
-      $.ajax({
-        method: "POST", 
-        data: data,
-        url: '/submitAssignment' + router.rootURL, 
-        contentType: 'application/JSON'
-      });
+        console.log('data', data);
+        $.ajax({
+          method: "POST", 
+          data: data,
+          url: '/submitAssignment' + router.rootURL, 
+          contentType: 'application/JSON',
+          success: function(){
+            $('#container').html("You're done!");
+          }
+        });
+      } else {
+        $('#container').prepend("You aren't logged in. Please login and submit again.");
+      }
     },
 
     render: function(){
@@ -358,7 +365,18 @@ $(document).ready(function(){
       var url = this.url;
       var i = url.indexOf('/student/') + '/student/'.length;
       var run = true, slashCount = 0, j = i;
-
+      $.ajax({
+        method: "GET", 
+        url: "/loggedin", 
+        success: function(){
+          router.loggedin = true;
+          $('#loggedinHeader').removeClass('hide');
+          $('#loggedoutHeader').addClass('hide');
+        }, 
+        error: function(){
+          router.loggedin = false;
+        }
+      });
 
       //the below formats the rootUrl correctly
       //and extracts the correct url to ask for the whole assessment
@@ -389,6 +407,23 @@ $(document).ready(function(){
        error: function(error){
          $('#container').prepend('<h1>' + error.responseText +'</h1>')
        }
+      })
+    },
+    login: function(){
+      var $header = $('#loggedoutHeader');
+      var username = $header.find('.username').val();
+      var password = $header.find('.password').val();
+      $.ajax({
+        method: "POST", 
+        url: "/login/user?username=" + username + "&password=" + password, 
+        success: function(){
+          $('#loggedinHeader').removeClass('hide');
+          $('#loggedoutHeader').addClass('hide');
+          router.loggedin = true;
+        }, 
+        error: function(){
+          $('#container').prepend('Username or password is incorrect');
+        }
       })
     },
 
@@ -443,7 +478,7 @@ $(document).ready(function(){
 
   }));
   //End router
-
+  homeworkBuddy.app = app;
 
 
   Backbone.history.start({pushState: true});

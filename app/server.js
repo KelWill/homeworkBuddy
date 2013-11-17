@@ -42,6 +42,12 @@ app.get('/', function(request, response){
   response.sendfile('index.html');
 });
 
+//Check to see if a user is logged in
+app.get('/loggedin', function(request, response){
+  !!request.user ? response.writeHead(200) : response.writeHead(401);
+  response.end();
+})
+
 app.get('/teacher/create', function(request, response){
   response.sendfile('index.html');
 });

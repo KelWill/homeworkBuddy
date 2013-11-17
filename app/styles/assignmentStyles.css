@@ -25,9 +25,9 @@ textarea {
 }
 
 textarea:focus {
-  border: 1px solid blue;
+  border: 1px solid lightblue;
 }
-input[type = "text"]{
+.FillBlank input[type = "text"] {
   
   border: 1px solid gray;
   border-radius: 5px;
@@ -38,4 +38,8 @@ input[type = "text"]{
 }
 input[type ="text"]:focus {
   border: 1px solid blue;
+}
+
+.hide {
+  display: none;
 }

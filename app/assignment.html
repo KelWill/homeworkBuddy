@@ -21,11 +21,26 @@
 <body>
   <div class="container">
     <div class="header">
-      <ul class="nav nav-pills pull-right" id = "header">
-        <div class="nav navbar-nav">
+      <ul class="nav navbar-right hide" id = "loggedinHeader">
+        <div class="nav navbar-nav logged in">
           <li><a href = "/student">Choose a different assignment</a></li>
           <li><a href = "/student/review">Review!</a></li>
           <li><a href = "/logout">Logout</a></li>
+        </div>
+      </ul>
+      <ul class="nav navbar-right loggedout" id = "loggedoutHeader">
+        <div class="nav navbar-nav logged in">
+          <li><a href = "/">Sign up</a></li>
+          <li><a href = "/student">Choose a different assignment</a></li>
+          <li><form class="navbar-form" role="login">
+            <div class="form-group">
+              <input type="text" class="form-control username" placeholder="Username">
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control password" placeholder="Password">
+            </div>
+              <a href = "#" class="btn btn-default" onclick = "homeworkBuddy.app.login()">Login</a>
+          </form></li>
         </div>
       </ul>
       <h1 class="text-muted chewy"><a href = "/">HW Bud</a></h1>

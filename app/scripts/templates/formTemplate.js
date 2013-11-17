@@ -1,4 +1,4 @@
-homeworkBuddy.templates.formTemplate = '<form class = "teacher login hide container text-center" action="/login/teacher" method="post">\
+homeworkBuddy.templates.formTemplate = '<form class = "form-group teacher login hide container text-center" action="/login/teacher" method="post">\
     <div>\
         <label>Username:</label><br>\
         <input type="text" name="username" placeholder = "Username"/>\
@@ -8,10 +8,10 @@ homeworkBuddy.templates.formTemplate = '<form class = "teacher login hide contai
         <input type="password" name="password" placeholder = "Password"/>\
     </div>\
     <div>\
-        <input type="submit" value="Log In"/>\
+        <input class  = "btn btn-primary" type="submit" value="Log In"/>\
     </div>\
 </form>\
-<form class = "student login hide container text-center" action="/login/student" method="post">\
+<form class = "student login hide container text-center form-group" action="/login/student" method="post">\
     <div>\
     <label>Username:</label><br>\
         <input type="text" name="username" placeholder = "Username"/>\
@@ -21,10 +21,10 @@ homeworkBuddy.templates.formTemplate = '<form class = "teacher login hide contai
         <input type="password" name="password" placeholder = "Password"/>\
     </div>\
     <div>\
-        <input type="submit" value="Log In"/>\
+        <input class  = "btn btn-primary" type="submit" value="Log In"/>\
     </div>\
 </form>\
-<form class = "teacher signup hide container text-center" action="/signup/teacher" method="post">\
+<form class = "teacher signup hide container text-center form-group" action="/signup/teacher" method="post">\
     <div>\
     <label>Username:</label><br>\
         <input type="text" name="username" placeholder = "How students find you"/>\
@@ -38,10 +38,10 @@ homeworkBuddy.templates.formTemplate = '<form class = "teacher login hide contai
         <input type="password" name="password" placeholder = "Password"/>\
     </div>\
     <div>\
-        <input type="submit" value="Sign Up"/>\
+        <input class  = "btn btn-primary" type="submit" value="Sign Up"/>\
     </div>\
 </form>\
-<form class = "student signup hide container text-center" action="/signup/student" method="post">\
+<form class = "student signup hide container text-center form-group" action="/signup/student" method="post">\
     <div>\
     <label>Username:</label><br>\
         <input type="text" name="username" placeholder = "Visible to teacher"/>\
@@ -55,6 +55,6 @@ homeworkBuddy.templates.formTemplate = '<form class = "teacher login hide contai
         <input type="password" name="password" placeholder = "Password"/>\
     </div>\
     <div>\
-        <input type="submit" value="Sign Up" role = "button"/>\
+        <input class  = "btn btn-primary" type="submit" value="Sign Up" role = "button"/>\
     </div>\
 </form>'
