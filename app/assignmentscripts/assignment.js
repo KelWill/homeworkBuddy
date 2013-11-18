@@ -12,9 +12,14 @@ $(document).ready(function(){
   app = new (Backbone.Router.extend({
     url: document.URL,
     routes: {
+      'student': 'student',
       'student/review': 'review',
        'student/:teacher/:assignment/p/:id' : 'showParagraph',
       'student/:teacher/:assignment/p/:id/q' : 'showQuestions',
+    },
+
+    student: function(){
+      console.log('on route student');
     },
 
     review: function(){
@@ -173,7 +178,6 @@ $(document).ready(function(){
   }));
   //End router
   homeworkBuddy.app = app;
-
 
   Backbone.history.start({pushState: true});
 
