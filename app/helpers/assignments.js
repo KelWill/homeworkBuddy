@@ -247,13 +247,7 @@ module.exports.retrieveTeacherAssignments = function(request, response, db){
       console.log(error);
       response.end('We messed up! Sorry! Try again in a few minutes');
     } 
-    if (rows.length) {
-      console.log('Return assignments');
-      response.end(JSON.stringify(rows));
-    } else {
-      var data = JSON.stringify([{assignmentName: "This teacher hasn\'t created any assignments. No homework for you!", id: 'yaynohomework'}]);
-      response.end(data);
-    }
+    response.end(JSON.stringify(rows));
   })
 };
 

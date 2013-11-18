@@ -12,36 +12,18 @@ $(document).ready(function(){
   app = new (Backbone.Router.extend({
     url: document.URL,
     routes: {
-      'student': 'student',
-      'student/review': 'review',
-      'student/:teacher/:assignment/p/:id' : 'showParagraph',
-      'student/:teacher/:assignment/p/:id/q' : 'showQuestions',
-      'student/:teacher/:assignment': 'renderAssignment'
+      'student(/)': 'student',
+      'student/review(/)': 'review',
+      'student/:teacher/:assignment/p/:id(/)' : 'showParagraph',
+      'student/:teacher/:assignment/p/:id/q(/)' : 'showQuestions',
+      'student/:teacher/:assignment(/)': 'renderAssignment'
     },
 
-    renderAssignment: function(){
-      console.log('on route renderAssignment');
-      var url = this.url;
-      var i = url.indexOf('/student/') + '/student/'.length;
-      var run = true, slashCount = 0, j = i;
-      while (run){
-        j++
-        if (j === url.length){
-          run = false;
-        }
-        if ('/' === url[j]){
-          slashCount++; 
-          if (slashCount === 2){
-            run = false;
-          }
-        }
-      }
-      this.rootURL = '/student/' + url.slice(i, j);
-      url = url.slice(i, j);  
-
+    renderAssignment: function(teacher, assignment){
+      this.rootURL = '/student/' + teacher + '/' + assignment;
       $.ajax({
        method: 'get', 
-       url: '/getassignment/' + url, 
+       url: '/getassignment/' + teacher + '/' + assignment, 
        success: function(data){
          data = JSON.parse(data);
          var paragraphs = JSON.parse(data.paragraphs);
@@ -110,10 +92,6 @@ $(document).ready(function(){
           router.loggedin = false;
         }
       });
-
-      //the below formats the rootUrl correctly
-      //and extracts the correct url to ask for the whole assessment
-      
     },
     login: function(){
       var $header = $('#loggedoutHeader');
@@ -160,7 +138,6 @@ $(document).ready(function(){
         paragraph.get('questionSet').push(question);
       }
       this.assignment.trigger('questionsAdded');
-
       this.navigate(this.rootURL + '/p/' + this.urls[this.currentIndex], {trigger: true});
     },
 
@@ -186,6 +163,6 @@ $(document).ready(function(){
   //End router
   homeworkBuddy.app = app;
 
-  Backbone.history.start({pushState: true});
+  Backbone.history.start({pushState: true, silent: false});
 
 });

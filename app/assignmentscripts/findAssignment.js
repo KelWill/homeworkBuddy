@@ -6,9 +6,11 @@ homeworkBuddy.student.start = function( ){
   }
   var $container = $('#container');
   $container.children().detach();
-  $container.append('<div id = "teachers"></div>');
-  $container.append('<div id = "myTeachers"></div>');
-  $container.append('<div id = "assignments"></div>');
+  $container.append('<div class = "row"></div>');
+  $container = $container.find('.row');
+  $container.append('<div id = "teachers" class = "col-md-4"><h2>All Teachers</h2></div>');
+  $container.append('<div id = "myTeachers" class = "col-md-4"><h2>My Teachers</h2></div>');
+  $container.append('<div id = "assignments" class = "col-md-4"><h2>Assignments</h2></div>');
   if (!this.allTeachers){
     this.allTeachers = new homeworkBuddy.Collections.AllTeacherList();
   } else {
@@ -38,7 +40,7 @@ homeworkBuddy.Collections.AllTeacherList = Backbone.Collection.extend({
       },
       error: function(error){
         $('#container').find('#teachers').children().detach();
-        $('#container').find('#teachers')('Something went wrong. Sorry! Try again in a minute');
+        $('#container').find('#teachers').append('Something went wrong. Sorry! Try again in a minute');
       }
     });
   }, 
@@ -131,11 +133,9 @@ homeworkBuddy.Models.Teacher = Backbone.Model.extend({
       success: function(data){
         data = JSON.parse(data);
         teacher.assignments = data;
-        if (!teacher.assignments.length){
-          teacher.assignments.push({assignmentName: "This teacher hasn't created any homework yet."});
-        }
         teacher.assignmentsView = new homeworkBuddy.Views.AssignmentListView({model: teacher});
         teacher.trigger('fetchedAssignments');
+        console.log(teacher.assignments);
       }, 
       error: function(){
         teacher.assignments.push({assignmentName: "There was an error fetching the data"});
@@ -170,7 +170,7 @@ homeworkBuddy.Views.TeacherView = Backbone.View.extend({
     this.model.on('fetchedAssignments', function(){
       //where to attach the view
       $assignments = $('#container').find('#assignments');
-      $assignments.children().detach();
+      $assignments.find('.assignments').detach();
       $assignments.append(this.model.assignmentsView.el);
     }, this)
   },
@@ -182,7 +182,6 @@ homeworkBuddy.Views.TeacherView = Backbone.View.extend({
   getAssignmentsForTeacher: function(){
     console.log('getting assignments for teacher');
     if (this.model.assignmentsView){
-      debugger;
       this.model.trigger('fetchedAssignments');
     } else {
       this.model.getAssignmentsForTeacher();
@@ -206,7 +205,7 @@ homeworkBuddy.Views.AllTeacherView = homeworkBuddy.Views.TeacherView.extend({
     this.model.joinClass();
   },
 
-  template: _.template('<a href = "#"><%=name%></a><span class ="joinClass label label-default pull-right">Join Class</span>'),
+  template: _.template('<a href = "#" class = "teacher"><%=name%></a><span class ="joinClass label label-default pull-right">Join Class</span>'),
   render: function(){
     var view = this;
     console.log(view.model.attributes);
@@ -219,7 +218,7 @@ homeworkBuddy.Views.AllTeacherView = homeworkBuddy.Views.TeacherView.extend({
 });
 
 homeworkBuddy.Views.AssignmentListView = Backbone.View.extend({
-  className: "list-group",
+  className: "list-group assignments",
   tagName: "ul",
 
   initialize: function(){
@@ -235,6 +234,12 @@ homeworkBuddy.Views.AssignmentListView = Backbone.View.extend({
       view = new homeworkBuddy.Views.SingleAssignmentView(options);
       this.$el.append(view.el);
     }
+    if (!this.model.assignments.length){
+      this.noAssignment();
+    }
+  },
+  noAssignment: function(){
+    this.$el.append('<li class = "list-group-item">This teacher hasn\'t made any assignments yet.</li>');
   }
 });
 
@@ -257,7 +262,6 @@ homeworkBuddy.Views.SingleAssignmentView = Backbone.View.extend({
   },
   
   gotoAssignment: function(){
-    debugger;
     homeworkBuddy.app.navigate('/student/' + this.teacher + '/' + this.assignmentName, {trigger: true});
   }
 })
