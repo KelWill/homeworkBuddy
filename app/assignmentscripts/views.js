@@ -49,7 +49,7 @@ homeworkBuddy.Views.MCQuestionView = homeworkBuddy.Views.QuestionView.extend({
 homeworkBuddy.Views.ShortAnswerQuestionView = homeworkBuddy.Views.QuestionView.extend({
   initialize: function(){
     this.model.on('save', function(){
-      var answer = this.$el.find('.answer').val();
+      var answer = this.$el.find('.answer').text();
       this.model.set('answer', answer);
     }, this)
   },
