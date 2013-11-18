@@ -14,12 +14,49 @@ $(document).ready(function(){
     routes: {
       'student': 'student',
       'student/review': 'review',
-       'student/:teacher/:assignment/p/:id' : 'showParagraph',
+      'student/:teacher/:assignment/p/:id' : 'showParagraph',
       'student/:teacher/:assignment/p/:id/q' : 'showQuestions',
+      'student/:teacher/:assignment': 'renderAssignment'
+    },
+
+    renderAssignment: function(){
+      console.log('on route renderAssignment');
+      var url = this.url;
+      var i = url.indexOf('/student/') + '/student/'.length;
+      var run = true, slashCount = 0, j = i;
+      while (run){
+        j++
+        if (j === url.length){
+          run = false;
+        }
+        if ('/' === url[j]){
+          slashCount++; 
+          if (slashCount === 2){
+            run = false;
+          }
+        }
+      }
+      this.rootURL = '/student/' + url.slice(i, j);
+      url = url.slice(i, j);  
+
+      $.ajax({
+       method: 'get', 
+       url: '/getassignment/' + url, 
+       success: function(data){
+         data = JSON.parse(data);
+         var paragraphs = JSON.parse(data.paragraphs);
+         var questions = JSON.parse(data.questions);
+         router.createCollectionsAndViews(paragraphs, questions);
+       }, 
+       error: function(error){
+         $('#container').prepend('<h1>' + error.responseText +'</h1>')
+       }
+      })
     },
 
     student: function(){
       console.log('on route student');
+      homeworkBuddy.student.start();
     },
 
     review: function(){
@@ -61,9 +98,6 @@ $(document).ready(function(){
 
     initialize: function(){
       router = this;
-      var url = this.url;
-      var i = url.indexOf('/student/') + '/student/'.length;
-      var run = true, slashCount = 0, j = i;
       $.ajax({
         method: "GET", 
         url: "/loggedin", 
@@ -79,34 +113,7 @@ $(document).ready(function(){
 
       //the below formats the rootUrl correctly
       //and extracts the correct url to ask for the whole assessment
-      while (run){
-        j++
-        if (j === url.length){
-          run = false;
-        }
-        if ('/' === url[j]){
-          slashCount++; 
-          if (slashCount === 2){
-            run = false;
-          }
-        }
-      }
-      this.rootURL = '/student/' + url.slice(i, j);
-      url = url.slice(i, j);  
-
-      $.ajax({
-       method: 'get', 
-       url: '/getassignment/' + url, 
-       success: function(data){
-         data = JSON.parse(data);
-         var paragraphs = JSON.parse(data.paragraphs);
-         var questions = JSON.parse(data.questions);
-         router.createCollectionsAndViews(paragraphs, questions);
-       }, 
-       error: function(error){
-         $('#container').prepend('<h1>' + error.responseText +'</h1>')
-       }
-      })
+      
     },
     login: function(){
       var $header = $('#loggedoutHeader');
@@ -114,7 +121,7 @@ $(document).ready(function(){
       var password = $header.find('.password').val();
       $.ajax({
         method: "POST", 
-        url: "/login/user?username=" + username + "&password=" + password, 
+        url: "/login/user?password=" + password + "&username=" +  username, 
         success: function(){
           $('#loggedinHeader').removeClass('hide');
           $('#loggedoutHeader').addClass('hide');

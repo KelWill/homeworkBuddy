@@ -2,6 +2,10 @@
   font-family: "Chewy", Cursive;
 }
 
+span.joinClass {
+  cursor: pointer;
+}
+
 .marTop {
   margin-top: 20px;
 }

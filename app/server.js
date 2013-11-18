@@ -53,7 +53,7 @@ app.get('/teacher/create', function(request, response){
 });
 
 app.get('/student', function(request, response){
-  response.sendfile('student.html');
+  response.sendfile('assignment.html');
 });
 
 app.get('/student/review/getquestions', function(request, response){
@@ -180,6 +180,7 @@ app.get('/allclasses', function(request, response){
   if (request.user){
     assignments.allClasses(request, response, db);
   } else {
+    response.writeHead(401);
     response.end();
   }
 })
