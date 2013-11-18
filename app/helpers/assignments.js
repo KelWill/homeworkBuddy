@@ -1,6 +1,9 @@
+var safe_tags = function(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') ;
+};
 module.exports.createAssignment = function(request, response, db){
   var assignment = request.body;
-  var assignmentName = request.params.assignmentName;
+  var assignmentName = safe_tags(request.params.assignmentName);
   var thingsToInsert = 0;
   var thingsInserted = 0;
   var assignment_id;
@@ -20,7 +23,7 @@ module.exports.createAssignment = function(request, response, db){
     for ( var i = 0 ; i < assignment.length; i++) {
       paragraph = assignment[i];
       p_id = paragraph.id;
-      text = paragraph.text;
+      text = safe_tags(paragraph.text);
       questionSet = paragraph.questionSet;
       if (assignment[i].name){
         continue;
@@ -39,7 +42,7 @@ module.exports.createAssignment = function(request, response, db){
           question = JSON.stringify(question);
           thingsToInsert++;
           db.query('INSERT INTO questions (id_Assignments, QuestionText, QuestionAnswer, paragraph_id, QuestionType) VALUES (?, ?, ?, ?, ?)', 
-            [assignment_id, question, answer, p_id, type], 
+            [assignment_id, safe_tags(question), safe_tags(answer), p_id, type], 
             function(error, result){
               thingsInserted++;
               if (error) { console.log (error); } 
@@ -223,7 +226,7 @@ module.exports.submitAssignment = function(request, response, db, hw){
 
               //inserting into Student_Questions which tracks student relationships with questions
               db.query('INSERT INTO Student_Questions (id_Questions, id_Students, Correct, StudentAnswer, fromAssignment) VALUES (?, ?, ?, ?, ?)', 
-                [hw[i].question_id, studentId, correct, hw[i].answer, fromAssignment], 
+                [hw[i].question_id, studentId, correct, safe_tags(hw[i].answer), fromAssignment], 
                 function(error){
                   if (error) { 
                    console.log( error); 

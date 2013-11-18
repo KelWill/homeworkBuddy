@@ -32,9 +32,9 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
       }, 
       error: function(error){
         debugger;
-        if (error.status = 401){
+        if (error.status === 401){
           $('#container').prepend("<h2>Looks like you aren't logged in...</h2>");
-        } else if (error.status = 400){
+        } else if (error.status === 400){
           $('#container').prepend("<h2>You've already used that assignment name.</h2>");
         } else {
            $('#container').prepend('<h2>Something went wrong with our servers. Sorry!</h2><p>Try again in a minute or two</p>')

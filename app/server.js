@@ -15,6 +15,12 @@ var db = mysql.createConnection({
   password : 'secret',
 });
 
+//To guard against XSS
+var safe_tags = function(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+};
+
+
 //connecting to database and using correct table
 db.connect(function(err){
   if (err) { console.log(err); }
@@ -149,7 +155,7 @@ app.post('/signup/:teacherOrStudent', function(request, response){
   db.query('SELECT * FROM Users where name = ?', [userData.username] , function(err, rows, fields) {
     if ( rows.length === 0 ) {
       db.query('INSERT INTO Users (name, email, password_hash, isTeacher) VALUES (?, ?, ?, ?)', 
-        [request.body.username, request.body.email, request.body.password, teacherOrStudent], 
+        [safe_tags(request.body.username), request.body.email, request.body.password, teacherOrStudent], 
         function(err){
           response.end('You signed up successfully');
       });

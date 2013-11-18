@@ -95,8 +95,8 @@ $(document).ready(function(){
     },
     login: function(){
       var $header = $('#loggedoutHeader');
-      var username = $header.find('.username').text();
-      var password = $header.find('.password').text();
+      var username = $header.find('.username').val();
+      var password = $header.find('.password').val();
       $.ajax({
         method: "POST", 
         url: "/login/user?password=" + password + "&username=" +  username, 

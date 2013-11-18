@@ -30,16 +30,14 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
         template: _.template(homeworkBuddy.templates.MCCreation),
 
         save: function(){
-          var question = $('.text.MC').text();
+          var question = $('.text.MC').val();
           var answerOptions = [];
           var temp;
           var correctAnswer;
-
-          //The 0s are in place to guard against XSS
-          answerOptions.push(this.$el.find('.A').val())[0];
-          answerOptions.push(this.$el.find('.B').val())[0];
-          answerOptions.push(this.$el.find('.C').val())[0];
-          answerOptions.push(this.$el.find('.D').val())[0];
+          answerOptions.push(this.$el.find('.A').val());
+          answerOptions.push(this.$el.find('.B').val());
+          answerOptions.push(this.$el.find('.C').val());
+          answerOptions.push(this.$el.find('.D').val());
 
           temp = this.$el.find('.active').attr("class");
           if (temp && temp.length){
