@@ -27,19 +27,21 @@ $(document).ready(function(){
         }
         results.push(q);
       });
-      console.log(results);
-      $.ajax({
-        method: "POST", 
-        url: '/student/review', 
-        contentType: 'application/json',
-        data: JSON.stringify(results),
-        success: function(){
-          console.log('success');
-        }, 
-        error: function(error){
-          console.log(error);
-        }
-      });
+      if (!this.submitted){
+        this.submitted = true;
+        $.ajax({
+          method: "POST", 
+          url: '/student/review', 
+          contentType: 'application/json',
+          data: JSON.stringify(results),
+          success: function(){
+            console.log('success');
+          }, 
+          error: function(error){
+            console.log(error);
+          }
+        });
+      }
     }
   });
 
@@ -100,6 +102,7 @@ $(document).ready(function(){
         }
       }, this);
       this.listenTo(this.model, 'highlight', function(correct, answer){
+        this.$el.find('.answer.option').removeClass('active');
         if (correct){
           this.$el.find('.' + answer).addClass('correct');
         } else {
@@ -325,16 +328,20 @@ $(document).ready(function(){
       'student/review': 'review',
        'student/:teacher/:assignment/p/:id' : 'showParagraph',
       'student/:teacher/:assignment/p/:id/q' : 'showQuestions',
-      'student/:teacher/:assignment' : 'landing'
     },
 
     review: function(){
       console.log("REVIEW HAS BEEN TRIGGERED!");
+      $('#container').children().detach();
       $.ajax({
         method: "GET", 
         url: '/student/review/getquestions', 
         success: function(data){
           data = JSON.parse(data);
+          if (!data.length){
+            $('#container').prepend('Looks like you\'re up to date on your review. Come back after you\'ve done more assignments');
+            return
+          }
           console.log(data);
           app.questionSet = new QuestionSet();
           app.questionSetView = new QuestionSetView({collection: app.questionSet});

@@ -25,6 +25,7 @@ module.exports.getReviewQuestions = function(request, response, db){
           response.end(JSON.stringify(rows));
         }
         else {
+          var breadcrumbs = {};
           var questions = [];
           var toReturn = {0: true};
           if (!(review_session%2)){
@@ -40,11 +41,12 @@ module.exports.getReviewQuestions = function(request, response, db){
             toReturn[4] = true;
           }
           for ( var i= 0; i < rows.length; i++ ){
-            if (toReturn[rows[i].streak]){
+            if (toReturn[rows[i].streak] && !breadcrumbs[rows[i].id]){
+              console.log(rows[i]);
               questions.push(rows[i]);
+              breadcrumbs[rows[i].id] = true;
             }
           }
-          console.log('questions', questions);
           response.end(JSON.stringify(questions));
         }
 
@@ -56,7 +58,6 @@ module.exports.saveReviewProgress = function(request, response, db){
   if (!request.user && !request.user.id){
     response.writeHead(401);
   }
-  console.log('save review progress is running');
   var sId = request.user.id;
   console.log(request.body);
   var answers = request.body;
