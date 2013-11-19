@@ -1,0 +1,145 @@
+textarea.newAssignment {
+  outline: none;
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+
+  font-family: helvetica, sans-serif, serif;
+  font-size: 1.2em;
+  line-height: 1.5em;
+
+  border: 3px solid gray;
+
+  overflow: auto;
+
+  margin-bottom: 10px;
+
+  height: 400px;
+  width: 100%;
+}
+
+div.questions.grading {
+  clear: both;
+}
+
+div.questions.grading textarea {
+  height: 80%;
+  width: 100%;
+}
+
+div.questions.grading {
+  line-height: 1.5em;
+  font-size: 1em;
+}
+
+div.questions.grading h4 {
+  font-weight: bold;
+  font-family: "Chewy", inherit;
+  font-size: 24px;
+}
+
+div.questions.grading .percentageCorrect {
+  font-weight: bold;
+  margin-left: 100px;
+}
+div.questions.grading .correctAnswer {
+  font-weight: bold;
+  margin-left: 100px;
+}
+
+li.percents {
+  text-align: center;
+}
+
+.correct, .incorrect {
+  font-weight: bold;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  padding-right: 25px;
+}
+
+.questionSet {
+  border-top: 2px solid gray;
+  padding-top: 5px;
+  min-height: 350px;
+  width: 100%;
+}
+
+.questionSet .questionOptions {
+  margin-right: 30px;
+}
+
+div.FillBlank, div.SA, div.MC {
+  display: inline-block;
+  height: 300px;
+  width: 350px;
+  border: 2px solid ;
+}
+
+div.SA textarea {
+  height: 244px;
+  width: 295px;
+}
+
+div.FillBlank textarea {
+  height: 34%;
+  width: 100%;
+}
+
+div.FillBlank input, div.MC input[type="text"] {
+  width: 100%;
+  outline: none;
+
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+
+
+div.addedQuestions {
+  line-height: 1.2em;
+}
+
+div.paragraph {
+  clear: both;
+}
+
+.correct {
+  background-color: green;
+}
+.incorrect {
+  background-color: red;
+}
+
+.chewy {
+  font-family: "Chewy", cursive;
+}
+
+#assignmentName {
+  text-align: center;
+  line-height: 1.5em;
+  width: 100%;
+  background-color: inherit;
+  -webkit-appearance: none;
+  border: 3px solid transparent;
+
+  font-size: 2em;
+  font-weight: bold;
+}
+
+#assignmentName::-webkit-input-placeholder { /* WebKit browsers */
+    color: #999;
+}
+#assignmentName:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+    color: #999;
+}
+#assignmentName::-moz-placeholder { /* Mozilla Firefox 19+ */
+    color: #999;
+}
+#assignmentName:-ms-input-placeholder { /* Internet Explorer 10+ */
+    color: #999;
+}
+#assignmentName:focus{
+  outline: none;
+}

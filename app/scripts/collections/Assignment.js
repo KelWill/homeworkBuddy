@@ -14,7 +14,6 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
     if (assignmentName.length > 25){
       assignmentName = assignmentName.split('').slice(0, 25).join('');
     }
-    debugger;
     var data = this.processData(this.toJSON());
     data = JSON.stringify(data);
     console.log('submitting homework');
@@ -35,7 +34,6 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
         console.log(urlObj);
       }, 
       error: function(error){
-        debugger;
         if (error.status === 401){
           $('#container').prepend("<h2>Looks like you aren't logged in...</h2>");
         } else if (error.status === 400){

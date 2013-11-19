@@ -23,7 +23,7 @@ module.exports.createAssignment = function(request, response, db){
     for ( var i = 0 ; i < assignment.length; i++) {
       paragraph = assignment[i];
       p_id = paragraph.id;
-      text = paragraph.text;
+      text = safe_tags(paragraph.text);
       questionSet = paragraph.questionSet;
       if (assignment[i].name){
         continue;

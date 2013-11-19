@@ -27,7 +27,7 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
       submit: function(){
         var safe_name = function(str) {
           return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\//g, '&#47;').replace('/?/', '&#63;').replace(/\s/g, '');;
-        };
+        };  
         var temp, paragraph;
         var assignmentName = safe_name($('input#assignmentName').val());
 

@@ -6,8 +6,9 @@ var LocalStrategy = require('passport-local').Strategy;
 var assignments = require('./helpers/assignments');
 var grading = require('./helpers/grading');
 var review = require('./helpers/review');
-var process = require("./helpers/process");
+var process = require('./helpers/process')
 
+console.log(process);
 var port = process.env.PORT || 3000;
 //   Database   //
 //creating connection with database
@@ -37,7 +38,7 @@ var app = express();
 app.configure(function() {;
   app.use(express.cookieParser());
   app.use(express.bodyParser());
-  app.use(express.session({ secret: 'a random string' }));
+  app.use(express.session({ secret: process.env.RANDOMSTRING}));
 
   //initializing passport
   app.use(passport.initialize());
@@ -47,7 +48,7 @@ app.configure(function() {;
 });
 
 app.get('/', function(request, response){
-  response.sendfile('index.html');
+  response.sendfile('home.html');
 });
 
 //Check to see if a user is logged in
@@ -57,7 +58,7 @@ app.get('/loggedin', function(request, response){
 })
 
 app.get('/teacher/create', function(request, response){
-  response.sendfile('index.html');
+  response.sendfile('home.html');
 });
 
 app.get('/student', function(request, response){
