@@ -25,14 +25,14 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
 
       //maybe should communicate with router
       submit: function(){
-        var safe_tags = function(str) {
-          return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\//g, '&#47;') ;
+        var safe_name = function(str) {
+          return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\//g, '&#47;').replace('/?/', '&#63;').replace(/\s/g, '');;
         };
         var temp, paragraph;
-        var assignmentName = safe_tags($('input#assignmentName').val());
+        var assignmentName = safe_name($('input#assignmentName').val());
 
         if (!assignmentName){
-          assignmentName = safe_tags(prompt("Please enter a title for your assignment"));
+          assignmentName = safe_name(prompt("Please enter a title for your assignment"));
         }
         if (assignmentName){
           var text = $('textarea.newAssignment').val();
@@ -47,7 +47,7 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
             if (array[i].length) {
               id = id + 1;
               temp = decodeURIComponent(array[i]);
-              temp = safe_tags(temp);
+              temp = temp;
               paragraph = new homeworkBuddy.Models.Paragraph({text: temp, id: id});
               homeworkBuddy.assignment.add(paragraph);
             }

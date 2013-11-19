@@ -7,12 +7,13 @@ var assignments = require('./helpers/assignments');
 var grading = require('./helpers/grading');
 var review = require('./helpers/review');
 
+var port = process.env.PORT || 3000;
 //   Database   //
 //creating connection with database
 var db = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'will',
-  password : 'secret',
+  host     : process.env.HOST,
+  user     : process.env.USER,
+  password : process.env.PASSWORD,
 });
 
 //To guard against XSS
@@ -240,4 +241,4 @@ app.get('/teacher/grade', function(request, response){
 });
 
 //   Starting Server   //
-app.listen(8080);
+app.listen(port);

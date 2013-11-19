@@ -11,6 +11,10 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
   submitHomework: function(){
     var assignmentName = this.assignmentName;
     console.log(assignmentName);
+    if (assignmentName.length > 25){
+      assignmentName = assignmentName.split('').slice(0, 25).join('');
+    }
+    debugger;
     var data = this.processData(this.toJSON());
     data = JSON.stringify(data);
     console.log('submitting homework');

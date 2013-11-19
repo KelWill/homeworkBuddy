@@ -3,7 +3,7 @@ var safe_tags = function(str) {
 };
 module.exports.createAssignment = function(request, response, db){
   var assignment = request.body;
-  var assignmentName = safe_tags(request.params.assignmentName);
+  var assignmentName = request.params.assignmentName;
   var thingsToInsert = 0;
   var thingsInserted = 0;
   var assignment_id;
@@ -33,7 +33,7 @@ module.exports.createAssignment = function(request, response, db){
           question = questionSet[j];
           correctAnswers.push(question);
           if (question.correctAnswer){
-            answer = question.correctAnswer;
+            answer = safe_tags(question.correctAnswer);
             delete question.correctAnswer;
           } else {
             answer = null;
@@ -42,7 +42,7 @@ module.exports.createAssignment = function(request, response, db){
           question = JSON.stringify(question);
           thingsToInsert++;
           db.query('INSERT INTO questions (id_Assignments, QuestionText, QuestionAnswer, paragraph_id, QuestionType) VALUES (?, ?, ?, ?, ?)', 
-            [assignment_id, safe_tags(question), safe_tags(answer), p_id, type], 
+            [assignment_id, safe_tags(question), answer, p_id, type], 
             function(error, result){
               thingsInserted++;
               if (error) { console.log (error); } 
@@ -208,6 +208,9 @@ module.exports.submitAssignment = function(request, response, db, hw){
       } else {
         console.log(hw);
         for ( var i = 0; i < hw.length; i++ ) {
+          if (hw[i].answer){
+            hw[i].answer = safe_tags(hw[i].answer);
+          }
           for ( var j = 0; j < rows.length; j++ ){
             if (hw[i].question_id === rows[j].id){
               console.log('match');
@@ -226,7 +229,7 @@ module.exports.submitAssignment = function(request, response, db, hw){
 
               //inserting into Student_Questions which tracks student relationships with questions
               db.query('INSERT INTO Student_Questions (id_Questions, id_Students, Correct, StudentAnswer, fromAssignment) VALUES (?, ?, ?, ?, ?)', 
-                [hw[i].question_id, studentId, correct, safe_tags(hw[i].answer), fromAssignment], 
+                [hw[i].question_id, studentId, correct, hw[i].answer, fromAssignment], 
                 function(error){
                   if (error) { 
                    console.log( error); 

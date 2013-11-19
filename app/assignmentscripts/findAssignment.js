@@ -102,7 +102,7 @@ homeworkBuddy.Views.TeacherListView = Backbone.View.extend({
     this.$el.append('<a href = "#" class = "list-group-item hide fetchTeachers">Refresh</a>');
     this.collection.on('add', function(teacher){
       var view = new homeworkBuddy.Views.TeacherView({model: teacher});
-      this.$el.append(view.el)
+      this.$el.prepend(view.el)
     }, this)
     this.render();
   },
@@ -147,14 +147,16 @@ homeworkBuddy.Models.Teacher = Backbone.Model.extend({
     var teacher = this;
     var teacherName = this.get('name');
     if (!homeworkBuddy.student.teachersList[teacherName]){
+      //This + error callback are so you can't dbl click to join multiple times
+      homeworkBuddy.student.teachersList[teacherName] = true;
       $.ajax({
         method:"POST",
         url: '/students/joinclass/' + teacherName, 
         success: function(){
           homeworkBuddy.student.myTeachers.add(teacher);
-          homworkBuddy.student.teachersList[teacherName] = true;
         },
         error: function(){
+          homeworkBuddy.student.teachersList[teacherName] = false;
           $('#message').text('There was an error joining the class. Try again in a second').removeClass('hide');
         }
       })
@@ -232,7 +234,7 @@ homeworkBuddy.Views.AssignmentListView = Backbone.View.extend({
     for (var i = 0; i < this.model.assignments.length; i++){
       options.assignmentName = this.model.assignments[i].assignmentName
       view = new homeworkBuddy.Views.SingleAssignmentView(options);
-      this.$el.append(view.el);
+      this.$el.prepend(view.el);
     }
     if (!this.model.assignments.length){
       this.noAssignment();

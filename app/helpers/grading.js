@@ -11,6 +11,8 @@ module.exports.grade = function(request, response, db){
         results.assignmentId = rows[0].id;
         getGrades(rows[0].id);
       } else {
+        console.log(results.assignmentName);
+        console.log(request.user.id);
         response.writeHead(401);
         response.end("Are you the teacher that wrote that assignment?");
       }

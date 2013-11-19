@@ -18,3 +18,7 @@ TODO:
     7. clean up any last things
     8. share link
     9. profit
+    10. add refresh button to assignments page
+    11. allow assignment names with spaces
+    12. on grading view change input to div to allow proper express of <>/ etc
+    13. examine why after doing assignments, clicking doesn't work
