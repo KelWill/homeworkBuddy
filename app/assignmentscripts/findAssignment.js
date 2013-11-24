@@ -170,7 +170,6 @@ homeworkBuddy.Views.TeacherView = Backbone.View.extend({
   initialize: function(){
     this.render();
     this.model.on('fetchedAssignments', function(){
-      //where to attach the view
       $assignments = $('#container').find('#assignments');
       $assignments.find('.assignments').detach();
       $assignments.append(this.model.assignmentsView.el);

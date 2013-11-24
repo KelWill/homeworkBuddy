@@ -30,7 +30,7 @@ module.exports = function (grunt) {
         yeoman: yeomanConfig,
         concat: {
           assignment: {
-            src [  "./app/bower_components/jquery/jquery.js",
+            src: [  "./app/bower_components/jquery/jquery.js",
                    "./app/bower_components/underscore/underscore.js",
                    "./app/bower_components/backbone/backbone.js",
                    "./app/assignmentscripts/assignment.js",
@@ -39,15 +39,20 @@ module.exports = function (grunt) {
                    "./app/assignmentscripts/collectionViews.js",
                    "./app/assignmentscripts/collections.js",
                    "./app/assignmentscripts/findAssignment.js",
-                   "./styles/js/bootstrap.js"],
+                   "./styles/js/bootstrap.js",
+                    "/styles/js/bootstrap.js"],
             dest: './app_small/assignmentAll.js'
+          },
+
+          assignmentHtml: {
+            src: ['./app/assignment.html'],
+            dest: './app_small/assignment.html'
           },
 
           assignmentCss: {
             src: [
-  <script src="/styles/js/bootstrap.js"></script>
-  <link rel="stylesheet" href="/styles/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="/styles/assignmentStyles.css" />]
+              "./app/styles/css/bootstrap.min.css",
+              "./app/styles/assignmentStyles.css"]
           },
           main: {
             src: [ "./app/bower_components/jquery/jquery.js", 
@@ -84,6 +89,16 @@ module.exports = function (grunt) {
                 "./app/scripts/collections/Assignment.js",
                 "./app/styles/js/bootstrap.js"],
             dest: './app_small/all.js'
+          }, 
+          mainCSS: {
+            src: [        
+              "./app/styles/css/bootstrap.min.css",
+              "./app/styles/style.css"],
+            dest: './app_small/main.css'
+          },
+          mainHtml: {
+            src: './app/index.html',
+            dest: './app_small/index.html'
           }
         },
         watch: {

@@ -103,6 +103,9 @@ $(document).ready(function(){
         success: function(){
           $('#loggedinHeader').removeClass('hide');
           $('#loggedoutHeader').addClass('hide');
+
+          //TODO refactor this to make it prettier
+          $('#container').find('#myTeachers').find('.fetchTeachers').click();
           router.loggedin = true;
         }, 
         error: function(){

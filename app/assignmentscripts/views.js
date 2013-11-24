@@ -93,7 +93,7 @@ homeworkBuddy.Views.ParagraphView = Backbone.View.extend({
 
 
    this.listenTo(this.model, 'showMe', function(){
-     $('#container').html('');
+     $('#container').children().detach();
      $('#container').append(view.el);
 
      view.$el.find(".go").on('click', function(){
@@ -162,7 +162,8 @@ homeworkBuddy.Views.ParagraphView = Backbone.View.extend({
         url: '/submitAssignment' + router.rootURL, 
         contentType: 'application/JSON',
         success: function(){
-          $('#container').html("You're done!");
+          $('#container').children().detach();
+          $('#container').append("You're done!");
         }
       });
     } else {
