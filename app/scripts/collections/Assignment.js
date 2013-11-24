@@ -11,19 +11,37 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
   submitHomework: function(){
     var assignmentName = this.assignmentName;
     console.log(assignmentName);
+    if (assignmentName.length > 25){
+      assignmentName = assignmentName.split('').slice(0, 25).join('');
+    }
     var data = this.processData(this.toJSON());
     data = JSON.stringify(data);
     console.log('submitting homework');
     console.log(data);
 
     $.ajax({
-     method: 'POST', 
-     contentType: 'application/json',
-     data: data, 
-     url: 'http://localhost:8080/newhw/' + assignmentName, 
-     success: function(text){
-      console.log(text);
-     }
+      method: 'POST', 
+      contentType: 'application/json',
+      data: data, 
+      url: 'http://localhost:8080/newhw/' + assignmentName, 
+      success: function(urlObj){
+      $('#container').children().detach();
+      $('#container').append('\
+        <h1>Homework Creation Successful!</h1>\
+        <p>Nice job. Your homework is available at' +
+        urlObj + '</p>\
+        ');
+        console.log(urlObj);
+      }, 
+      error: function(error){
+        if (error.status === 401){
+          $('#container').prepend("<h2>Looks like you aren't logged in...</h2>");
+        } else if (error.status === 400){
+          $('#container').prepend("<h2>You've already used that assignment name.</h2>");
+        } else {
+           $('#container').prepend('<h2>Something went wrong with our servers. Sorry!</h2><p>Try again in a minute or two</p>')
+        }
+      }
     });
   },
 

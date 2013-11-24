@@ -12,16 +12,10 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
         'click button': 'saveQuestion',
       }, 
 
-      click: function(){
-        debugger;
-      },
-
       render: function(){
       },
 
       saveQuestion: function(){
-        //for now just handles MC questions
-        //TODO refactor into different views
         this.save();
 
         //finishing editing the form
@@ -38,11 +32,17 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
         save: function(){
           var question = $('.text.MC').val();
           var answerOptions = [];
-          answerOptions.push($('.A').val());
-          answerOptions.push($('.B').val());
-          answerOptions.push($('.C').val());
-          answerOptions.push($('.D').val());
-          var correctAnswer = $('input:radio[name=correct]:checked').val();
+          var temp;
+          var correctAnswer;
+          answerOptions.push(this.$el.find('.A').val());
+          answerOptions.push(this.$el.find('.B').val());
+          answerOptions.push(this.$el.find('.C').val());
+          answerOptions.push(this.$el.find('.D').val());
+
+          temp = this.$el.find('.active').attr("class");
+          if (temp && temp.length){
+            correctAnswer = temp[0];
+          }
 
           this.model.saveQuestion({question: question, answerOptions: answerOptions, correctAnswer: correctAnswer});
         },
@@ -62,6 +62,8 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
 
     homeworkBuddy.Views.FillBlankCreationView = homeworkBuddy.Views.QuestionCreationView.extend({
         template: _.template(homeworkBuddy.templates.FillBlankCreation),
+
+        className: "FB",
 
         save: function(){
           var preText = $('.preText').val();
@@ -84,6 +86,8 @@ homeworkBuddy.templates = homeworkBuddy.templates || {};
 
     homeworkBuddy.Views.ShortAnswerCreationView = homeworkBuddy.Views.QuestionCreationView.extend({
         template: _.template(homeworkBuddy.templates.ShortAnswerCreation),
+
+        className: "SA",
 
         save: function(){
           var min = $('.min').val();

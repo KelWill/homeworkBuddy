@@ -15,8 +15,10 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
           'click a.FillBlank': 'addFillBlank', 
         },
 
-        questionOptions: '<span class = "questionOptions"><a href = "#" class = "MC question">Add Multiple Choice</a><br><a href = "#" class = "ShortAnswer question">Add Short Answer</a><br>\
-                        <a href = "#" class = "FillBlank question">Add Fill in the Blank<br></a></span><span class = "addedQuestions"></span>\
+        className: "questionSet",
+
+        questionOptions: '<div class = "questionOptions pull-left"><a href = "#" class = "MC question">Add Multiple Choice</a><br><a href = "#" class = "ShortAnswer question">Add Short Answer</a><br>\
+                        <a href = "#" class = "FillBlank question">Add Fill in the Blank<br></a></div><div class = "addedQuestions"></div>\
                         <div class = "questionForm"></div>',
 
         initialize: function(){
@@ -37,7 +39,7 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
           this.collection.on('questionAdded', function(question){
             if (!question.get('rendered')){
               var completedQuestionView = new homeworkBuddy.Views.CompletedQuestion({model: question});
-              this.$el.find('span.addedQuestions').append(completedQuestionView.render().el);
+              this.$el.find('div.addedQuestions').append(completedQuestionView.render().el);
             }
           }, this);
 
@@ -47,15 +49,18 @@ homeworkBuddy.Views = homeworkBuddy.Views || {};
           this.$el.find('span.questionOptions').html(this.questionOptions);
         },
 
-        addMC: function(){
+        addMC: function(e){
+          e.preventDefault();
           this.collection.addMC();
         }, 
         
-        addShortAnswer: function(){
+        addShortAnswer: function(e){
+          e.preventDefault();
           this.collection.addShortAnswer();
         }, 
         
-        addFillBlank: function(){
+        addFillBlank: function(e){
+          e.preventDefault();
           this.collection.addFillBlank();
         },
 

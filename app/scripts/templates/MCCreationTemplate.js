@@ -1,18 +1,17 @@
 homeworkBuddy.templates = homeworkBuddy.templates || {};
 
 homeworkBuddy.templates.MCCreation = 
-'<div class = "MC"> \
-  Question: <input type = "text" class = "MC text" value = "<%=question%>"/> <br>\
-  <span>A:</span> <input type = text" class = "MC option A"  value = "<%=answerOptions[0]%>"/> <br>\
-  <span>B:</span> <input type = text" class = "MC option B" value = "<%=answerOptions[1]%>"/> <br>\
-  <span>C:</span> <input type = text" class = "MC option C" value = "<%=answerOptions[2]%>"/> <br>\
-  <span>D:</span> <input type = text" class = "MC option D" value = "<%=answerOptions[3]%>"/><br>\
-  <span><form>Correct Answer: \
-    A<input type="radio" name="correct" value="A" <% if (correctAnswer === "A") { print("checked=true")} %> />\
-    B<input type="radio" name="correct" value="B" <% if (correctAnswer === "B") { print("checked=true")} %> />\
-    C<input type="radio" name="correct" value="C" <% if (correctAnswer === "C") { print("checked=true")} %> />\
-    D<input type="radio" name="correct" value="D" <% if (correctAnswer === "D") { print("checked=true")} %> />\
-  </form></span>\
-  <button class = "submit">Done</button>\
+'<div class = "MC pull-left"> \
+<input type = "text" class = "MC text" value = "<%=question%>" placeholder = "Question"/><br>\
+<input type = "text" class = "MC option A" value = "<%=answerOptions[0]%>" placeholder = "A"/><br>\
+<input type = "text" class = "MC option B" value = "<%=answerOptions[1]%>" placeholder = "B"/><br>\
+<input type = "text" class = "MC option C" value = "<%=answerOptions[2]%>" placeholder = "C"/><br>\
+<input type = "text" class = "MC option D" value = "<%=answerOptions[3]%>" placeholder = "D"/><br>\
+<div class = "btn-group" data-toggle = "buttons">\
+  <label class ="A btn btn-primary <% if (correctAnswer === "A") { print("active")} %>"><input type="radio" name="correct" value ="A" >A</label>\
+  <label class ="B btn btn-primary <% if (correctAnswer === "B") { print("active")} %>"><input type="radio" name="correct" value ="B" >B</label>\
+  <label class ="C btn btn-primary <% if (correctAnswer === "C") { print("active")} %>"><input type="radio" name="correct" value ="C" >C</label>\
+  <label class ="D btn btn-primary <% if (correctAnswer === "D") { print("active")} %>"><input type="radio" name="correct" value ="D" >D</label>\
+</div>\
+  <button class = "submit btn btn-success btn-lg pull-right">Done</button>\
 </div>'
-

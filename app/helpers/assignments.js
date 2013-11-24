@@ -1,3 +1,6 @@
+var safe_tags = function(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') ;
+};
 module.exports.createAssignment = function(request, response, db){
   var assignment = request.body;
   var assignmentName = request.params.assignmentName;
@@ -5,7 +8,13 @@ module.exports.createAssignment = function(request, response, db){
   var thingsInserted = 0;
   var assignment_id;
   var correctAnswers = [];
-  if (request.user) { var teacher_id = request.user.id; } else { teacher_id = 1; }
+  if (request.user) { 
+    var teacher_id = request.user.id;
+    var teacherName = request.user.name;
+  } else {
+    response.writeHead(401);
+    response.end();
+  }
   //insert into the assignment body with a teacher's id
   
   var insertAll = function(assignment, assignment_id){
@@ -24,7 +33,7 @@ module.exports.createAssignment = function(request, response, db){
           question = questionSet[j];
           correctAnswers.push(question);
           if (question.correctAnswer){
-            answer = question.correctAnswer;
+            answer = safe_tags(question.correctAnswer);
             delete question.correctAnswer;
           } else {
             answer = null;
@@ -33,7 +42,7 @@ module.exports.createAssignment = function(request, response, db){
           question = JSON.stringify(question);
           thingsToInsert++;
           db.query('INSERT INTO questions (id_Assignments, QuestionText, QuestionAnswer, paragraph_id, QuestionType) VALUES (?, ?, ?, ?, ?)', 
-            [assignment_id, question, answer, p_id, type], 
+            [assignment_id, safe_tags(question), answer, p_id, type], 
             function(error, result){
               thingsInserted++;
               if (error) { console.log (error); } 
@@ -47,7 +56,7 @@ module.exports.createAssignment = function(request, response, db){
         function(error){
           if (error) { console.log('inserting into paragraphs failed', error); }
           thingsInserted++;
-          finish(thingsInserted, thingsToInsert, response);
+          finish(thingsInserted, thingsToInsert, response, teacherName, assignmentName);
       });
     }
   };
@@ -70,20 +79,20 @@ db.query('SELECT * FROM assignments WHERE assignmentName = ? and id_teachers = ?
     });
   }
   if (rows.length){
-    response.end('Need a distinct homework name');
+    response.writeHead(400)
+    response.end(JSON.stringify({error: "You've already used that HW name"}));
   }
 })
 
 
-  var finish = function(thingsInserted, thingsToInsert, response){
+  var finish = function(thingsInserted, thingsToInsert, response, teacherName, assignmentName){
     if (thingsInserted === thingsToInsert){
       db.query('UPDATE Assignments SET CorrectAnswers = ? Where id = ?', [JSON.stringify(correctAnswers), assignment_id], function(error){
         if (error) { 
           console.log(error);
           response.writeHead(500);
         }
-        response.end();
-
+        response.end(JSON.stringify({teacherName: teacherName, assignmentName: assignmentName}));
       });
     }
   }
@@ -106,10 +115,11 @@ module.exports.retrieveAssignment = function(request, response, db){
         if (error){
           console.log(error);
           response.writeHead(500);
-          response.end(JSON.stringify('We messed up! Sorry! Try again in a few minutes'));
+          response.end('We messed up! Sorry! Try again in a few minutes');
         } else if (!rows.length){
           console.log('assignment not found');
-          response.end(JSON.stringify('Assignment not found.'))
+          response.writeHead(500);
+          response.end("Assignment not found");
         } else {
           console.log('success!');
           console.log(rows);
@@ -198,6 +208,9 @@ module.exports.submitAssignment = function(request, response, db, hw){
       } else {
         console.log(hw);
         for ( var i = 0; i < hw.length; i++ ) {
+          if (hw[i].answer){
+            hw[i].answer = safe_tags(hw[i].answer);
+          }
           for ( var j = 0; j < rows.length; j++ ){
             if (hw[i].question_id === rows[j].id){
               console.log('match');
@@ -240,13 +253,7 @@ module.exports.retrieveTeacherAssignments = function(request, response, db){
       console.log(error);
       response.end('We messed up! Sorry! Try again in a few minutes');
     } 
-    if (rows.length) {
-      console.log('Return assignments');
-      response.end(JSON.stringify(rows));
-    } else {
-      var data = JSON.stringify([{assignmentName: "This teacher hasn\'t created any assignments. No homework for you!", id: 'yaynohomework'}]);
-      response.end(data);
-    }
+    response.end(JSON.stringify(rows));
   })
 };
 

@@ -5,6 +5,7 @@ var mountFolder = function (connect, dir) {
     return connect.static(require('path').resolve(dir));
 };
 
+
 // # Globbing
 // for performance reasons we're only matching one level down:
 // 'test/spec/{,*/}*.js'
@@ -13,6 +14,7 @@ var mountFolder = function (connect, dir) {
 // templateFramework: 'lodash'
 
 module.exports = function (grunt) {
+    grunt.loadNpmTasks('grunt-contrib-concat');
     // show elapsed time at the end
     require('time-grunt')(grunt);
     // load all grunt tasks
@@ -26,6 +28,79 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         yeoman: yeomanConfig,
+        concat: {
+          assignment: {
+            src: [  "./app/bower_components/jquery/jquery.js",
+                   "./app/bower_components/underscore/underscore.js",
+                   "./app/bower_components/backbone/backbone.js",
+                   "./app/assignmentscripts/assignment.js",
+                   "./app/assignmentscripts/models.js",
+                   "./app/assignmentscripts/views.js",
+                   "./app/assignmentscripts/collectionViews.js",
+                   "./app/assignmentscripts/collections.js",
+                   "./app/assignmentscripts/findAssignment.js",
+                   "./styles/js/bootstrap.js",
+                    "/styles/js/bootstrap.js"],
+            dest: './app_small/assignmentAll.js'
+          },
+
+          assignmentHtml: {
+            src: ['./app/assignment.html'],
+            dest: './app_small/assignment.html'
+          },
+
+          assignmentCss: {
+            src: [
+              "./app/styles/css/bootstrap.min.css",
+              "./app/styles/assignmentStyles.css"]
+          },
+          main: {
+            src: [ "./app/bower_components/jquery/jquery.js", 
+                "./app/bower_components/sass-bootstrap/js/affix.js",
+                "./app/bower_components/underscore/underscore.js",
+                "./app/bower_components/backbone/backbone.js",
+                "./app/bower_components/ejs/ejs.min.js",
+                "./app/bower_components/sass-bootstrap/js/button.js",
+                "./app/scripts/setup.js",
+                "./app/login.js",
+                "./app/scripts/templates/formTemplate.js",
+                "./app/grading/collections.js",
+                "./app/grading/models.js",
+                "./app/grading/percentCorrectView.js",
+                "./app/grading/questionView.js",
+                "./app/grading/views.js",
+                "./app/grading/createGradingView.js",
+                "./app/scripts/templates/MCCreationTemplate.js",
+                "./app/scripts/templates/base.js",
+                "./app/scripts/templates/HWCreationTemplate.js",
+                "./app/scripts/templates/FillBlankCreationTemplate.js",
+                "./app/scripts/templates/ShortAnswerCreationTemplate.js",
+                "./app/scripts/models/HWCreation.js",
+                "./app/scripts/views/HWView.js",
+                "./app/scripts/views/signupForm.js",
+                "./app/scripts/models/Question.js",
+                "./app/scripts/views/QuestionView.js",
+                "./app/scripts/collections/QuestionSet.js",
+                "./app/scripts/views/QuestionSetView.js",
+                "./app/scripts/views/ParagraphView.js",
+                "./app/scripts/views/AssignmentView.js",
+                "./app/scripts/views/CompletedQuestion.js",
+                "./app/scripts/models/Paragraph.js",
+                "./app/scripts/collections/Assignment.js",
+                "./app/styles/js/bootstrap.js"],
+            dest: './app_small/all.js'
+          }, 
+          mainCSS: {
+            src: [        
+              "./app/styles/css/bootstrap.min.css",
+              "./app/styles/style.css"],
+            dest: './app_small/main.css'
+          },
+          mainHtml: {
+            src: './app/index.html',
+            dest: './app_small/index.html'
+          }
+        },
         watch: {
             options: {
                 nospawn: true

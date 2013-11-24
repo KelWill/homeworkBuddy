@@ -6,14 +6,22 @@ var LocalStrategy = require('passport-local').Strategy;
 var assignments = require('./helpers/assignments');
 var grading = require('./helpers/grading');
 var review = require('./helpers/review');
+var process = require("./helpers/process");
 
+var port = process.env.PORT || 3000;
 //   Database   //
 //creating connection with database
 var db = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'will',
-  password : 'secret',
+  host     : process.env.HOST,
+  user     : process.env.USER,
+  password : process.env.PASSWORD,
 });
+
+//To guard against XSS
+var safe_tags = function(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+};
+
 
 //connecting to database and using correct table
 db.connect(function(err){
@@ -41,8 +49,19 @@ app.configure(function() {;
 app.get('/', function(request, response){
   response.sendfile('index.html');
 });
+
+//Check to see if a user is logged in
+app.get('/loggedin', function(request, response){
+  !!request.user ? response.writeHead(200) : response.writeHead(401);
+  response.end();
+})
+
+app.get('/teacher/create', function(request, response){
+  response.sendfile('index.html');
+});
+
 app.get('/student', function(request, response){
-  response.sendfile('student.html');
+  response.sendfile('assignment.html');
 });
 
 app.get('/student/review/getquestions', function(request, response){
@@ -113,8 +132,13 @@ passport.deserializeUser(function(id, done) {
 
 //   User authentication   //
 //   Login   //
-app.post('/login/teacher', passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login'})  );
+app.post('/login/teacher', passport.authenticate('local', { successRedirect: '/teacher/create', failureRedirect: '/login'})  );
 app.post('/login/student', passport.authenticate('local', { successRedirect: '/student', failureRedirect: '/login'})  );
+app.post('/login/user', passport.authenticate('local'), function(request, response){
+  response.end(JSON.stringify({loggedin: true}));
+})
+
+
 
 app.get('/login', function(request, response){
   response.sendfile(__dirname + '/login.html');
@@ -133,7 +157,7 @@ app.post('/signup/:teacherOrStudent', function(request, response){
   db.query('SELECT * FROM Users where name = ?', [userData.username] , function(err, rows, fields) {
     if ( rows.length === 0 ) {
       db.query('INSERT INTO Users (name, email, password_hash, isTeacher) VALUES (?, ?, ?, ?)', 
-        [request.body.username, request.body.email, request.body.password, teacherOrStudent], 
+        [safe_tags(request.body.username), request.body.email, request.body.password, teacherOrStudent], 
         function(err){
           response.end('You signed up successfully');
       });
@@ -147,7 +171,7 @@ app.post('/signup/:teacherOrStudent', function(request, response){
 //   logging out   //
 app.get('/logout', function(req, res){
   req.logout();
-  res.redirect('/login');
+  res.redirect('/');
 });
 
 //   Getting and Joining Classes   //
@@ -164,6 +188,7 @@ app.get('/allclasses', function(request, response){
   if (request.user){
     assignments.allClasses(request, response, db);
   } else {
+    response.writeHead(401);
     response.end();
   }
 })
@@ -217,4 +242,4 @@ app.get('/teacher/grade', function(request, response){
 });
 
 //   Starting Server   //
-app.listen(8080);
+app.listen(port);

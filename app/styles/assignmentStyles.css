@@ -1,0 +1,56 @@
+.chewy {
+  font-family: "Chewy", Cursive;
+}
+
+span.joinClass {
+  cursor: pointer;
+}
+
+.marTop {
+  margin-top: 20px;
+}
+
+a.answer.option {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+textarea {
+  width: 100%;
+  height: 300px;
+  font-size: 1em;
+  
+  border: 1px solid gray;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+
+  outline: none;
+}
+
+textarea:focus {
+  border: 1px solid lightblue;
+}
+.FillBlank input[type = "text"] {
+  
+  border: 1px solid gray;
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+
+  outline: none;
+}
+input[type ="text"]:focus {
+  border: 1px solid blue;
+}
+
+.hide {
+  display: none;
+}
+.correct {
+  background-color: green;
+}
+
+.incorrect {
+  background-color: red;
+}

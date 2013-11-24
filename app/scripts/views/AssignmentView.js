@@ -13,19 +13,20 @@ homeworkBuddy.Views.AssignmentView = Backbone.View.extend({
     'click button#completed':'submitHomework'
   },
 
-  completedButton: '<button id = "completed">Homework Creation Complete!</div>', 
+  completedButton: '<div class = "bottom"><button id = "completed" class = "btn btn-success btn-lg pull-right">Homework Creation Complete!</button></div>', 
   
   render: function(){
    //clears out the old container and adds in assignment view
-   $('.container').html("");
+   $('#container').html("");
    $('.title').prepend(this.collection.assignmentName);
-   $('.container').append(this.$el);
-   this.$el.append(this.completedButton)
+   $('#container').append(this.$el);
+   this.$el.append('<div class = "middle"></div>')
+   this.$el.append(this.completedButton);
   },
 
   addOne: function(paragraph){
     var paragraphView = new homeworkBuddy.Views.ParagraphView({model: paragraph});
-    this.$el.append(paragraphView.el);
+    this.$el.find('.middle').append(paragraphView.el);
   },
 
   submitHomework: function(){
