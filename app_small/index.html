@@ -1,0 +1,94 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>HW Bud</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="/styles/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="/styles/style.css" />
+    </head>
+    <body>
+        <!--[if lt IE 10]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+ <div class="container">
+      <div class="header">
+        <ul class="nav nav-pills pull-right" id = "header">
+        </ul>
+        <h1 class="text-muted chewy"><a href = "/">HW Bud</a></h1>
+      </div>
+
+      <div class="jumbotron container" id = "container"></div>
+      <div class="row marketing"></div>
+  </div>
+        <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+        <!-- // <script> 
+        //     (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+        //     function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+        //     e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+        //     e.src='//www.google-analytics.com/analytics.js';
+        //     r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+        //     ga('create','UA-XXXXX-X');ga('send','pageview');
+        // </script> -->
+
+        <!-- build:js scripts/vendor.js -->
+        <script src="/bower_components/jquery/jquery.js"></script>
+        <script src="/bower_components/underscore/underscore.js"></script>
+        <script src="/bower_components/backbone/backbone.js"></script>
+        <script src="/bower_components/ejs/ejs.min.js"></script>
+        <!-- endbuild -->
+
+        <!-- build:js scripts/plugins.js -->
+        <script src="/bower_components/sass-bootstrap/js/affix.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/alert.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/dropdown.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/tooltip.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/modal.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/transition.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/button.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/popover.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/carousel.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/scrollspy.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/collapse.js"></script>
+        <script src="/bower_components/sass-bootstrap/js/tab.js"></script>
+
+        <!-- endbuild -->
+
+        <!-- build:js({.tmp,app}) scripts/main.js -->
+        <script src = "/scripts/setup.js"></script>
+        <script src = "/login.js"></script>
+        <script src = "/scripts/templates/formTemplate.js"></script>
+        <script src = "/grading/collections.js"></script>
+        <script src = "/grading/models.js"></script>
+        <script src = "/grading/percentCorrectView.js"></script>
+        <script src = "/grading/questionView.js"></script>
+        <script src = "/grading/views.js"></script>
+        <script src = "/grading/createGradingView.js"></script>
+        <script src="/scripts/templates/MCCreationTemplate.js"></script>
+        <script src="/scripts/templates/base.js"></script>
+        <script src="/scripts/templates/HWCreationTemplate.js"></script>
+        <script src="/scripts/templates/FillBlankCreationTemplate.js"></script>
+        <script src="/scripts/templates/ShortAnswerCreationTemplate.js"></script>
+        <script src="/scripts/models/HWCreation.js"></script>
+        <script src="/scripts/views/HWView.js"></script>
+        <script src="/scripts/views/signupForm.js"></script>
+        <script src="/scripts/models/Question.js"></script>
+        <script src="/scripts/views/QuestionView.js"></script>
+        <script src="/scripts/collections/QuestionSet.js"></script>
+        <script src="/scripts/views/QuestionSetView.js"></script>
+        <script src="/scripts/views/ParagraphView.js"></script>
+        <script src="/scripts/views/AssignmentView.js"></script>
+        <script src="/scripts/views/CompletedQuestion.js"></script>
+        <script src="/scripts/models/Paragraph.js"></script>
+        <script src="/scripts/collections/Assignment.js"></script>
+
+        <script src="/styles/js/bootstrap.js"></script>
+        <link href='http://fonts.googleapis.com/css?family=Chewy' rel='stylesheet' type='text/css'>
+        <!-- endbuild -->
+</body>
+</html>

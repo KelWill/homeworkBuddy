@@ -52,7 +52,8 @@ module.exports = function (grunt) {
           assignmentCss: {
             src: [
               "./app/styles/css/bootstrap.min.css",
-              "./app/styles/assignmentStyles.css"]
+              "./app/styles/assignmentStyles.css"],
+            dest: './app_small/assignmentStyle.css'
           },
           main: {
             src: [ "./app/bower_components/jquery/jquery.js", 

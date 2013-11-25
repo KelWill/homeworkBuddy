@@ -9595,133 +9595,6 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 }
 
 })( window );
-/* ========================================================================
- * Bootstrap: affix.js v3.0.0
- * http://twbs.github.com/bootstrap/javascript.html#affix
- * ========================================================================
- * Copyright 2012 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ======================================================================== */
-
-
-+function ($) { "use strict";
-
-  // AFFIX CLASS DEFINITION
-  // ======================
-
-  var Affix = function (element, options) {
-    this.options = $.extend({}, Affix.DEFAULTS, options)
-    this.$window = $(window)
-      .on('scroll.bs.affix.data-api', $.proxy(this.checkPosition, this))
-      .on('click.bs.affix.data-api',  $.proxy(this.checkPositionWithEventLoop, this))
-
-    this.$element = $(element)
-    this.affixed  =
-    this.unpin    = null
-
-    this.checkPosition()
-  }
-
-  Affix.RESET = 'affix affix-top affix-bottom'
-
-  Affix.DEFAULTS = {
-    offset: 0
-  }
-
-  Affix.prototype.checkPositionWithEventLoop = function () {
-    setTimeout($.proxy(this.checkPosition, this), 1)
-  }
-
-  Affix.prototype.checkPosition = function () {
-    if (!this.$element.is(':visible')) return
-
-    var scrollHeight = $(document).height()
-    var scrollTop    = this.$window.scrollTop()
-    var position     = this.$element.offset()
-    var offset       = this.options.offset
-    var offsetTop    = offset.top
-    var offsetBottom = offset.bottom
-
-    if (typeof offset != 'object')         offsetBottom = offsetTop = offset
-    if (typeof offsetTop == 'function')    offsetTop    = offset.top()
-    if (typeof offsetBottom == 'function') offsetBottom = offset.bottom()
-
-    var affix = this.unpin   != null && (scrollTop + this.unpin <= position.top) ? false :
-                offsetBottom != null && (position.top + this.$element.height() >= scrollHeight - offsetBottom) ? 'bottom' :
-                offsetTop    != null && (scrollTop <= offsetTop) ? 'top' : false
-
-    if (this.affixed === affix) return
-    if (this.unpin) this.$element.css('top', '')
-
-    this.affixed = affix
-    this.unpin   = affix == 'bottom' ? position.top - scrollTop : null
-
-    this.$element.removeClass(Affix.RESET).addClass('affix' + (affix ? '-' + affix : ''))
-
-    if (affix == 'bottom') {
-      this.$element.offset({ top: document.body.offsetHeight - offsetBottom - this.$element.height() })
-    }
-  }
-
-
-  // AFFIX PLUGIN DEFINITION
-  // =======================
-
-  var old = $.fn.affix
-
-  $.fn.affix = function (option) {
-    return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.affix')
-      var options = typeof option == 'object' && option
-
-      if (!data) $this.data('bs.affix', (data = new Affix(this, options)))
-      if (typeof option == 'string') data[option]()
-    })
-  }
-
-  $.fn.affix.Constructor = Affix
-
-
-  // AFFIX NO CONFLICT
-  // =================
-
-  $.fn.affix.noConflict = function () {
-    $.fn.affix = old
-    return this
-  }
-
-
-  // AFFIX DATA-API
-  // ==============
-
-  $(window).on('load', function () {
-    $('[data-spy="affix"]').each(function () {
-      var $spy = $(this)
-      var data = $spy.data()
-
-      data.offset = data.offset || {}
-
-      if (data.offsetBottom) data.offset.bottom = data.offsetBottom
-      if (data.offsetTop)    data.offset.top    = data.offsetTop
-
-      $spy.affix(data)
-    })
-  })
-
-}(window.jQuery);
-
 //     Underscore.js 1.4.4
 //     http://underscorejs.org
 //     (c) 2009-2013 Jeremy Ashkenas, DocumentCloud Inc.
@@ -12521,3419 +12394,758 @@ if ( typeof define === "function" && define.amd && define.amd.jQuery ) {
 
 }).call(this);
 
-ejs=function(){function require(p){if("fs"==p)return{};var path=require.resolve(p),mod=require.modules[path];if(!mod)throw new Error('failed to require "'+p+'"');return mod.exports||(mod.exports={},mod.call(mod.exports,mod,mod.exports,require.relative(path))),mod.exports}return require.modules={},require.resolve=function(path){var orig=path,reg=path+".js",index=path+"/index.js";return require.modules[reg]&&reg||require.modules[index]&&index||orig},require.register=function(path,fn){require.modules[path]=fn},require.relative=function(parent){return function(p){if("."!=p.substr(0,1))return require(p);var path=parent.split("/"),segs=p.split("/");path.pop();for(var i=0;i<segs.length;i++){var seg=segs[i];".."==seg?path.pop():"."!=seg&&path.push(seg)}return require(path.join("/"))}},require.register("ejs.js",function(module,exports,require){var utils=require("./utils"),fs=require("fs");exports.version="0.7.2";var filters=exports.filters=require("./filters"),cache={};exports.clearCache=function(){cache={}};function filtered(js){return js.substr(1).split("|").reduce(function(js,filter){var parts=filter.split(":"),name=parts.shift(),args=parts.shift()||"";return args&&(args=", "+args),"filters."+name+"("+js+args+")"})}function rethrow(err,str,filename,lineno){var lines=str.split("\n"),start=Math.max(lineno-3,0),end=Math.min(lines.length,lineno+3),context=lines.slice(start,end).map(function(line,i){var curr=i+start+1;return(curr==lineno?" >> ":"    ")+curr+"| "+line}).join("\n");throw err.path=filename,err.message=(filename||"ejs")+":"+lineno+"\n"+context+"\n\n"+err.message,err}var parse=exports.parse=function(str,options){var options=options||{},open=options.open||exports.open||"<%",close=options.close||exports.close||"%>",buf=["var buf = [];","\nwith (locals) {","\n  buf.push('"],lineno=1,consumeEOL=!1;for(var i=0,len=str.length;i<len;++i)if(str.slice(i,open.length+i)==open){i+=open.length;var prefix,postfix,line="__stack.lineno="+lineno;switch(str.substr(i,1)){case"=":prefix="', escape(("+line+", ",postfix=")), '",++i;break;case"-":prefix="', ("+line+", ",postfix="), '",++i;break;default:prefix="');"+line+";",postfix="; buf.push('"}var end=str.indexOf(close,i),js=str.substring(i,end),start=i,n=0;"-"==js[js.length-1]&&(js=js.substring(0,js.length-2),consumeEOL=!0);while(~(n=js.indexOf("\n",n)))n++,lineno++;js.substr(0,1)==":"&&(js=filtered(js)),buf.push(prefix,js,postfix),i+=end-start+close.length-1}else str.substr(i,1)=="\\"?buf.push("\\\\"):str.substr(i,1)=="'"?buf.push("\\'"):str.substr(i,1)=="\r"?buf.push(" "):str.substr(i,1)=="\n"?consumeEOL?consumeEOL=!1:(buf.push("\\n"),lineno++):buf.push(str.substr(i,1));return buf.push("');\n}\nreturn buf.join('');"),buf.join("")},compile=exports.compile=function(str,options){options=options||{};var input=JSON.stringify(str),filename=options.filename?JSON.stringify(options.filename):"undefined";str=["var __stack = { lineno: 1, input: "+input+", filename: "+filename+" };",rethrow.toString(),"try {",exports.parse(str,options),"} catch (err) {","  rethrow(err, __stack.input, __stack.filename, __stack.lineno);","}"].join("\n"),options.debug&&console.log(str);var fn=new Function("locals, filters, escape",str);return function(locals){return fn.call(this,locals,filters,utils.escape)}};exports.render=function(str,options){var fn,options=options||{};if(options.cache){if(!options.filename)throw new Error('"cache" option requires "filename".');fn=cache[options.filename]||(cache[options.filename]=compile(str,options))}else fn=compile(str,options);return options.__proto__=options.locals,fn.call(options.scope,options)},exports.renderFile=function(path,options,fn){var key=path+":string";"function"==typeof options&&(fn=options,options={}),options.filename=path;try{var str=options.cache?cache[key]||(cache[key]=fs.readFileSync(path,"utf8")):fs.readFileSync(path,"utf8");fn(null,exports.render(str,options))}catch(err){fn(err)}},exports.__express=exports.renderFile,require.extensions?require.extensions[".ejs"]=function(module,filename){source=require("fs").readFileSync(filename,"utf-8"),module._compile(compile(source,{}),filename)}:require.registerExtension&&require.registerExtension(".ejs",function(src){return compile(src,{})})}),require.register("filters.js",function(module,exports,require){exports.first=function(obj){return obj[0]},exports.last=function(obj){return obj[obj.length-1]},exports.capitalize=function(str){return str=String(str),str[0].toUpperCase()+str.substr(1,str.length)},exports.downcase=function(str){return String(str).toLowerCase()},exports.upcase=function(str){return String(str).toUpperCase()},exports.sort=function(obj){return Object.create(obj).sort()},exports.sort_by=function(obj,prop){return Object.create(obj).sort(function(a,b){return a=a[prop],b=b[prop],a>b?1:a<b?-1:0})},exports.size=exports.length=function(obj){return obj.length},exports.plus=function(a,b){return Number(a)+Number(b)},exports.minus=function(a,b){return Number(a)-Number(b)},exports.times=function(a,b){return Number(a)*Number(b)},exports.divided_by=function(a,b){return Number(a)/Number(b)},exports.join=function(obj,str){return obj.join(str||", ")},exports.truncate=function(str,len){return str=String(str),str.substr(0,len)},exports.truncate_words=function(str,n){var str=String(str),words=str.split(/ +/);return words.slice(0,n).join(" ")},exports.replace=function(str,pattern,substitution){return String(str).replace(pattern,substitution||"")},exports.prepend=function(obj,val){return Array.isArray(obj)?[val].concat(obj):val+obj},exports.append=function(obj,val){return Array.isArray(obj)?obj.concat(val):obj+val},exports.map=function(arr,prop){return arr.map(function(obj){return obj[prop]})},exports.reverse=function(obj){return Array.isArray(obj)?obj.reverse():String(obj).split("").reverse().join("")},exports.get=function(obj,prop){return obj[prop]},exports.json=function(obj){return JSON.stringify(obj)}}),require.register("utils.js",function(module,exports,require){exports.escape=function(html){return String(html).replace(/&(?!\w+;)/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}}),require("ejs")}();
-/* ========================================================================
- * Bootstrap: button.js v3.0.0
- * http://twbs.github.com/bootstrap/javascript.html#buttons
- * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ======================================================================== */
-
-
-+function ($) { "use strict";
-
-  // BUTTON PUBLIC CLASS DEFINITION
-  // ==============================
-
-  var Button = function (element, options) {
-    this.$element = $(element)
-    this.options  = $.extend({}, Button.DEFAULTS, options)
-  }
-
-  Button.DEFAULTS = {
-    loadingText: 'loading...'
-  }
-
-  Button.prototype.setState = function (state) {
-    var d    = 'disabled'
-    var $el  = this.$element
-    var val  = $el.is('input') ? 'val' : 'html'
-    var data = $el.data()
-
-    state = state + 'Text'
-
-    if (!data.resetText) $el.data('resetText', $el[val]())
-
-    $el[val](data[state] || this.options[state])
-
-    // push to event loop to allow forms to submit
-    setTimeout(function () {
-      state == 'loadingText' ?
-        $el.addClass(d).attr(d, d) :
-        $el.removeClass(d).removeAttr(d);
-    }, 0)
-  }
-
-  Button.prototype.toggle = function () {
-    var $parent = this.$element.closest('[data-toggle="buttons"]')
-
-    if ($parent.length) {
-      var $input = this.$element.find('input')
-        .prop('checked', !this.$element.hasClass('active'))
-        .trigger('change')
-      if ($input.prop('type') === 'radio') $parent.find('.active').removeClass('active')
-    }
-
-    this.$element.toggleClass('active')
-  }
-
-
-  // BUTTON PLUGIN DEFINITION
-  // ========================
-
-  var old = $.fn.button
-
-  $.fn.button = function (option) {
-    return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.button')
-      var options = typeof option == 'object' && option
-
-      if (!data) $this.data('bs.button', (data = new Button(this, options)))
-
-      if (option == 'toggle') data.toggle()
-      else if (option) data.setState(option)
-    })
-  }
-
-  $.fn.button.Constructor = Button
-
-
-  // BUTTON NO CONFLICT
-  // ==================
-
-  $.fn.button.noConflict = function () {
-    $.fn.button = old
-    return this
-  }
-
-
-  // BUTTON DATA-API
-  // ===============
-
-  $(document).on('click.bs.button.data-api', '[data-toggle^=button]', function (e) {
-    var $btn = $(e.target)
-    if (!$btn.hasClass('btn')) $btn = $btn.closest('.btn')
-    $btn.button('toggle')
-    e.preventDefault()
-  })
-
-}(window.jQuery);
-
-window.homeworkBuddy = {
-    Models: {},
-    Collections: {},
-    Views: {},
-    Routers: {},
-    templates: {},
-    init: function () {
-        'use strict';
-    }
+homeworkBuddy = {
+  Models: {}, 
+  Views: {}, 
+  Collections: {}
 };
+$(document).ready(function(){
+  var currentParagraph = 0;
+  var currentQuestion = 0;
+  var textNotQuestions = true;
 
-homeworkBuddy.Router = Backbone.Router.extend({
-  routes: {
-    'teacher/create': 'teacherView',
-    'teacher/create/addquestions': 'addQuestions',
-    'teacher/grade/:assignment': 'getGrades',
-    'teacher/grade': 'grades',
-    '': 'landing',
-    'signup/student': 'signupStudent',
-    'signup/teacher': 'signupTeacher', 
-    'login/student': 'loginStudent', 
-    'login/teacher': 'loginTeacher',
-  },
+  //   Setting up the Router   //
+  app = new (Backbone.Router.extend({
+    url: document.URL,
+    routes: {
+      'student(/)': 'student',
+      'student/review(/)': 'review',
+      'student/:teacher/:assignment/p/:id(/)' : 'showParagraph',
+      'student/:teacher/:assignment/p/:id/q(/)' : 'showQuestions',
+      'student/:teacher/:assignment(/)': 'renderAssignment'
+    },
 
-  gradeAssignment: function(){
+    renderAssignment: function(teacher, assignment){
+      this.rootURL = '/student/' + teacher + '/' + assignment;
+      $.ajax({
+       method: 'get', 
+       url: '/getassignment/' + teacher + '/' + assignment, 
+       success: function(data){
+         data = JSON.parse(data);
+         var paragraphs = JSON.parse(data.paragraphs);
+         var questions = JSON.parse(data.questions);
+         router.createCollectionsAndViews(paragraphs, questions);
+       }, 
+       error: function(error){
+         $('#container').prepend('<h1>' + error.responseText +'</h1>')
+       }
+      })
+    },
 
-  },
+    student: function(){
+      console.log('on route student');
+      homeworkBuddy.student.start();
+    },
 
-  teacherView: function(){
-    if (!this.teacherViewInitialized){
-      homeworkBuddy.questionSet = new homeworkBuddy.Collections.QuestionSet({model: homeworkBuddy.Models.QuestionModel});
-      homeworkBuddy.questionSetView = new homeworkBuddy.Views.QuestionSetView({collection: homeworkBuddy.questionSet});
-      homeworkBuddy.hwCreationModel = new homeworkBuddy.Models.HWCreationModel();
-      homeworkBuddy.hwCreationView = new homeworkBuddy.Views.HWCreationView({model: homeworkBuddy.hwCreationModel});
-      homeworkBuddy.$container.append(homeworkBuddy.hwCreationView.el);
-      homeworkBuddy.router.header = new homeworkBuddy.Models.Header();
-      homeworkBuddy.router.headerView = new homeworkBuddy.Views.HeaderView({model: homeworkBuddy.router.header});
-      $('.marketing').hide();
-      $('#header').append(this.headerView.el);
-      this.teacherViewInitialized = true;
-    } else {
-      homeworkBuddy.$container.children().detach();
-      homeworkBuddy.$container.append(homeworkBuddy.Views.HWCreationView.el);
-    }
-  },
+    review: function(){
+      console.log("REVIEW HAS BEEN TRIGGERED!");
+      $('#container').children().detach();
+      $.ajax({
+        method: "GET", 
+        url: '/student/review/getquestions', 
+        success: function(data){
+          data = JSON.parse(data);
+          if (!data.length){
+            $('#container').prepend('Looks like you\'re up to date on your review. Come back after you\'ve done more assignments');
+            return
+          }
+          console.log(data);
+          app.questionSet = new homeworkBuddy.Collections.QuestionSet();
+          app.questionSetView = new homeworkBuddy.Views.QuestionSetView({collection: app.questionSet});
+          for ( var i = 0; i < data.length; i++ ){
+            var questionText = JSON.parse(data[i].QuestionText);
+            var q = {};
+            q.questionType = "MC";
+            q.number = i + 1;
+            q.question = questionText.question;
+            q.answerOptions = questionText.answerOptions;
+            q.correctAnswer = data[i].QuestionAnswer;
+            q.questionId = data[i].id;
+            q.streak = data[i].streak;
+            app.questionSet.add(q);
+          }
+          app.questionSetView.addSubmit();
+          $("#container").html('');
+          $('#container').append(app.questionSetView.el);
+        },
+        error: function(error){
+          console.log(error)
+        }
+      })
+    }, 
 
+    initialize: function(){
+      router = this;
+      $.ajax({
+        method: "GET", 
+        url: "/loggedin", 
+        success: function(){
+          router.loggedin = true;
+          $('#loggedinHeader').removeClass('hide');
+          $('#loggedoutHeader').addClass('hide');
+        }, 
+        error: function(){
+          router.loggedin = false;
+        }
+      });
+    },
+    login: function(){
+      var $header = $('#loggedoutHeader');
+      var username = $header.find('.username').val();
+      var password = $header.find('.password').val();
+      $.ajax({
+        method: "POST", 
+        url: "/login/user?password=" + password + "&username=" +  username, 
+        success: function(){
+          $('#loggedinHeader').removeClass('hide');
+          $('#loggedoutHeader').addClass('hide');
 
-  landing: function(){
-    homeworkBuddy.signup = new homeworkBuddy.Views.LoginView({});
-    homeworkBuddy.$container.html(homeworkBuddy.templates.base);
-    $('.marketing').html(homeworkBuddy.templates.marketing);
-    homeworkBuddy.signup.landing();
-  },
+          //TODO refactor this to make it prettier
+          $('#container').find('#myTeachers').find('.fetchTeachers').click();
+          router.loggedin = true;
+        }, 
+        error: function(){
+          $('#container').prepend('Username or password is incorrect');
+        }
+      })
+    },
 
-  signOrLogin: function(){
-    if (!homeworkBuddy.signupForm){
-      homeworkBuddy.signupForm = new homeworkBuddy.Views.signupForm({});
-    }
-  },
+    createCollectionsAndViews: function(paragraphs, questions){
+      this.urls = [];
+      this.currentIndex = 0;
 
-  signupStudent: function(){
-    this.signOrLogin();
-    homeworkBuddy.signupForm.signupStudent();
-  },
-
-  signupTeacher: function(){
-    this.signOrLogin();
-
-    homeworkBuddy.signupForm.signupTeacher();
-  },
-
-  loginStudent: function(){
-    this.signOrLogin();
-    homeworkBuddy.signupForm.loginStudent();
-  },
-
-  loginTeacher: function(){
-    this.signOrLogin();
-    homeworkBuddy.signupForm.loginTeacher();
-  },
-
-
-  //  This shows all the assignments that the teacher can "grade"
-  grades: function(){
-  },
-
-  makeAssignment: function(){
-    var router = this;
-    homeworkBuddy.$container.append(homeworkBuddy.hwCreationView.el);
-  }, 
-
-  addQuestions: function() {
-    console.log('Router is on create/addquestions')
-  }
-});
-
-//  this gets student data and all the questions for an assignment
-//  updates the router, and renders the grading view
-homeworkBuddy.Models.Header = Backbone.Model.extend({
-  getAssignment: function(url){
-    $.ajax({
-      method: "GET", 
-      url: url, 
-      success: function(data){
-        homeworkBuddy.$container.children().detach();
-        homeworkBuddy.createGradingView(data);
-      }, 
-      error: function(error){
-        console.log("There was an error");
-        console.log(error);
+      this.assignment = new homeworkBuddy.Collections.Assignment({model: homeworkBuddy.Models.Paragraph});
+      this.assignmentView = new homeworkBuddy.Views.AssignmentView({collection: this.assignment});
+      var currentText = '';
+      for ( var i = paragraphs.length - 1; i >= 0; i-- ){
+        if (paragraphs[i].paragraph_id){
+          var paragraph = new homeworkBuddy.Models.Paragraph(paragraphs[i]);
+          this.assignment.add(paragraph);
+          this.urls.push(paragraph.get('paragraph_id'));
+        }
       }
-    })
-  }
-});
+      paragraph = this.assignment.at(0);
+      for ( var i = 0; i < questions.length; i++ ) {
+        var question = questions[i];
 
-//  This is the standard header/menu view for teachers
-homeworkBuddy.Views.HeaderView = Backbone.View.extend({
-  initialize: function(){
-    this.$el.append(this.template({}));
-    this.fetchAssignments();
-  },
-
-  className: "nav navbar-nav",
-
-  events: {
-    'click a.grades': 'navigateGrade', 
-    'click a.createNew': 'navigateCreateNew'
-  },
-
-  navigateGrade: function(){
-    homeworkBuddy.$container.children().detach();
-    homeworkBuddy.$container.append(homeworkBuddy.assignmentsListView.el);
-    if (!this.onGrade){
-      this.onGrade = true;
-      homeworkBuddy.router.navigate('/teacher/grade');
-    }
-
-  }, 
-
-  navigateCreateNew: function(){
-    this.onGrade = false;
-    homeworkBuddy.$container.children().detach();
-    homeworkBuddy.$container.append(homeworkBuddy.hwCreationView.el);
-    homeworkBuddy.router.navigate('/teacher/create');
-  },
-
-  template: _.template('\
-    <li><a class = "createNew">Create New Homework!</a></li>\
-    <li><a class = "grades">Grades!</a></li>\
-    <li><a href = "/logout" class = "logout">Logout</a></li>'),
-
-  //  This fetches all the assignments that the teacher can grade
-  //  This happens after page load
-
-  fetchAssignments: function(){
-    var view = this;
-    homeworkBuddy.assignmentsList = new homeworkBuddy.Models.AssignmentsList({})
-    homeworkBuddy.assignmentsListView = new homeworkBuddy.Views.AssignmentsList({model: homeworkBuddy.assignmentsList});
-    $.ajax({
-      method: "GET", 
-      url: '/teacher/grade', 
-      success: function(data){
-        data = JSON.parse(data);
-        homeworkBuddy.assignmentsListView.createLinks(data);
-      }, 
-      error: function(error){
-        homeworkBuddy.assignmentsListView.loggedIn();
-        console.log(error)
+        //only search the collection for the new paragraph if the current paragraph isn't correct
+        if (paragraph.get('paragraph_id') !== questions[i].paragraph_id) {
+          paragraph = this.assignment.find(function(item){
+            return item.get('paragraph_id') === questions[i].paragraph_id;
+          });
+        }
+        paragraph.get('questionSet').push(question);
       }
-    })
-  },
+      this.assignment.trigger('questionsAdded');
+      this.navigate(this.rootURL + '/p/' + this.urls[this.currentIndex], {trigger: true});
+    },
 
-});
+    showParagraph: function(teacher, assignment, paragraph_id){
+      if (this.assignment){
+        paragraph = this.assignment.find(function(p){
+          return p.get('paragraph_id') + '' === paragraph_id + '';
+        });
+        paragraph.trigger('showMe');
+      }
+    },
 
-homeworkBuddy.Models.AssignmentsList = Backbone.Model.extend({});
-
-homeworkBuddy.Views.AssignmentsList = Backbone.View.extend({
-  createLinks: function(list){
-    this.$el.empty();
-    if (!list.length){
-      this.$el.append('<li>Make some homework first!</li>')
-    }
-    for (var i = 0; i < list.length; i++){
-      console.log(list[i])
-      this.$el.append(this.linkTemplate(list[i]));
-    }
-  },
-
-  loggedIn: function(){
-    this.$el.html('<li>There was an error fetching your data. Are you logged in? <br><a class = "login" href = "/">Login</a>');
-  },
-
-  initialize: function(){
-    this.$el.html('<ul><li>Try clicking again in a second, we\'re still fetching your data. Sorry!</li></ul>');
-  },
-
-  events: {
-    'click a.assignment': 'renderAssignment'
-  },
-
-  linkTemplate: _.template('<li><a class = "assignment" href = "grade/<%=assignmentName%>"><%=assignmentName%></a></li>'),
-
- render: function(){
-   return this;
- }, 
-
-  renderAssignment: function(e){
-    e.preventDefault();
-    var url = e.target.href;
-    homeworkBuddy.router.header.getAssignment(url);
-  }
-})
-
-
-$(document).ready(function () {
-    'use strict';
-    homeworkBuddy.init();
-    homeworkBuddy.$container = $('#container');
-    homeworkBuddy.router = new homeworkBuddy.Router();
-    Backbone.history.start({pushState: true})
-});
-
-homeworkBuddy.Views.LoginView = Backbone.View.extend({
-  events: {
-    'click a.signup.student': 'signupStudent',
-    'click a.signup.teacher': 'signupTeacher',
-    'click a.login.student': 'loginStudent', 
-    'click a.login.teacher': 'loginTeacher', 
-    'click a.why': 'why',
-  }, 
-
-  initialize: function(){
-    $('#header').append(this.el);
-  },
-
-  className: "nav navbar-nav",
-
-  landing: function(){
-    this.$el.append('<li><a href = "#" class = "why landing">Why use HW bud?</a></li>');
-    this.$el.append('<li><a href = "#" class = "login student landing">\
-                    Student Login</a></li>');
-    this.$el.append('<li><a href = "#" class = "signup student landing">Student Signup</a></li>');
-    this.$el.append('<li><a href = "#" class = "login teacher landing">Teacher Login</a></li>');
-    this.$el.append('<li><a href = "#"" class = "signup teacher landing">Teacher Signup</a></li>');
-  },
-
-  why: function(){
-    homeworkBuddy.router.navigate('/why', {trigger: true});
-  },
-
-  signupStudent: function(){
-    homeworkBuddy.router.navigate('/signup/student', {trigger: true});
-  },
-
-  loginStudent: function(){
-    homeworkBuddy.router.navigate('/login/student', {trigger: true});
-  },
-
-
-  signupTeacher: function(e){
-    homeworkBuddy.router.navigate('/signup/teacher', {trigger: true});
-  },
-
-  loginTeacher: function(e){
-    homeworkBuddy.router.navigate('/login/teacher', {trigger: true});
-  },
-}); 
-homeworkBuddy.templates.formTemplate = '<form class = "form-group teacher login hide container text-center" action="/login/teacher" method="post">\
-    <div>\
-        <label>Username:</label><br>\
-        <input type="text" name="username" placeholder = "Username"/>\
-    </div>\
-    <div>\
-    <label>Password:</label><br>\
-        <input type="password" name="password" placeholder = "Password"/>\
-    </div>\
-    <div>\
-        <input class  = "btn btn-primary" type="submit" value="Log In"/>\
-    </div>\
-</form>\
-<form class = "student login hide container text-center form-group" action="/login/student" method="post">\
-    <div>\
-    <label>Username:</label><br>\
-        <input type="text" name="username" placeholder = "Username"/>\
-    </div>\
-    <div>\
-    <label>Password:</label><br>\
-        <input type="password" name="password" placeholder = "Password"/>\
-    </div>\
-    <div>\
-        <input class  = "btn btn-primary" type="submit" value="Log In"/>\
-    </div>\
-</form>\
-<form class = "teacher signup hide container text-center form-group" action="/signup/teacher" method="post">\
-    <div>\
-    <label>Username:</label><br>\
-        <input type="text" name="username" placeholder = "How students find you"/>\
-    </div>\
-    <div>\
-    <label>Email:</label><br>\
-        <input type="text" name="email" placeholder = "optional"/>\
-    </div>\
-    <div>\
-    <label>Password:</label><br>\
-        <input type="password" name="password" placeholder = "Password"/>\
-    </div>\
-    <div>\
-        <input class  = "btn btn-primary" type="submit" value="Sign Up"/>\
-    </div>\
-</form>\
-<form class = "student signup hide container text-center form-group" action="/signup/student" method="post">\
-    <div>\
-    <label>Username:</label><br>\
-        <input type="text" name="username" placeholder = "Visible to teacher"/>\
-    </div>\
-    <div>\
-        <label>Email:</label><br>\
-        <input type="text" name="email" placeholder = "optional"/>\
-    </div>\
-    <div>\
-        <label>Password:</label><br>\
-        <input type="password" name="password" placeholder = "Password"/>\
-    </div>\
-    <div>\
-        <input class  = "btn btn-primary" type="submit" value="Sign Up" role = "button"/>\
-    </div>\
-</form>'
-homeworkBuddy.Collections.AllQuestions = Backbone.Collection.extend({
-  initialize: function(){
-    this.breadcrumbs = {};
-  }
-});
-
-homeworkBuddy.Collections.Students = Backbone.Collection.extend({
-  initialize: function(){
-    //store reference to model on breadcrumb for easier access
-    this.breadcrumbs = {};
-  }
-})
-
-homeworkBuddy.Collections.StudentAssignment = Backbone.Collection.extend({});
-
-homeworkBuddy.Collections.StudentAnswers = Backbone.Collection.extend({
-  initialize: function(){
-    this.existingAnswers = {};
-  },
-  addQuestion: function(question){
-    if (!this.existingAnswers[question.id_questions]){
-      this.existingAnswers[question.id_questions] = true;
-      delete question.name;
-      this.add(question);
-      homeworkBuddy.allQuestions.breadcrumbs[question.id_questions].updateTally(question.correct);
-      if (homeworkBuddy.allQuestions.breadcrumbs[question.id_questions].get('questionType') === "MC"){
-        this.student.updateTally(question.correct);
+    showQuestions: function(teacher, assignment, paragraph_id){
+      if (this.assignment){
+        paragraph = this.assignment.find(function(item){
+          return item.get('paragraph_id') === paragraph_id;
+        });
+        paragraph.trigger('showQuestions');
       }
     }
-  },
+
+  }));
+  //End router
+  homeworkBuddy.app = app;
+
+  Backbone.history.start({pushState: true, silent: false});
+
 });
-
-homeworkBuddy.Models.Student = Backbone.Model.extend({
-  initialize: function(){
-    this.questions = new homeworkBuddy.Collections.StudentAnswers();
-    //So that questions can update student grades
-    this.questions.student = this;
-  }, 
-
-  defaults: {
-    questionsCorrect: 0, 
-    questionsAnswered: 0
-  }, 
-
-  updateTally: function(correct){
-    this.set('questionsCorrect', this.get('questionsCorrect') + correct);
-    this.set('questionsAnswered', this.get('questionsAnswered') + 1);
+homeworkBuddy.Models.Paragraph = Backbone.Model.extend({
+  initialize: function(options){
+    this.set('paragraph_id', options.paragraph_id); 
+    this.set('text', options.text);
+    this.set('questionSet', []);
   }
-
 });
 
 homeworkBuddy.Models.Question = Backbone.Model.extend({
-  initialize: function(){
-    this.timesAnswered = 0; 
-    this.timesCorrect = 0;
+  defaults: {
+    'questionType': 'MC'
   },
 
-  updateTally: function(correct){
-    this.timesAnswered++;
-    if (correct){
-      this.timesCorrect++;
-    }
-  }
-});
-
-homeworkBuddy.Models.StudentAnswer = Backbone.Model.extend({});
-
-homeworkBuddy.Views.PercentCorrectViews = Backbone.View.extend({
-  className: "grading percentCorrectView list-inline pull-left",
   initialize: function(){
-    console.log('precent correct views is getting initialized');
-    this.collection.forEach(function(model){
-      var percentCorrectView = new homeworkBuddy.Views.PercentCorrectView({model: model});
-      this.$el.append(percentCorrectView.render().el);
-    }, this);
-    this.sortedQuestions = [];
+    this.set('answer', '');
   }, 
-
-  tagName: "ul",
-  className: "list-group list-inline pull-left text-center",
-
-
-  sortByDifficulty: function(){
-    if (!this.sortedQuestions.length){
-      this.collection.forEach(function(question){
-        var qObj = {};
-        if (question.get('questionType') !== 'MC' || question.timesAnswered === 0){
-          qObj.percent = '?';
-          qObj.symbol = "";
-          question.set('percentCorrect', '?');
-        } else {
-          qObj.percent = (question.timesCorrect / question.timesAnswered * 100);
-          qObj.symbol = "%";
-          question.set('percentCorrect', (question.timesCorrect / question.timesAnswered));
-        }
-        qObj.number = question.get('number');
-        this.sortedQuestions.push(qObj);
-      }, this);
-      this.sortedQuestions.sort(function(a, b){
-        if (a.percent === '?' && b.percent === '?'){
-          return 0;
-        } else if (a.percent === '?'){
-          return 1;
-        } else if (b.percent === '?'){
-          return -1
-        }
-        return a.percent - b.percent;
-      });
-      this.renderSortedQuestions();
-    }
-  },
-
-  template: _.template('<li class = "list-group-item" style = "width:100px"><%= number %>. <%= percent %><%= symbol %></li>'),
-
-  renderSortedQuestions: function(){
-    var view = this;
-    // this.$el.append('<li class = "list-group-item" style ="width = 250px" >Questions by difficulty:</li>');
-    _.each(this.sortedQuestions, function(item){
-      view.$el.append(view.template(item));
-    });
-    $('#container').prepend(this.el);
-  },
-
-  render: function(){
-    this.collection.forEach(function(question){
-      question.trigger('addPercentageCorrect');
-    });
-  },
 });
 
-homeworkBuddy.Views.GradingQuestionView = Backbone.View.extend({
-  className: "grading questions"
-});
+homeworkBuddy.Views.QuestionView = Backbone.View.extend({});
 
-homeworkBuddy.Views.GradingMCQuestionView = homeworkBuddy.Views.GradingQuestionView.extend({
-   initialize: function(){
-     this.model.on('addPercentageCorrect', function(){
-       this.renderPercent();
-     }, this);
-
-     this.model.on('studentAnswers', function(studentAnswer){
-      this.studentAnswers(studentAnswer);
-    }, this);
-   },
-
-   studentAnswers: function(studentAnswer){
-     this.$el.find('.answer.option').removeClass("correct").removeClass('incorrect');
-     if (studentAnswer.get('correct')){
-       this.$el.find('.' + studentAnswer.get('StudentAnswer')).addClass('correct');
-     } else {
-       this.$el.find('.' + studentAnswer.get('StudentAnswer')).addClass('incorrect');
-     }
-   },
-
-   questionTemplate: _.template('<h4><%= number %>. <%= question %></h4>\
-     <span class = "A answer option">A: <%= answerOptions[0] %></span><br>\
-     <span class = "B answer option">B: <%= answerOptions[1] %></span><br>\
-     <span class = "C answer option">C: <%= answerOptions[2] %></span><br>\
-     <span class = "D answer option">D: <%= answerOptions[3] %></span><br>\
-     <div class = "answer option correctAnswer"><% if (QuestionAnswer) { print ("Correct Answer: " + QuestionAnswer) } %></div>\
-     <div class = "percentageCorrect answer option"></div>'
-     ),
-
-   percentTemplate: _.template('<% if (timesAnswered) { print("Pecentage Correct: " + (timesCorrect/timesAnswered * 100) + "%") }%>'),
-
-   render: function(){
-     this.$el.append(this.questionTemplate(this.model.attributes));
-     this.renderPercent();
-     return this;
-   },
-   renderPercent: function(){
-     this.$el.find('.percentageCorrect').html(this.percentTemplate(this.model));
-    }
- });
-
-homeworkBuddy.Views.GradingShortAnswerQuestionView = homeworkBuddy.Views.GradingQuestionView.extend({
-   initialize: function(){
-     this.model.on('studentAnswers', function(studentAnswer){
-      this.studentAnswers(studentAnswer);
-     }, this);
-   },
-   questionTemplate: _.template('<h4><%= number %>. <%= question %></h4>\
-     <textarea class = "answer" value = "<%= QuestionAnswer %>" />'), 
-
-   studentAnswers: function(studentAnswer){
-     this.$el.find('.answer').text(studentAnswer.get('StudentAnswer'));
-   },
-
-   render: function(){
-     this.$el.append(this.questionTemplate(this.model.attributes));
-     return this;
-   }
- });
-
-homeworkBuddy.Views.GradingFillBlankQuestionView = homeworkBuddy.Views.GradingQuestionView.extend({
-   initialize: function(){
-     this.model.on('studentAnswers', function(studentAnswer){
-      this.studentAnswers(studentAnswer);
-     }, this);
-   },
-
-   studentAnswers: function(studentAnswer){
-     var $answer = this.$el.find(".answer");
-     $answer.val(studentAnswer.get('StudentAnswer'));
-   },
-
-   questionTemplate: _.template('<h4><%= number %>. <%= preText %><input type = "text" class = "answer" value = "<%=QuestionAnswer%>"><%= postText %></h4>'),
-
-   render: function(){
-     this.$el.append(this.questionTemplate(this.model.attributes));
-     return this;
-   }
- }); 
-homeworkBuddy.Views.AllQuestionsView = Backbone.View.extend({
-  className: "grading",
-  initialize: function(){
-   this.collection.on('add', function(q){
-     this.renderQuestion(q);
-   }, this);
-  },
-
-  percentageCorrect: function(){
-  },
-
-  renderQuestion: function(q){
-   var qView;
-   if (q.get('questionType') === "MC"){
-     qView = new homeworkBuddy.Views.GradingMCQuestionView({model: q});
-   } else if (q.get('questionType') === "ShortAnswer"){
-     qView = new homeworkBuddy.Views.GradingShortAnswerQuestionView({model: q});
-   } else if (q.get('questionType') === "FillBlank"){
-     qView = new homeworkBuddy.Views.GradingFillBlankQuestionView({model: q});
-   }
-   qView.render();
-   this.$el.append(qView.el);
-  }
- });
-
-homeworkBuddy.Views.Completed = Backbone.View.extend({
-  className: "grading completion input-group-btn pull-right",
-  tagName: "div",
-
-  initialize: function(){
-    this.$el.append('<button data-toggle = "dropdown" class = "btn btn-default btn-lg btn-primary dropdown-toggle pull-right">Students<span class="caret"></span></button>');
-    this.$el.append('<ul class="dropdown-menu pull-right"></ul>');
-    this.collection.forEach(function(student){
-      var view = new homeworkBuddy.Views.CompletedStudent({model: student});
-      this.$el.find('ul').append(view.render().el);
-    }, this);
-    this.render();
-    $('.dropdown-toggle').dropdown();
-  },
-
-  
-  render: function(){
-    $('#container').prepend(this.el);
-  }
-});
-
-homeworkBuddy.Views.CompletedStudent = Backbone.View.extend({
+homeworkBuddy.Views.MCQuestionView = homeworkBuddy.Views.QuestionView.extend({
   events: {
-    'click': 'displayStudentAnswers'
+    'click a.answer.option' : 'select', 
   },
 
-  tagName: 'li',
-
-  displayStudentAnswers: function(){
-    this.$el.parent().children().removeClass('active');
-    this.$el.addClass('active');
-    this.model.questions.forEach(function(question){
-        homeworkBuddy.allQuestions.breadcrumbs[question.get('id_questions')].trigger('studentAnswers', question);
-    });
+  select: function(event){
+    var option = this.$el.find('a.answer.option');
+    option.removeClass('selected').removeClass('active');
+    $currentTarget = $(event.currentTarget);
+    $currentTarget.addClass('selected').addClass('active');
+    var selected = $currentTarget.attr('class')[0];
+    this.model.set('selected', selected);
   },
+
+  initialize: function(){
+    this.model.on('save', function(){
+      var option = this.$el.find('.selected');
+      if (option.length){
+        var answer = option.attr('class')[0];
+        this.model.set('answer', answer);
+      }
+    }, this);
+    this.listenTo(this.model, 'highlight', function(correct, answer){
+      this.$el.find('.answer.option').removeClass('active');
+      if (correct){
+        this.$el.find('.' + answer).addClass('correct');
+      } else {
+        this.$el.find('.' + answer).addClass('incorrect');
+      }
+    })
+  },
+  //<% if (selected === "A") { print("selected") }%>
+  questionTemplate: _.template('<h2><%= number %>. <%= question %></h2\
+   <div class = "list-group">\
+     <a class = "A answer option list-group-item">A: <%= answerOptions[0] %></li>\
+     <a class = "B answer option list-group-item">B: <%= answerOptions[1] %></li>\
+     <a class = "C answer option list-group-item">C: <%= answerOptions[2] %></li>\
+     <a class = "D answer option list-group-item">D: <%= answerOptions[3] %></li>\
+   </div>'),
 
   render: function(){
-    this.$el.append('<a href = "#" class = "list-group-item">' + this.model.get('name') +  ' <span class = "badge"> ' + this.model.get('questionsCorrect')  + ' / ' + this.model.get('questionsAnswered') + '</span></a>');
+    this.$el.append(this.questionTemplate(this.model.attributes));
     return this;
   }
 });
-homeworkBuddy.createGradingView = function(data){
-  homeworkBuddy.students = new homeworkBuddy.Collections.Students();
-  homeworkBuddy.students.model = homeworkBuddy.Models.Student;
-  homeworkBuddy.allQuestions = new homeworkBuddy.Collections.AllQuestions();
-  homeworkBuddy.allQuestions.model = homeworkBuddy.Models.Question;
-  homeworkBuddy.allQuestionsView = new homeworkBuddy.Views.AllQuestionsView({collection: homeworkBuddy.allQuestions});
-  homeworkBuddy.percentCorrectViews = new homeworkBuddy.Views.PercentCorrectViews({collection: homeworkBuddy.allQuestions});
 
-  data = JSON.parse(data);
-  var assignmentName = data.assignmentName;
-  var questions = data.questions;
-  var student_questions = data.studentData;
-  var breadcrumbs = homeworkBuddy.students.breadcrumbs
-  var question, name, student, formattedQuestion, temp;
-  for ( var i = 0; i < questions.length; i++ ){
-    question = questions[i];
-    formattedQuestion = {};
-    formattedQuestion.id = question.id;
-    formattedQuestion.QuestionAnswer = question.QuestionAnswer || undefined;
-    temp = JSON.parse(question.QuestionText);
-    formattedQuestion = _.extend(formattedQuestion, temp);
-    formattedQuestion.number = i + 1;
-
-    homeworkBuddy.allQuestions.add(formattedQuestion);
-    question = homeworkBuddy.allQuestions.at(homeworkBuddy.allQuestions.length - 1);
-    homeworkBuddy.allQuestions.breadcrumbs[formattedQuestion.id] = question;
-  }
-  for ( var i = student_questions.length - 1; i >= 0; i-- ){
-    question = student_questions[i];
-    name = student_questions[i].name;
-    if (homeworkBuddy.students.breadcrumbs[name]){
-      student = homeworkBuddy.students.breadcrumbs[name];
-      student.questions.addQuestion(student_questions[i]);
-    } else {
-      homeworkBuddy.students.add([{'name': name}]);
-      student = homeworkBuddy.students.at(homeworkBuddy.students.length - 1);
-      homeworkBuddy.students.breadcrumbs[name] = student;
-    }
-  }
-  $('#container').html(homeworkBuddy.allQuestionsView.el);
-  homeworkBuddy.percentCorrectViews.render();
-  homeworkBuddy.completed = new homeworkBuddy.Views.Completed({collection: homeworkBuddy.students});
-  homeworkBuddy.percentCorrectViews.sortByDifficulty();
-};
-
-
-homeworkBuddy.templates = homeworkBuddy.templates || {};
-
-homeworkBuddy.templates.MCCreation = 
-'<div class = "MC pull-left"> \
-<input type = "text" class = "MC text" value = "<%=question%>" placeholder = "Question"/><br>\
-<input type = "text" class = "MC option A" value = "<%=answerOptions[0]%>" placeholder = "A"/><br>\
-<input type = "text" class = "MC option B" value = "<%=answerOptions[1]%>" placeholder = "B"/><br>\
-<input type = "text" class = "MC option C" value = "<%=answerOptions[2]%>" placeholder = "C"/><br>\
-<input type = "text" class = "MC option D" value = "<%=answerOptions[3]%>" placeholder = "D"/><br>\
-<div class = "btn-group" data-toggle = "buttons">\
-  <label class ="A btn btn-primary <% if (correctAnswer === "A") { print("active")} %>"><input type="radio" name="correct" value ="A" >A</label>\
-  <label class ="B btn btn-primary <% if (correctAnswer === "B") { print("active")} %>"><input type="radio" name="correct" value ="B" >B</label>\
-  <label class ="C btn btn-primary <% if (correctAnswer === "C") { print("active")} %>"><input type="radio" name="correct" value ="C" >C</label>\
-  <label class ="D btn btn-primary <% if (correctAnswer === "D") { print("active")} %>"><input type="radio" name="correct" value ="D" >D</label>\
-</div>\
-  <button class = "submit btn btn-success btn-lg pull-right">Done</button>\
-</div>'
-homeworkBuddy.templates.base = '<h1>Make Homework Awesome</h1>\
-        <p class="lead">Great homework comes from great teachers. Homework Bud just helps.  </p>\
-        <p><a class="btn btn-lg btn-success" href="/why" role="button">Check it out</a></p>\
-      </div>'
-
-homeworkBuddy.templates.marketing = '\
-        <div class="col-lg-6">\
-          <h4>Effectiveness of homework?</h4>\
-          <p>Have you ever had the feeling that the homework you\'ve created isn\'t helping students achieve? You\'re not alone, and <a href = "http://www.alfiekohn.org/teaching/HWach.htm">you might not be wrong</a></p>\
-          <h4>Homework Bud is Different</h4>\
-          <p>By allowing you to easily add questions to a reading passage or article, HW Bud helps you increase student engagement, and helps them retain the material better.</p>\
-          <h4>Spaced Repitition and Spiraling Review</h4>\
-          <p>Students can easily review questions from previous assignments using a built in Leitner Flashcard System.</p>\
-        </div>\
-        <div class="col-lg-6">\
-          <h4>Improve your teaching</h4>\
-          <p>By being able to quickly see what problems and concepts students struggled with, you can tailor your lessons to greater effect.</p>\
-          <h4>Reading isn\'t enough</h4>\
-          <p>Just reading something is one of the worst ways to learn. Testing and checks for understanding improve student results dramatically.</p>\
-          <h4>Grading shouldn\'t be your priority</h4>\
-          <p>Grading stacks of homework is the worst. Homework Bud will grade all of your multiple choice questions for you, and let\'s you concentrate on the important stuff.</p>\
-        </div>'
-homeworkBuddy.templates = homeworkBuddy.templates || {};
-
-homeworkBuddy.templates.HWCreationTemplate = '<h2>Makin\' Some Homework</h2>\
-<input type = "text" class = "chewy" id = "assignmentName" placeholder = "Your awesome assignment name goes here (no spaces!)"/><br>\
-<textarea class = "newAssignment"\
-placeholder = "Paste the text you\'d like to turn into an assignment">\
-</textarea><br><button class = "btn btn-success btn-lg newAssignment submit pull-right">Add Questions!</button>';
-homeworkBuddy.templates = homeworkBuddy.templates || {};
-
-homeworkBuddy.templates.FillBlankCreation = '<div class = "FillBlank question pull-left">\
-<textarea class = "FillBlank question preText text" placeholder = "Text before the blank"><% if (preText) { print (preText) } %> </textarea>\
-<input type = "text" class = "FillBlank question answer" value = "<%= answer %>" placeholder = "the blank"/>\
-<textarea class = "FillBlank question postText text" placeholder = "Text after the blank"><% if (postText) { print (postText) } %></textarea>\
-<button value = "Done" class = "btn btn-success btn-lg submit pull-right">Done</button></div>'
-homeworkBuddy.templates = homeworkBuddy.templates || {};
-homeworkBuddy.templates.ShortAnswerCreation = '<div class = "pull-left ShortAnswer question">\
-  <textarea type = "text" class = "SA question text" placeholder = "Prompt" ><% if (question) { print (question) } %></textarea><br>\
-  <button class = "submit btn btn-success btn-lg pull-right">Done</button>\
-</div>'
-
-/*global homeworkBuddy, Backbone*/
-
-homeworkBuddy.Models = homeworkBuddy.Models || {};
-
-(function () {
-    'use strict';
-
-    homeworkBuddy.Models.HWCreationModel = Backbone.Model.extend({
-      initialize: function(){
-        this.height = '200px';
-      }
-    });
-
-})();
-
-/*global homeworkBuddy, Backbone, JST*/
-
-homeworkBuddy.Views = homeworkBuddy.Views || {};
-
-(function () {
-    'use strict';
-    homeworkBuddy.Views.HWCreationView = Backbone.View.extend({
-
-      template: _.template(homeworkBuddy.templates.HWCreationTemplate),
-
-      className: 'textarea',
-
-      events: {
-        'click button.newAssignment': 'updateRouter'
-      },
-
-      initialize: function(){
-        this.render();
-      },
-
-      updateRouter: function(){
-        homeworkBuddy.router.navigate('/create/addquestions', {trigger: true});
-        this.submit();
-      },
-
-      //maybe should communicate with router
-      submit: function(){
-        var safe_name = function(str) {
-          return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\//g, '&#47;').replace('/?/', '&#63;').replace(/\s/g, '');;
-        };  
-        var temp, paragraph;
-        var assignmentName = safe_name($('input#assignmentName').val());
-
-        if (!assignmentName){
-          assignmentName = safe_name(prompt("Please enter a title for your assignment"));
-        }
-        if (assignmentName){
-          var text = $('textarea.newAssignment').val();
-          var array = encodeURIComponent(text).split('%0A');
-
-          homeworkBuddy.assignment = new homeworkBuddy.Collections.Assignment({name: assignmentName});
-          homeworkBuddy.assignmentView = new homeworkBuddy.Views.AssignmentView({collection: homeworkBuddy.assignment});
-          
-
-          var id = 0;
-          for (var i = 0; i < array.length; i++){
-            if (array[i].length) {
-              id = id + 1;
-              temp = decodeURIComponent(array[i]);
-              temp = temp;
-              paragraph = new homeworkBuddy.Models.Paragraph({text: temp, id: id});
-              homeworkBuddy.assignment.add(paragraph);
-            }
-          }
-        }
-        //need to add in check here
-
-      },
-
-      render: function(){
-        this.$el.append(this.template(this.model.attributes));
-        
-        return this;
-      }
-        // template: new EJS({url: 'app/scripts/templates/HWView.ejs'})
-    });
-
-})();
-
-homeworkBuddy.Views.signupForm = Backbone.View.extend({
-  forms: homeworkBuddy.templates.formTemplate, 
-
+homeworkBuddy.Views.ShortAnswerQuestionView = homeworkBuddy.Views.QuestionView.extend({
   initialize: function(){
-    $('#container').empty();
-    this.$el.html(this.forms);
-    $('#container').html(this.$el);
+    this.model.on('save', function(){
+      var answer = this.$el.find('.answer').val();
+      this.model.set('answer', answer);
+    }, this)
   },
-
-  signupStudent: function(){
-    this.$el.children().addClass('hide');
-    this.$el.find('.signup.student').removeClass('hide');
-  },
-
-  loginStudent: function(){
-    this.$el.children().addClass('hide');
-    this.$el.find('.login.student').removeClass('hide');
-  },
-
-  signupTeacher: function(){
-    this.$el.children().addClass('hide');
-    this.$el.find('.signup.teacher').removeClass('hide');
-  },
-
-  loginTeacher: function(){
-    this.$el.children().addClass('hide');
-    this.$el.find('.login.teacher').removeClass('hide');
-  },
-
-});
-/*global homeworkBuddy, Backbone*/
-
-homeworkBuddy.Models = homeworkBuddy.Models || {};
-
-(function () {
-    'use strict';
-
-    homeworkBuddy.Models.QuestionModel = Backbone.Model.extend({
-      
-    });
-
-    //MC questions, Fill in the blank questions, and short answer questions all inherit from 
-    //the question model, but have their own particular data
-    homeworkBuddy.Models.MCCreationModel = homeworkBuddy.Models.QuestionModel.extend({
-      defaults: {//these are important for editing
-        question: "", 
-        correctAnswer: "",
-        answerOptions:["", "", "", ""], 
-        questionType: "MC"
-      },
-
-      initialize: function(options){
-      },
-      saveQuestion: function(options){
-        this.set(options);
-      },
-
-      questionType: "MC", 
-      questionText: "Multiple Choice"
-    });
-
-
-    homeworkBuddy.Models.FillBlankCreationModel = homeworkBuddy.Models.QuestionModel.extend({
-      initialize: function(options){
-      }, 
-
-      defaults: {
-        preText: "", 
-        postText: "", 
-        answer: "", 
-        questionType: "FillBlank"
-      },
-
-      saveQuestion: function(options){
-        this.set(options);
-      },
-      questionType: "FillBlank", 
-      questionText: "Fill in the Blank"
-    });
-
-
-    homeworkBuddy.Models.ShortAnswerCreationModel = homeworkBuddy.Models.QuestionModel.extend({
-      initialize: function(options){
-      },
-
-      defaults: {
-        min: 0,
-        max: 100, 
-        question: "", 
-        questionType: "ShortAnswer"
-      },
-      saveQuestion: function(options){
-        options.min = parseInt(options.min);
-        options.max = parseInt(options.max)
-        if (Number.isNaN(options.min)) {
-          options.min = 0;
-        }
-        if (Number.isNaN(options.max) || options.min > options.max){
-          options.max = options.min + 100;
-        }
-        this.set(options);
-      },
-      questionType: "ShortAnswer", 
-      questionText: "Short Answer"
-    });
-
-
-})();
-
-/*global homeworkBuddy, Backbone, JST*/
-
-homeworkBuddy.Views = homeworkBuddy.Views || {};
-homeworkBuddy.templates = homeworkBuddy.templates || {};
-(function () {
-    'use strict';
-
-
-    homeworkBuddy.Views.QuestionCreationView = Backbone.View.extend({
-
-      events: {
-        'click button': 'saveQuestion',
-      }, 
-
-      render: function(){
-      },
-
-      saveQuestion: function(){
-        this.save();
-
-        //finishing editing the form
-        this.model.trigger('stopEdit');
-        this.model.trigger('questionAdded', this.model);
-      },
-
-    });
-
-    //can refactor to put initialize and render in the parent view, and leave template in the child
-    homeworkBuddy.Views.MCCreationView = homeworkBuddy.Views.QuestionCreationView.extend({
-        template: _.template(homeworkBuddy.templates.MCCreation),
-
-        save: function(){
-          var question = $('.text.MC').val();
-          var answerOptions = [];
-          var temp;
-          var correctAnswer;
-          answerOptions.push(this.$el.find('.A').val());
-          answerOptions.push(this.$el.find('.B').val());
-          answerOptions.push(this.$el.find('.C').val());
-          answerOptions.push(this.$el.find('.D').val());
-
-          temp = this.$el.find('.active').attr("class");
-          if (temp && temp.length){
-            correctAnswer = temp[0];
-          }
-
-          this.model.saveQuestion({question: question, answerOptions: answerOptions, correctAnswer: correctAnswer});
-        },
-        
-        initialize: function(){
-          //when done editing hide this view
-          this.model.on('stopEdit', function(){ 
-            this.$el.remove();
-          }, this);
-        },
-        
-        render: function(){
-          this.$el.append(this.template(this.model.attributes));
-          return this;
-        }
-    });
-
-    homeworkBuddy.Views.FillBlankCreationView = homeworkBuddy.Views.QuestionCreationView.extend({
-        template: _.template(homeworkBuddy.templates.FillBlankCreation),
-
-        className: "FB",
-
-        save: function(){
-          var preText = $('.preText').val();
-          var postText = $('.postText').val();
-          var answer = $('.answer').val();
-
-          this.model.saveQuestion({preText: preText, postText: postText, answer: answer});
-        },
-
-        initialize: function(){
-          this.model.on('stopEdit', function(){ 
-            this.$el.remove(); 
-          }, this)
-        },
-        render: function(){
-          this.$el.append(this.template(this.model.attributes));
-          return this;
-        }
-    });
-
-    homeworkBuddy.Views.ShortAnswerCreationView = homeworkBuddy.Views.QuestionCreationView.extend({
-        template: _.template(homeworkBuddy.templates.ShortAnswerCreation),
-
-        className: "SA",
-
-        save: function(){
-          var min = $('.min').val();
-          var max = $('.max').val();
-          var question = $('.text.question').val();
-
-          this.model.saveQuestion({min: min, max: max, question: question});
-        },
-        
-        initialize: function(){
-          this.model.on('stopEdit', function(){ 
-            this.$el.remove();
-          }, this)
-        },
-        render: function(){
-          this.$el.append(this.template(this.model.attributes));
-          return this;
-        }
-    });
-
-})();
-
-
-/*global homeworkBuddy, Backbone*/
-
-homeworkBuddy.Collections = homeworkBuddy.Collections || {};
-
-(function () {
-    'use strict';
-    
-
-    homeworkBuddy.Collections.QuestionSet = Backbone.Collection.extend({
-        addMC: function(){
-          this.add(new homeworkBuddy.Models.MCCreationModel());
-        }, 
-        addShortAnswer: function(){
-          this.add(new homeworkBuddy.Models.ShortAnswerCreationModel());
-        }, 
-        addFillBlank: function(){
-          this.add(new homeworkBuddy.Models.FillBlankCreationModel());
-        },
-
-        initialize: function(){
-          this.count = 1;
-          this.on('add', function(model){
-            console.log(model);
-            model.set('number', this.count);
-            this.count++;
-          }, this);
-        }
-    });
-
-})();
-
-/*global homeworkBuddy, Backbone, JST*/
-
-homeworkBuddy.Views = homeworkBuddy.Views || {};
-
-(function () {
-    'use strict';
-
-    homeworkBuddy.Views.QuestionSetView = Backbone.View.extend({
-        
-        //basically a large div that will be used for showAll
-        // template: new ejs({url: 'app/scripts/templates/QuestionSetView.ejs'}), 
-        events:{
-          'click a.MC': 'addMC', 
-          'click a.ShortAnswer': 'addShortAnswer', 
-          'click a.FillBlank': 'addFillBlank', 
-        },
-
-        className: "questionSet",
-
-        questionOptions: '<div class = "questionOptions pull-left"><a href = "#" class = "MC question">Add Multiple Choice</a><br><a href = "#" class = "ShortAnswer question">Add Short Answer</a><br>\
-                        <a href = "#" class = "FillBlank question">Add Fill in the Blank<br></a></div><div class = "addedQuestions"></div>\
-                        <div class = "questionForm"></div>',
-
-        initialize: function(){
-          this.$el.html(this.questionOptions);
-
-          this.collection.on('add', function(model, collection){
-            this.addOne(model);
-          }, this);
-
-          this.collection.on('editQuestion', function(question){
-            this.addOne(question);
-          }, this);
-
-          this.collection.on('change', function(model, collection){
-            //view.render();
-          }, this);
-
-          this.collection.on('questionAdded', function(question){
-            if (!question.get('rendered')){
-              var completedQuestionView = new homeworkBuddy.Views.CompletedQuestion({model: question});
-              this.$el.find('div.addedQuestions').append(completedQuestionView.render().el);
-            }
-          }, this);
-
-        },
-
-        render: function(){
-          this.$el.find('span.questionOptions').html(this.questionOptions);
-        },
-
-        addMC: function(e){
-          e.preventDefault();
-          this.collection.addMC();
-        }, 
-        
-        addShortAnswer: function(e){
-          e.preventDefault();
-          this.collection.addShortAnswer();
-        }, 
-        
-        addFillBlank: function(e){
-          e.preventDefault();
-          this.collection.addFillBlank();
-        },
-
-        //addOne takes a question model and renders it and places it in the dom
-        addOne: function(question){
-          var questionView;
-          if (question.questionType === 'MC'){
-            questionView = new homeworkBuddy.Views.MCCreationView({model: question});
-          } else if (question.questionType === 'ShortAnswer') {
-            questionView = new homeworkBuddy.Views.ShortAnswerCreationView({model: question});
-          } else if (question.questionType === 'FillBlank') {
-            questionView = new homeworkBuddy.Views.FillBlankCreationView({model: question});
-          }
-          questionView.render();
-          this.$el.find('.questionForm').append(questionView.el);
-          return this;
-        }
-        
-    });
-
-})();
-
-homeworkBuddy.Views.ParagraphView = Backbone.View.extend({
-  events: {
-    'click a.paragraph': 'startQuestionSet',
-  },
-
-  initialize: function(){
-    this.render();
-  },
-
-  template: _.template('<div class = "paragraph paragraph<%=id%>" > <%=text%> </div><div class = "insert question">\
-                       <a href = "#" class = "paragraph paragraph<%=id%>" >Add some questions!</a></div>'),
+  questionTemplate: _.template('<h2><%= number %>. <%= question %></h2>\
+    <textarea class = "answer" value = "<%=answer%>" />'), 
 
   render: function(){
-    //rendering a paragaph with the appropriate text and id. 
-    this.$el.append(this.template(this.model.attributes));
-  }, 
-
-  startQuestionSet: function(e){
-    e.preventDefault();
-    this.$el.find('a.paragraph').hide();
-
-    //create a new question set collection and view
-    this.model.set('questionSet', new homeworkBuddy.Collections.QuestionSet());
-    var questionSetView = new homeworkBuddy.Views.QuestionSetView({collection: this.model.get('questionSet')});
-
-    //add the questionSetView to the paragraph DOM view element
-    this.$el.append(questionSetView.el);
-
+    this.$el.append(this.questionTemplate(this.model.attributes));
+    return this;
   }
+ });
 
-});
-homeworkBuddy.Views.AssignmentView = Backbone.View.extend({
-
+homeworkBuddy.Views.FillBlankQuestionView = homeworkBuddy.Views.QuestionView.extend({
   initialize: function(){
-    this.render();
-
-    var view = this;
-    this.collection.on('add', function(p){
-      view.addOne(p);
-    })
-  }, 
-
-  events: {
-    'click button#completed':'submitHomework'
-  },
-
-  completedButton: '<div class = "bottom"><button id = "completed" class = "btn btn-success btn-lg pull-right">Homework Creation Complete!</button></div>', 
-  
-  render: function(){
-   //clears out the old container and adds in assignment view
-   $('#container').html("");
-   $('.title').prepend(this.collection.assignmentName);
-   $('#container').append(this.$el);
-   this.$el.append('<div class = "middle"></div>')
-   this.$el.append(this.completedButton);
-  },
-
-  addOne: function(paragraph){
-    var paragraphView = new homeworkBuddy.Views.ParagraphView({model: paragraph});
-    this.$el.find('.middle').append(paragraphView.el);
-  },
-
-  submitHomework: function(){
-    this.collection.submitHomework();
-  }
-
-})
-homeworkBuddy.Views.CompletedQuestion = Backbone.View.extend({
-  tagName: 'span',
-  editing: false, 
-  events: {
-    'click': 'showQuestionCreation'
-  },
-  
-  initialize: function(){
-    this.model.on('stopEdit', function(){
-      this.editing = false;
+    this.model.on('save', function(){
+      var answer = this.$el.find('.answer').val();
+      this.model.set('answer', answer);
     }, this)
   },
 
-  showQuestionCreation: function(){
-    if (!this.editing){
-      this.editing = true;
-      this.model.trigger('editQuestion', this.model);
-    } else {
-      this.model.trigger('stopEdit', this.model);
-    }
-  },
-  
+  questionTemplate: _.template('<h2><%= number %>. <%= preText %><input type = "text" class = "answer" value = "<%=answer%>"><%= postText %></h2>'),
+
   render: function(){
-   this.$el.text( this.model.get('number') + '. ' + this.model.questionText + ' ');
-   this.model.set('rendered', true);
-   return this;
+    this.$el.append(this.questionTemplate(this.model.attributes));
+    return this;
   }
-
-})
-homeworkBuddy.Models.Paragraph = Backbone.Model.extend({
 });
-homeworkBuddy.Collections = homeworkBuddy.Collections || {};
 
-homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
-  model: homeworkBuddy.Models.Paragraph, 
+homeworkBuddy.Views.ParagraphView = Backbone.View.extend({
+  initialize: function(){
+   var view = this;
+   this.url = '/p/' + this.model.get('paragraph_id'),
 
-  url: "http://localhost:8080",
-  initialize: function(options){
-    this.assignmentName = options.name;
+   this.listenTo(this.model, 'renderQuestions', function(){
+     this.renderQuestions();
+   }, this);
+
+   this.listenTo(this.model, 'complete', function(){
+     this.render();
+   }, this);
+
+
+   this.listenTo(this.model, 'showMe', function(){
+     $('#container').children().detach();
+     $('#container').append(view.el);
+
+     view.$el.find(".go").on('click', function(){
+       view.doQuestions();
+     });
+     view.$el.find(".return").on('click', function(){
+       view.returnParagraph();
+     });
+     view.$el.find(".submit").on('click', function(){
+       view.submit();
+     });
+     view.$el.find(".assignment").on('click', function(){
+       view.submitAssignment();
+     });
+   });
   },
 
-  submitHomework: function(){
-    var assignmentName = this.assignmentName;
-    console.log(assignmentName);
-    if (assignmentName.length > 25){
-      assignmentName = assignmentName.split('').slice(0, 25).join('');
+  submit: function(){
+    //saving values
+    var paragraph = app.assignment.find(function(item){
+      return item.get('paragraph_id') + '' === app.urls[router.currentIndex] + '';
+    });
+    if (paragraph && paragraph.questionSet){
+      paragraph.questionSet.forEach(function(question){
+        question.trigger('save');
+      });
     }
-    var data = this.processData(this.toJSON());
-    data = JSON.stringify(data);
-    console.log('submitting homework');
-    console.log(data);
 
-    $.ajax({
-      method: 'POST', 
-      contentType: 'application/json',
-      data: data, 
-      url: 'http://localhost:8080/newhw/' + assignmentName, 
-      success: function(urlObj){
-      $('#container').children().detach();
-      $('#container').append('\
-        <h1>Homework Creation Successful!</h1>\
-        <p>Nice job. Your homework is available at' +
-        urlObj + '</p>\
-        ');
-        console.log(urlObj);
-      }, 
-      error: function(error){
-        if (error.status === 401){
-          $('#container').prepend("<h2>Looks like you aren't logged in...</h2>");
-        } else if (error.status === 400){
-          $('#container').prepend("<h2>You've already used that assignment name.</h2>");
-        } else {
-           $('#container').prepend('<h2>Something went wrong with our servers. Sorry!</h2><p>Try again in a minute or two</p>')
+    app.currentIndex++;
+    if (app.currentIndex < app.urls.length){
+      app.navigate(app.rootURL + '/p/' + app.urls[app.currentIndex], {trigger: true});
+    } else {
+      this.submitAssignment();
+    }
+  },
+
+  doQuestions: function(){
+    app.navigate(app.rootURL + this.url + '/q');
+    this.$el.children().toggleClass('hide');
+  },
+
+  returnParagraph: function(){
+    app.navigate(app.rootURL + this.url);
+    this.$el.children().toggleClass('hide');
+  },
+
+  submitAssignment: function(){
+    if (router.loggedin){
+      var data = [];
+      router.assignment.forEach(function(paragraph){
+        if (paragraph.attributes.questionSet){
+          paragraph.questionSet.forEach(function(question){
+            var toSave = {};
+            toSave.question_id = question.get('questionId');
+            toSave.answer = question.get('answer');
+            data.push(toSave);
+          });
         }
+      })
+      data = JSON.stringify(data);
+
+      console.log('data', data);
+      $.ajax({
+        method: "POST", 
+        data: data,
+        url: '/submitAssignment' + router.rootURL, 
+        contentType: 'application/JSON',
+        success: function(){
+          $('#container').children().detach();
+          $('#container').append("You're done!");
+        }
+      });
+    } else {
+      $('#container').prepend("You aren't logged in. Please login and submit again.");
+    }
+  },
+
+  render: function(){
+    this.$el.html('<div class = "questions" >' + this.model.get('text') + '</div>');
+    this.$el.append('<div class = "questionSet questions hide"></div>');
+    this.$el.append('<button class = "questions go btn btn-success btn-lg pull-right marTop">Ready for some questions?</button>');
+    this.$el.append('<button class = "btn btn-warning questions btn-lg return hide pull-left marTop">Return to text</button>');
+    this.$el.append('<button class = "btn btn-success btn-lg submit hide pull-right marTop">Submit Answers</button>');
+    
+    return this;
+  },
+
+  renderQuestions: function(){
+    this.model.questionSet = new homeworkBuddy.Collections.QuestionSet();
+    this.model.questionSetView = new homeworkBuddy.Views.QuestionSetView({collection: this.model.questionSet});
+    for (var i = 0; i < this.model.get('questionSet').length; i++){
+      var q = this.model.get('questionSet')[i]
+      var id = q.id;
+      q = JSON.parse(q.QuestionText);
+      q = new homeworkBuddy.Models.Question(q);
+      q.set({questionId: id});
+      this.model.questionSet.add(q);
+    }
+    this.$el.find('div.questionSet').append(this.model.questionSetView.el);
+    
+  }
+});
+
+homeworkBuddy.Views.QuestionSetView = Backbone.View.extend({
+  initialize: function(){
+    this.collection.on('add', function(q){
+      this.renderQuestion(q);
+    }, this);
+  },
+
+  addSubmit: function(){
+    this.$el.append("<button class = 'submit review btn-success btn btn-lg pull-right'>Check and Submit</button>")
+  }, 
+
+  events: {
+    'click button.submit.review' : 'checkAndSubmit'
+  },
+
+  checkAndSubmit: function(){
+    this.collection.checkAndSubmit();
+  },
+
+  renderQuestion: function(q){
+    var qView;
+    if (q.get('questionType') === "MC"){
+      qView = new homeworkBuddy.Views.MCQuestionView({model: q});
+    } else if (q.get('questionType') === "ShortAnswer"){
+      qView = new homeworkBuddy.Views.ShortAnswerQuestionView({model: q});
+    } else if (q.get('questionType') === "FillBlank"){
+      qView = new homeworkBuddy.Views.FillBlankQuestionView({model: q});
+    }
+    qView.render();
+    this.$el.append(qView.el);
+  }
+});
+
+homeworkBuddy.Views.AssignmentView = Backbone.View.extend({
+
+  initialize: function(){
+   this.$el = $('#container');
+
+   this.collection.on('add', function(p){
+      this.addOne(p);
+    }, this);
+
+    this.collection.on('questionsAdded', function(){
+      this.forEach(function(paragraph){
+        paragraph.trigger('complete');
+        paragraph.trigger('renderQuestions');
+      });
+    })
+  }, 
+
+  addOne: function(paragraph){
+    var paragraphView = new homeworkBuddy.Views.ParagraphView({model: paragraph});
+    paragraphView.render();
+  }
+});
+
+homeworkBuddy.Collections.QuestionSet = Backbone.Collection.extend({
+  checkAndSubmit: function(){
+    var results = [];
+    this.forEach(function(question){
+      var q = {};
+      q.id = question.get('questionId');
+      q.streak = question.get('streak');
+      var selected = question.get('selected');
+      var correctAnswer = question.get('correctAnswer');
+      console.log("selected", selected);
+      console.log("correctAnswer", correctAnswer);
+      if (selected === correctAnswer){
+        question.trigger('highlight', true, correctAnswer);
+        q.correct = 1;
+        q.streak = 1;
+      } else {
+        question.trigger('highlight', false, correctAnswer);
+        q.correct = 0;
+        q.correct = -q.streak;
+      }
+      results.push(q);
+    });
+    if (!this.submitted){
+      this.submitted = true;
+      $.ajax({
+        method: "POST", 
+        url: '/student/review', 
+        contentType: 'application/json',
+        data: JSON.stringify(results),
+        success: function(){
+          console.log('success');
+        }, 
+        error: function(error){
+          console.log(error);
+        }
+      });
+    }
+  }
+});
+
+homeworkBuddy.Collections.Assignment = Backbone.Collection.extend();
+
+
+homeworkBuddy.student = {}
+
+homeworkBuddy.student.start = function( ){
+  if (!this.teachersList){
+    this.teachersList = {};
+  }
+  var $container = $('#container');
+  $container.children().detach();
+  $container.append('<div class = "row"></div>');
+  $container = $container.find('.row');
+  $container.append('<div id = "teachers" class = "col-md-4"><h2>All Teachers</h2></div>');
+  $container.append('<div id = "myTeachers" class = "col-md-4"><h2>My Teachers</h2></div>');
+  $container.append('<div id = "assignments" class = "col-md-4"><h2>Assignments</h2></div>');
+  if (!this.allTeachers){
+    this.allTeachers = new homeworkBuddy.Collections.AllTeacherList();
+  } else {
+    $('#container').find('#teachers').append(this.allTeachers.view.el);
+  }
+  if (!this.myTeachers){
+    this.myTeachers = new homeworkBuddy.Collections.TeacherList({});
+  } else {
+    $('#container').find('#myTeachers').append(this.myTeachers.view.el);
+  }
+}
+
+homeworkBuddy.Collections.AllTeacherList = Backbone.Collection.extend({
+  initialize: function(){
+    var allTeacherList = this;
+    this.view = new homeworkBuddy.Views.AllTeacherListView({collection: this});
+    $.ajax({
+      method: 'GET', 
+      url: '/allteachers',
+      success: function(data){
+        var teacher;
+        data = JSON.parse(data);
+        for (var i = 0; i < data.length; i++){
+          teacher = new homeworkBuddy.Models.Teacher(data[i]);
+          allTeacherList.add(teacher);
+        }
+      },
+      error: function(error){
+        $('#container').find('#teachers').children().detach();
+        $('#container').find('#teachers').append('Something went wrong. Sorry! Try again in a minute');
+      }
+    });
+  }, 
+});
+
+homeworkBuddy.Views.AllTeacherListView = Backbone.View.extend({
+  tagName: 'ul',
+  className: 'list-group', 
+
+  initialize: function(){
+    this.listenTo(this.collection, 'add', function(model){
+      var view = new homeworkBuddy.Views.AllTeacherView({model: model});
+      this.$el.append(view.el);
+    }, this);
+    this.render();
+  },
+
+  render: function(){
+    $('#container').find('#teachers').append(this.el);
+  }
+});
+
+
+homeworkBuddy.Collections.TeacherList = Backbone.Collection.extend({
+  initialize: function(){
+    this.view = new homeworkBuddy.Views.TeacherListView({collection: this});
+    this.fetchTeachers();
+  },
+
+  fetchTeachers: function(){
+    var myTeacherList = this;
+    $.ajax({
+      method: "GET",
+      url: '/allclasses',
+      success: function(data){
+        data = JSON.parse(data);
+        for (var i = 0; i < data.length; i++){
+          var teacher = new homeworkBuddy.Models.Teacher(data[i]);
+          myTeacherList.add(teacher);
+          homeworkBuddy.student.teachersList[data[i].name] = true;
+        }
+        $('#myTeachers').find('.message').text('');
+        $('#container').find('#myTeachers').find('.fetchTeachers').addClass('hide');
+      },
+      error: function(){
+        $('#myTeachers').find('.message').text('There was an error fetching your classes. Are you logged in?')
+        $('#container').find('#myTeachers').find('.fetchTeachers').removeClass('hide');
+      }
+    })
+  }
+});
+
+homeworkBuddy.Views.TeacherListView = Backbone.View.extend({
+  tagName: 'ul',
+  className: 'list-group',
+
+  initialize: function(){
+    this.$el.append('<div class = "message" fetchTeachers></div>')
+    this.$el.append('<a href = "#" class = "list-group-item hide fetchTeachers">Refresh</a>');
+    this.collection.on('add', function(teacher){
+      var view = new homeworkBuddy.Views.TeacherView({model: teacher});
+      this.$el.prepend(view.el)
+    }, this)
+    this.render();
+  },
+
+  events: {
+    'click a.fetchTeachers': 'fetch', 
+  },
+
+  fetch: function(){
+    this.collection.fetchTeachers();
+  },
+
+  render: function(){
+    $('#container').find('#myTeachers').append(this.el);
+  }
+})
+
+homeworkBuddy.Models.Teacher = Backbone.Model.extend({
+  initialize: function(){
+    this.assignments = [];
+  },
+
+  getAssignmentsForTeacher: function(){
+    var teacher = this;
+    $.ajax({
+      method: "GET", 
+      url: '/getassignments/' + teacher.get('name'), 
+      success: function(data){
+        data = JSON.parse(data);
+        teacher.assignments = data;
+        teacher.assignmentsView = new homeworkBuddy.Views.AssignmentListView({model: teacher});
+        teacher.trigger('fetchedAssignments');
+        console.log(teacher.assignments);
+      }, 
+      error: function(){
+        teacher.assignments.push({assignmentName: "There was an error fetching the data"});
       }
     });
   },
 
-
-//Need to concatenate all the paragraphs in order so that articles will show up in the right place on the student server
-  processData: function(data){
-    console.log(data);
-    var temp = '';
-    var results = [];
-
-
-    for ( var i = 0; i < data.length ; i++ ){
-      if (!data[i].text){
-        continue;
-      }
-      temp = temp + '<br>' + data[i].text;
-      if (data[i].questionSet && data[i].questionSet.length){
-        data[i].text = temp;
-        results.push(data[i]);
-        temp = '';
-      } else if (i === data.length - 1){
-        data[i].text = temp;
-        results.push(data[i]);
-      }
+  joinClass: function(){
+    var teacher = this;
+    var teacherName = this.get('name');
+    if (!homeworkBuddy.student.teachersList[teacherName]){
+      //This + error callback are so you can't dbl click to join multiple times
+      homeworkBuddy.student.teachersList[teacherName] = true;
+      $.ajax({
+        method:"POST",
+        url: '/students/joinclass/' + teacherName, 
+        success: function(){
+          homeworkBuddy.student.myTeachers.add(teacher);
+        },
+        error: function(){
+          homeworkBuddy.student.teachersList[teacherName] = false;
+          $('#message').text('There was an error joining the class. Try again in a second').removeClass('hide');
+        }
+      })
     }
-    return results;
+  }
+});
+
+homeworkBuddy.Views.TeacherView = Backbone.View.extend({
+  tagName: "li", 
+  className: "list-group-item",
+  initialize: function(){
+    this.render();
+    this.model.on('fetchedAssignments', function(){
+      $assignments = $('#container').find('#assignments');
+      $assignments.find('.assignments').detach();
+      $assignments.append(this.model.assignmentsView.el);
+    }, this)
+  },
+
+  events: {
+    'click a.teacher': 'getAssignmentsForTeacher', 
+  },
+
+  getAssignmentsForTeacher: function(){
+    console.log('getting assignments for teacher');
+    if (this.model.assignmentsView){
+      this.model.trigger('fetchedAssignments');
+    } else {
+      this.model.getAssignmentsForTeacher();
+    }
+  },
+  template: _.template("<a href = '#' class = 'teacher'><%=name%></a>"),
+  render: function(){
+    this.$el.append(this.template(this.model.attributes));
+    return this;
+  }
+
+});
+
+homeworkBuddy.Views.AllTeacherView = homeworkBuddy.Views.TeacherView.extend({
+  events: {
+    'click a.teacher': 'getAssignmentsForTeacher', 
+    'click span.label': 'joinClass'
+  },
+
+  joinClass: function(){
+    this.model.joinClass();
+  },
+
+  template: _.template('<a href = "#" class = "teacher"><%=name%></a><span class ="joinClass label label-default pull-right">Join Class</span>'),
+  render: function(){
+    var view = this;
+    console.log(view.model.attributes);
+    var temp = view.template(view.model.attributes);
+    console.log(temp);
+    view.$el.append(temp);
+    console.log(view.el);
+    return this;
+  }
+});
+
+homeworkBuddy.Views.AssignmentListView = Backbone.View.extend({
+  className: "list-group assignments",
+  tagName: "ul",
+
+  initialize: function(){
+    this.render();
+  },
+
+  render: function(){
+    var options = {};
+    var view;
+    options.teacher = this.model.get('name');
+    for (var i = 0; i < this.model.assignments.length; i++){
+      options.assignmentName = this.model.assignments[i].assignmentName
+      view = new homeworkBuddy.Views.SingleAssignmentView(options);
+      this.$el.prepend(view.el);
+    }
+    if (!this.model.assignments.length){
+      this.noAssignment();
+    }
+  },
+  noAssignment: function(){
+    this.$el.append('<li class = "list-group-item">This teacher hasn\'t made any assignments yet.</li>');
+  }
+});
+
+homeworkBuddy.Views.SingleAssignmentView = Backbone.View.extend({
+  tagName: "li", 
+  className: "list-group-item",
+  initialize: function(options){
+    this.teacher = options.teacher;
+    this.assignmentName = options.assignmentName;
+    this.render();
+  },
+
+  events: {
+    'click a.assignment': "gotoAssignment"
+  },
+
+  render: function(){
+    this.$el.append('<a href = "#" class = "assignment">' + this.assignmentName + '</a>');
+    return this;
+  },
+  
+  gotoAssignment: function(){
+    homeworkBuddy.app.navigate('/student/' + this.teacher + '/' + this.assignmentName, {trigger: true});
   }
 })
-/*!
- * Bootstrap v3.0.2 by @fat and @mdo
- * Copyright 2013 Twitter, Inc.
- * Licensed under http://www.apache.org/licenses/LICENSE-2.0
- *
- * Designed and built with all the love in the world by @mdo and @fat.
- */
-
-if (typeof jQuery === "undefined") { throw new Error("Bootstrap requires jQuery") }
-
-/* ========================================================================
- * Bootstrap: transition.js v3.0.2
- * http://getbootstrap.com/javascript/#transitions
- * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ======================================================================== */
-
-
-+function ($) { "use strict";
-
-  // CSS TRANSITION SUPPORT (Shoutout: http://www.modernizr.com/)
-  // ============================================================
-
-  function transitionEnd() {
-    var el = document.createElement('bootstrap')
-
-    var transEndEventNames = {
-      'WebkitTransition' : 'webkitTransitionEnd'
-    , 'MozTransition'    : 'transitionend'
-    , 'OTransition'      : 'oTransitionEnd otransitionend'
-    , 'transition'       : 'transitionend'
-    }
-
-    for (var name in transEndEventNames) {
-      if (el.style[name] !== undefined) {
-        return { end: transEndEventNames[name] }
-      }
-    }
-  }
-
-  // http://blog.alexmaccaw.com/css-transitions
-  $.fn.emulateTransitionEnd = function (duration) {
-    var called = false, $el = this
-    $(this).one($.support.transition.end, function () { called = true })
-    var callback = function () { if (!called) $($el).trigger($.support.transition.end) }
-    setTimeout(callback, duration)
-    return this
-  }
-
-  $(function () {
-    $.support.transition = transitionEnd()
-  })
-
-}(jQuery);
-
-/* ========================================================================
- * Bootstrap: alert.js v3.0.2
- * http://getbootstrap.com/javascript/#alerts
- * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ======================================================================== */
-
-
-+function ($) { "use strict";
-
-  // ALERT CLASS DEFINITION
-  // ======================
-
-  var dismiss = '[data-dismiss="alert"]'
-  var Alert   = function (el) {
-    $(el).on('click', dismiss, this.close)
-  }
-
-  Alert.prototype.close = function (e) {
-    var $this    = $(this)
-    var selector = $this.attr('data-target')
-
-    if (!selector) {
-      selector = $this.attr('href')
-      selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') // strip for ie7
-    }
-
-    var $parent = $(selector)
-
-    if (e) e.preventDefault()
-
-    if (!$parent.length) {
-      $parent = $this.hasClass('alert') ? $this : $this.parent()
-    }
-
-    $parent.trigger(e = $.Event('close.bs.alert'))
-
-    if (e.isDefaultPrevented()) return
-
-    $parent.removeClass('in')
-
-    function removeElement() {
-      $parent.trigger('closed.bs.alert').remove()
-    }
-
-    $.support.transition && $parent.hasClass('fade') ?
-      $parent
-        .one($.support.transition.end, removeElement)
-        .emulateTransitionEnd(150) :
-      removeElement()
-  }
-
-
-  // ALERT PLUGIN DEFINITION
-  // =======================
-
-  var old = $.fn.alert
-
-  $.fn.alert = function (option) {
-    return this.each(function () {
-      var $this = $(this)
-      var data  = $this.data('bs.alert')
-
-      if (!data) $this.data('bs.alert', (data = new Alert(this)))
-      if (typeof option == 'string') data[option].call($this)
-    })
-  }
-
-  $.fn.alert.Constructor = Alert
-
-
-  // ALERT NO CONFLICT
-  // =================
-
-  $.fn.alert.noConflict = function () {
-    $.fn.alert = old
-    return this
-  }
-
-
-  // ALERT DATA-API
-  // ==============
-
-  $(document).on('click.bs.alert.data-api', dismiss, Alert.prototype.close)
-
-}(jQuery);
-
-/* ========================================================================
- * Bootstrap: button.js v3.0.2
- * http://getbootstrap.com/javascript/#buttons
- * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ======================================================================== */
-
-
-+function ($) { "use strict";
-
-  // BUTTON PUBLIC CLASS DEFINITION
-  // ==============================
-
-  var Button = function (element, options) {
-    this.$element = $(element)
-    this.options  = $.extend({}, Button.DEFAULTS, options)
-  }
-
-  Button.DEFAULTS = {
-    loadingText: 'loading...'
-  }
-
-  Button.prototype.setState = function (state) {
-    var d    = 'disabled'
-    var $el  = this.$element
-    var val  = $el.is('input') ? 'val' : 'html'
-    var data = $el.data()
-
-    state = state + 'Text'
-
-    if (!data.resetText) $el.data('resetText', $el[val]())
-
-    $el[val](data[state] || this.options[state])
-
-    // push to event loop to allow forms to submit
-    setTimeout(function () {
-      state == 'loadingText' ?
-        $el.addClass(d).attr(d, d) :
-        $el.removeClass(d).removeAttr(d);
-    }, 0)
-  }
-
-  Button.prototype.toggle = function () {
-    var $parent = this.$element.closest('[data-toggle="buttons"]')
-
-    if ($parent.length) {
-      var $input = this.$element.find('input')
-        .prop('checked', !this.$element.hasClass('active'))
-        .trigger('change')
-      if ($input.prop('type') === 'radio') $parent.find('.active').removeClass('active')
-    }
-
-    this.$element.toggleClass('active')
-  }
-
-
-  // BUTTON PLUGIN DEFINITION
-  // ========================
-
-  var old = $.fn.button
-
-  $.fn.button = function (option) {
-    return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.button')
-      var options = typeof option == 'object' && option
-
-      if (!data) $this.data('bs.button', (data = new Button(this, options)))
-
-      if (option == 'toggle') data.toggle()
-      else if (option) data.setState(option)
-    })
-  }
-
-  $.fn.button.Constructor = Button
-
-
-  // BUTTON NO CONFLICT
-  // ==================
-
-  $.fn.button.noConflict = function () {
-    $.fn.button = old
-    return this
-  }
-
-
-  // BUTTON DATA-API
-  // ===============
-
-  $(document).on('click.bs.button.data-api', '[data-toggle^=button]', function (e) {
-    var $btn = $(e.target)
-    if (!$btn.hasClass('btn')) $btn = $btn.closest('.btn')
-    $btn.button('toggle')
-    e.preventDefault()
-  })
-
-}(jQuery);
-
-/* ========================================================================
- * Bootstrap: carousel.js v3.0.2
- * http://getbootstrap.com/javascript/#carousel
- * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ======================================================================== */
-
-
-+function ($) { "use strict";
-
-  // CAROUSEL CLASS DEFINITION
-  // =========================
-
-  var Carousel = function (element, options) {
-    this.$element    = $(element)
-    this.$indicators = this.$element.find('.carousel-indicators')
-    this.options     = options
-    this.paused      =
-    this.sliding     =
-    this.interval    =
-    this.$active     =
-    this.$items      = null
-
-    this.options.pause == 'hover' && this.$element
-      .on('mouseenter', $.proxy(this.pause, this))
-      .on('mouseleave', $.proxy(this.cycle, this))
-  }
-
-  Carousel.DEFAULTS = {
-    interval: 5000
-  , pause: 'hover'
-  , wrap: true
-  }
-
-  Carousel.prototype.cycle =  function (e) {
-    e || (this.paused = false)
-
-    this.interval && clearInterval(this.interval)
-
-    this.options.interval
-      && !this.paused
-      && (this.interval = setInterval($.proxy(this.next, this), this.options.interval))
-
-    return this
-  }
-
-  Carousel.prototype.getActiveIndex = function () {
-    this.$active = this.$element.find('.item.active')
-    this.$items  = this.$active.parent().children()
-
-    return this.$items.index(this.$active)
-  }
-
-  Carousel.prototype.to = function (pos) {
-    var that        = this
-    var activeIndex = this.getActiveIndex()
-
-    if (pos > (this.$items.length - 1) || pos < 0) return
-
-    if (this.sliding)       return this.$element.one('slid', function () { that.to(pos) })
-    if (activeIndex == pos) return this.pause().cycle()
-
-    return this.slide(pos > activeIndex ? 'next' : 'prev', $(this.$items[pos]))
-  }
-
-  Carousel.prototype.pause = function (e) {
-    e || (this.paused = true)
-
-    if (this.$element.find('.next, .prev').length && $.support.transition.end) {
-      this.$element.trigger($.support.transition.end)
-      this.cycle(true)
-    }
-
-    this.interval = clearInterval(this.interval)
-
-    return this
-  }
-
-  Carousel.prototype.next = function () {
-    if (this.sliding) return
-    return this.slide('next')
-  }
-
-  Carousel.prototype.prev = function () {
-    if (this.sliding) return
-    return this.slide('prev')
-  }
-
-  Carousel.prototype.slide = function (type, next) {
-    var $active   = this.$element.find('.item.active')
-    var $next     = next || $active[type]()
-    var isCycling = this.interval
-    var direction = type == 'next' ? 'left' : 'right'
-    var fallback  = type == 'next' ? 'first' : 'last'
-    var that      = this
-
-    if (!$next.length) {
-      if (!this.options.wrap) return
-      $next = this.$element.find('.item')[fallback]()
-    }
-
-    this.sliding = true
-
-    isCycling && this.pause()
-
-    var e = $.Event('slide.bs.carousel', { relatedTarget: $next[0], direction: direction })
-
-    if ($next.hasClass('active')) return
-
-    if (this.$indicators.length) {
-      this.$indicators.find('.active').removeClass('active')
-      this.$element.one('slid', function () {
-        var $nextIndicator = $(that.$indicators.children()[that.getActiveIndex()])
-        $nextIndicator && $nextIndicator.addClass('active')
-      })
-    }
-
-    if ($.support.transition && this.$element.hasClass('slide')) {
-      this.$element.trigger(e)
-      if (e.isDefaultPrevented()) return
-      $next.addClass(type)
-      $next[0].offsetWidth // force reflow
-      $active.addClass(direction)
-      $next.addClass(direction)
-      $active
-        .one($.support.transition.end, function () {
-          $next.removeClass([type, direction].join(' ')).addClass('active')
-          $active.removeClass(['active', direction].join(' '))
-          that.sliding = false
-          setTimeout(function () { that.$element.trigger('slid') }, 0)
-        })
-        .emulateTransitionEnd(600)
-    } else {
-      this.$element.trigger(e)
-      if (e.isDefaultPrevented()) return
-      $active.removeClass('active')
-      $next.addClass('active')
-      this.sliding = false
-      this.$element.trigger('slid')
-    }
-
-    isCycling && this.cycle()
-
-    return this
-  }
-
-
-  // CAROUSEL PLUGIN DEFINITION
-  // ==========================
-
-  var old = $.fn.carousel
-
-  $.fn.carousel = function (option) {
-    return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.carousel')
-      var options = $.extend({}, Carousel.DEFAULTS, $this.data(), typeof option == 'object' && option)
-      var action  = typeof option == 'string' ? option : options.slide
-
-      if (!data) $this.data('bs.carousel', (data = new Carousel(this, options)))
-      if (typeof option == 'number') data.to(option)
-      else if (action) data[action]()
-      else if (options.interval) data.pause().cycle()
-    })
-  }
-
-  $.fn.carousel.Constructor = Carousel
-
-
-  // CAROUSEL NO CONFLICT
-  // ====================
-
-  $.fn.carousel.noConflict = function () {
-    $.fn.carousel = old
-    return this
-  }
-
-
-  // CAROUSEL DATA-API
-  // =================
-
-  $(document).on('click.bs.carousel.data-api', '[data-slide], [data-slide-to]', function (e) {
-    var $this   = $(this), href
-    var $target = $($this.attr('data-target') || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '')) //strip for ie7
-    var options = $.extend({}, $target.data(), $this.data())
-    var slideIndex = $this.attr('data-slide-to')
-    if (slideIndex) options.interval = false
-
-    $target.carousel(options)
-
-    if (slideIndex = $this.attr('data-slide-to')) {
-      $target.data('bs.carousel').to(slideIndex)
-    }
-
-    e.preventDefault()
-  })
-
-  $(window).on('load', function () {
-    $('[data-ride="carousel"]').each(function () {
-      var $carousel = $(this)
-      $carousel.carousel($carousel.data())
-    })
-  })
-
-}(jQuery);
-
-/* ========================================================================
- * Bootstrap: collapse.js v3.0.2
- * http://getbootstrap.com/javascript/#collapse
- * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ======================================================================== */
-
-
-+function ($) { "use strict";
-
-  // COLLAPSE PUBLIC CLASS DEFINITION
-  // ================================
-
-  var Collapse = function (element, options) {
-    this.$element      = $(element)
-    this.options       = $.extend({}, Collapse.DEFAULTS, options)
-    this.transitioning = null
-
-    if (this.options.parent) this.$parent = $(this.options.parent)
-    if (this.options.toggle) this.toggle()
-  }
-
-  Collapse.DEFAULTS = {
-    toggle: true
-  }
-
-  Collapse.prototype.dimension = function () {
-    var hasWidth = this.$element.hasClass('width')
-    return hasWidth ? 'width' : 'height'
-  }
-
-  Collapse.prototype.show = function () {
-    if (this.transitioning || this.$element.hasClass('in')) return
-
-    var startEvent = $.Event('show.bs.collapse')
-    this.$element.trigger(startEvent)
-    if (startEvent.isDefaultPrevented()) return
-
-    var actives = this.$parent && this.$parent.find('> .panel > .in')
-
-    if (actives && actives.length) {
-      var hasData = actives.data('bs.collapse')
-      if (hasData && hasData.transitioning) return
-      actives.collapse('hide')
-      hasData || actives.data('bs.collapse', null)
-    }
-
-    var dimension = this.dimension()
-
-    this.$element
-      .removeClass('collapse')
-      .addClass('collapsing')
-      [dimension](0)
-
-    this.transitioning = 1
-
-    var complete = function () {
-      this.$element
-        .removeClass('collapsing')
-        .addClass('in')
-        [dimension]('auto')
-      this.transitioning = 0
-      this.$element.trigger('shown.bs.collapse')
-    }
-
-    if (!$.support.transition) return complete.call(this)
-
-    var scrollSize = $.camelCase(['scroll', dimension].join('-'))
-
-    this.$element
-      .one($.support.transition.end, $.proxy(complete, this))
-      .emulateTransitionEnd(350)
-      [dimension](this.$element[0][scrollSize])
-  }
-
-  Collapse.prototype.hide = function () {
-    if (this.transitioning || !this.$element.hasClass('in')) return
-
-    var startEvent = $.Event('hide.bs.collapse')
-    this.$element.trigger(startEvent)
-    if (startEvent.isDefaultPrevented()) return
-
-    var dimension = this.dimension()
-
-    this.$element
-      [dimension](this.$element[dimension]())
-      [0].offsetHeight
-
-    this.$element
-      .addClass('collapsing')
-      .removeClass('collapse')
-      .removeClass('in')
-
-    this.transitioning = 1
-
-    var complete = function () {
-      this.transitioning = 0
-      this.$element
-        .trigger('hidden.bs.collapse')
-        .removeClass('collapsing')
-        .addClass('collapse')
-    }
-
-    if (!$.support.transition) return complete.call(this)
-
-    this.$element
-      [dimension](0)
-      .one($.support.transition.end, $.proxy(complete, this))
-      .emulateTransitionEnd(350)
-  }
-
-  Collapse.prototype.toggle = function () {
-    this[this.$element.hasClass('in') ? 'hide' : 'show']()
-  }
-
-
-  // COLLAPSE PLUGIN DEFINITION
-  // ==========================
-
-  var old = $.fn.collapse
-
-  $.fn.collapse = function (option) {
-    return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.collapse')
-      var options = $.extend({}, Collapse.DEFAULTS, $this.data(), typeof option == 'object' && option)
-
-      if (!data) $this.data('bs.collapse', (data = new Collapse(this, options)))
-      if (typeof option == 'string') data[option]()
-    })
-  }
-
-  $.fn.collapse.Constructor = Collapse
-
-
-  // COLLAPSE NO CONFLICT
-  // ====================
-
-  $.fn.collapse.noConflict = function () {
-    $.fn.collapse = old
-    return this
-  }
-
-
-  // COLLAPSE DATA-API
-  // =================
-
-  $(document).on('click.bs.collapse.data-api', '[data-toggle=collapse]', function (e) {
-    var $this   = $(this), href
-    var target  = $this.attr('data-target')
-        || e.preventDefault()
-        || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') //strip for ie7
-    var $target = $(target)
-    var data    = $target.data('bs.collapse')
-    var option  = data ? 'toggle' : $this.data()
-    var parent  = $this.attr('data-parent')
-    var $parent = parent && $(parent)
-
-    if (!data || !data.transitioning) {
-      if ($parent) $parent.find('[data-toggle=collapse][data-parent="' + parent + '"]').not($this).addClass('collapsed')
-      $this[$target.hasClass('in') ? 'addClass' : 'removeClass']('collapsed')
-    }
-
-    $target.collapse(option)
-  })
-
-}(jQuery);
-
-/* ========================================================================
- * Bootstrap: dropdown.js v3.0.2
- * http://getbootstrap.com/javascript/#dropdowns
- * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ======================================================================== */
-
-
-+function ($) { "use strict";
-
-  // DROPDOWN CLASS DEFINITION
-  // =========================
-
-  var backdrop = '.dropdown-backdrop'
-  var toggle   = '[data-toggle=dropdown]'
-  var Dropdown = function (element) {
-    var $el = $(element).on('click.bs.dropdown', this.toggle)
-  }
-
-  Dropdown.prototype.toggle = function (e) {
-    var $this = $(this)
-
-    if ($this.is('.disabled, :disabled')) return
-
-    var $parent  = getParent($this)
-    var isActive = $parent.hasClass('open')
-
-    clearMenus()
-
-    if (!isActive) {
-      if ('ontouchstart' in document.documentElement && !$parent.closest('.navbar-nav').length) {
-        // if mobile we we use a backdrop because click events don't delegate
-        $('<div class="dropdown-backdrop"/>').insertAfter($(this)).on('click', clearMenus)
-      }
-
-      $parent.trigger(e = $.Event('show.bs.dropdown'))
-
-      if (e.isDefaultPrevented()) return
-
-      $parent
-        .toggleClass('open')
-        .trigger('shown.bs.dropdown')
-
-      $this.focus()
-    }
-
-    return false
-  }
-
-  Dropdown.prototype.keydown = function (e) {
-    if (!/(38|40|27)/.test(e.keyCode)) return
-
-    var $this = $(this)
-
-    e.preventDefault()
-    e.stopPropagation()
-
-    if ($this.is('.disabled, :disabled')) return
-
-    var $parent  = getParent($this)
-    var isActive = $parent.hasClass('open')
-
-    if (!isActive || (isActive && e.keyCode == 27)) {
-      if (e.which == 27) $parent.find(toggle).focus()
-      return $this.click()
-    }
-
-    var $items = $('[role=menu] li:not(.divider):visible a', $parent)
-
-    if (!$items.length) return
-
-    var index = $items.index($items.filter(':focus'))
-
-    if (e.keyCode == 38 && index > 0)                 index--                        // up
-    if (e.keyCode == 40 && index < $items.length - 1) index++                        // down
-    if (!~index)                                      index=0
-
-    $items.eq(index).focus()
-  }
-
-  function clearMenus() {
-    $(backdrop).remove()
-    $(toggle).each(function (e) {
-      var $parent = getParent($(this))
-      if (!$parent.hasClass('open')) return
-      $parent.trigger(e = $.Event('hide.bs.dropdown'))
-      if (e.isDefaultPrevented()) return
-      $parent.removeClass('open').trigger('hidden.bs.dropdown')
-    })
-  }
-
-  function getParent($this) {
-    var selector = $this.attr('data-target')
-
-    if (!selector) {
-      selector = $this.attr('href')
-      selector = selector && /#/.test(selector) && selector.replace(/.*(?=#[^\s]*$)/, '') //strip for ie7
-    }
-
-    var $parent = selector && $(selector)
-
-    return $parent && $parent.length ? $parent : $this.parent()
-  }
-
-
-  // DROPDOWN PLUGIN DEFINITION
-  // ==========================
-
-  var old = $.fn.dropdown
-
-  $.fn.dropdown = function (option) {
-    return this.each(function () {
-      var $this = $(this)
-      var data  = $this.data('dropdown')
-
-      if (!data) $this.data('dropdown', (data = new Dropdown(this)))
-      if (typeof option == 'string') data[option].call($this)
-    })
-  }
-
-  $.fn.dropdown.Constructor = Dropdown
-
-
-  // DROPDOWN NO CONFLICT
-  // ====================
-
-  $.fn.dropdown.noConflict = function () {
-    $.fn.dropdown = old
-    return this
-  }
-
-
-  // APPLY TO STANDARD DROPDOWN ELEMENTS
-  // ===================================
-
-  $(document)
-    .on('click.bs.dropdown.data-api', clearMenus)
-    .on('click.bs.dropdown.data-api', '.dropdown form', function (e) { e.stopPropagation() })
-    .on('click.bs.dropdown.data-api'  , toggle, Dropdown.prototype.toggle)
-    .on('keydown.bs.dropdown.data-api', toggle + ', [role=menu]' , Dropdown.prototype.keydown)
-
-}(jQuery);
-
-/* ========================================================================
- * Bootstrap: modal.js v3.0.2
- * http://getbootstrap.com/javascript/#modals
- * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ======================================================================== */
-
-
-+function ($) { "use strict";
-
-  // MODAL CLASS DEFINITION
-  // ======================
-
-  var Modal = function (element, options) {
-    this.options   = options
-    this.$element  = $(element)
-    this.$backdrop =
-    this.isShown   = null
-
-    if (this.options.remote) this.$element.load(this.options.remote)
-  }
-
-  Modal.DEFAULTS = {
-      backdrop: true
-    , keyboard: true
-    , show: true
-  }
-
-  Modal.prototype.toggle = function (_relatedTarget) {
-    return this[!this.isShown ? 'show' : 'hide'](_relatedTarget)
-  }
-
-  Modal.prototype.show = function (_relatedTarget) {
-    var that = this
-    var e    = $.Event('show.bs.modal', { relatedTarget: _relatedTarget })
-
-    this.$element.trigger(e)
-
-    if (this.isShown || e.isDefaultPrevented()) return
-
-    this.isShown = true
-
-    this.escape()
-
-    this.$element.on('click.dismiss.modal', '[data-dismiss="modal"]', $.proxy(this.hide, this))
-
-    this.backdrop(function () {
-      var transition = $.support.transition && that.$element.hasClass('fade')
-
-      if (!that.$element.parent().length) {
-        that.$element.appendTo(document.body) // don't move modals dom position
-      }
-
-      that.$element.show()
-
-      if (transition) {
-        that.$element[0].offsetWidth // force reflow
-      }
-
-      that.$element
-        .addClass('in')
-        .attr('aria-hidden', false)
-
-      that.enforceFocus()
-
-      var e = $.Event('shown.bs.modal', { relatedTarget: _relatedTarget })
-
-      transition ?
-        that.$element.find('.modal-dialog') // wait for modal to slide in
-          .one($.support.transition.end, function () {
-            that.$element.focus().trigger(e)
-          })
-          .emulateTransitionEnd(300) :
-        that.$element.focus().trigger(e)
-    })
-  }
-
-  Modal.prototype.hide = function (e) {
-    if (e) e.preventDefault()
-
-    e = $.Event('hide.bs.modal')
-
-    this.$element.trigger(e)
-
-    if (!this.isShown || e.isDefaultPrevented()) return
-
-    this.isShown = false
-
-    this.escape()
-
-    $(document).off('focusin.bs.modal')
-
-    this.$element
-      .removeClass('in')
-      .attr('aria-hidden', true)
-      .off('click.dismiss.modal')
-
-    $.support.transition && this.$element.hasClass('fade') ?
-      this.$element
-        .one($.support.transition.end, $.proxy(this.hideModal, this))
-        .emulateTransitionEnd(300) :
-      this.hideModal()
-  }
-
-  Modal.prototype.enforceFocus = function () {
-    $(document)
-      .off('focusin.bs.modal') // guard against infinite focus loop
-      .on('focusin.bs.modal', $.proxy(function (e) {
-        if (this.$element[0] !== e.target && !this.$element.has(e.target).length) {
-          this.$element.focus()
-        }
-      }, this))
-  }
-
-  Modal.prototype.escape = function () {
-    if (this.isShown && this.options.keyboard) {
-      this.$element.on('keyup.dismiss.bs.modal', $.proxy(function (e) {
-        e.which == 27 && this.hide()
-      }, this))
-    } else if (!this.isShown) {
-      this.$element.off('keyup.dismiss.bs.modal')
-    }
-  }
-
-  Modal.prototype.hideModal = function () {
-    var that = this
-    this.$element.hide()
-    this.backdrop(function () {
-      that.removeBackdrop()
-      that.$element.trigger('hidden.bs.modal')
-    })
-  }
-
-  Modal.prototype.removeBackdrop = function () {
-    this.$backdrop && this.$backdrop.remove()
-    this.$backdrop = null
-  }
-
-  Modal.prototype.backdrop = function (callback) {
-    var that    = this
-    var animate = this.$element.hasClass('fade') ? 'fade' : ''
-
-    if (this.isShown && this.options.backdrop) {
-      var doAnimate = $.support.transition && animate
-
-      this.$backdrop = $('<div class="modal-backdrop ' + animate + '" />')
-        .appendTo(document.body)
-
-      this.$element.on('click.dismiss.modal', $.proxy(function (e) {
-        if (e.target !== e.currentTarget) return
-        this.options.backdrop == 'static'
-          ? this.$element[0].focus.call(this.$element[0])
-          : this.hide.call(this)
-      }, this))
-
-      if (doAnimate) this.$backdrop[0].offsetWidth // force reflow
-
-      this.$backdrop.addClass('in')
-
-      if (!callback) return
-
-      doAnimate ?
-        this.$backdrop
-          .one($.support.transition.end, callback)
-          .emulateTransitionEnd(150) :
-        callback()
-
-    } else if (!this.isShown && this.$backdrop) {
-      this.$backdrop.removeClass('in')
-
-      $.support.transition && this.$element.hasClass('fade')?
-        this.$backdrop
-          .one($.support.transition.end, callback)
-          .emulateTransitionEnd(150) :
-        callback()
-
-    } else if (callback) {
-      callback()
-    }
-  }
-
-
-  // MODAL PLUGIN DEFINITION
-  // =======================
-
-  var old = $.fn.modal
-
-  $.fn.modal = function (option, _relatedTarget) {
-    return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.modal')
-      var options = $.extend({}, Modal.DEFAULTS, $this.data(), typeof option == 'object' && option)
-
-      if (!data) $this.data('bs.modal', (data = new Modal(this, options)))
-      if (typeof option == 'string') data[option](_relatedTarget)
-      else if (options.show) data.show(_relatedTarget)
-    })
-  }
-
-  $.fn.modal.Constructor = Modal
-
-
-  // MODAL NO CONFLICT
-  // =================
-
-  $.fn.modal.noConflict = function () {
-    $.fn.modal = old
-    return this
-  }
-
-
-  // MODAL DATA-API
-  // ==============
-
-  $(document).on('click.bs.modal.data-api', '[data-toggle="modal"]', function (e) {
-    var $this   = $(this)
-    var href    = $this.attr('href')
-    var $target = $($this.attr('data-target') || (href && href.replace(/.*(?=#[^\s]+$)/, ''))) //strip for ie7
-    var option  = $target.data('modal') ? 'toggle' : $.extend({ remote: !/#/.test(href) && href }, $target.data(), $this.data())
-
-    e.preventDefault()
-
-    $target
-      .modal(option, this)
-      .one('hide', function () {
-        $this.is(':visible') && $this.focus()
-      })
-  })
-
-  $(document)
-    .on('show.bs.modal',  '.modal', function () { $(document.body).addClass('modal-open') })
-    .on('hidden.bs.modal', '.modal', function () { $(document.body).removeClass('modal-open') })
-
-}(jQuery);
-
-/* ========================================================================
- * Bootstrap: tooltip.js v3.0.2
- * http://getbootstrap.com/javascript/#tooltip
- * Inspired by the original jQuery.tipsy by Jason Frame
- * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ======================================================================== */
-
-
-+function ($) { "use strict";
-
-  // TOOLTIP PUBLIC CLASS DEFINITION
-  // ===============================
-
-  var Tooltip = function (element, options) {
-    this.type       =
-    this.options    =
-    this.enabled    =
-    this.timeout    =
-    this.hoverState =
-    this.$element   = null
-
-    this.init('tooltip', element, options)
-  }
-
-  Tooltip.DEFAULTS = {
-    animation: true
-  , placement: 'top'
-  , selector: false
-  , template: '<div class="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
-  , trigger: 'hover focus'
-  , title: ''
-  , delay: 0
-  , html: false
-  , container: false
-  }
-
-  Tooltip.prototype.init = function (type, element, options) {
-    this.enabled  = true
-    this.type     = type
-    this.$element = $(element)
-    this.options  = this.getOptions(options)
-
-    var triggers = this.options.trigger.split(' ')
-
-    for (var i = triggers.length; i--;) {
-      var trigger = triggers[i]
-
-      if (trigger == 'click') {
-        this.$element.on('click.' + this.type, this.options.selector, $.proxy(this.toggle, this))
-      } else if (trigger != 'manual') {
-        var eventIn  = trigger == 'hover' ? 'mouseenter' : 'focus'
-        var eventOut = trigger == 'hover' ? 'mouseleave' : 'blur'
-
-        this.$element.on(eventIn  + '.' + this.type, this.options.selector, $.proxy(this.enter, this))
-        this.$element.on(eventOut + '.' + this.type, this.options.selector, $.proxy(this.leave, this))
-      }
-    }
-
-    this.options.selector ?
-      (this._options = $.extend({}, this.options, { trigger: 'manual', selector: '' })) :
-      this.fixTitle()
-  }
-
-  Tooltip.prototype.getDefaults = function () {
-    return Tooltip.DEFAULTS
-  }
-
-  Tooltip.prototype.getOptions = function (options) {
-    options = $.extend({}, this.getDefaults(), this.$element.data(), options)
-
-    if (options.delay && typeof options.delay == 'number') {
-      options.delay = {
-        show: options.delay
-      , hide: options.delay
-      }
-    }
-
-    return options
-  }
-
-  Tooltip.prototype.getDelegateOptions = function () {
-    var options  = {}
-    var defaults = this.getDefaults()
-
-    this._options && $.each(this._options, function (key, value) {
-      if (defaults[key] != value) options[key] = value
-    })
-
-    return options
-  }
-
-  Tooltip.prototype.enter = function (obj) {
-    var self = obj instanceof this.constructor ?
-      obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type)
-
-    clearTimeout(self.timeout)
-
-    self.hoverState = 'in'
-
-    if (!self.options.delay || !self.options.delay.show) return self.show()
-
-    self.timeout = setTimeout(function () {
-      if (self.hoverState == 'in') self.show()
-    }, self.options.delay.show)
-  }
-
-  Tooltip.prototype.leave = function (obj) {
-    var self = obj instanceof this.constructor ?
-      obj : $(obj.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type)
-
-    clearTimeout(self.timeout)
-
-    self.hoverState = 'out'
-
-    if (!self.options.delay || !self.options.delay.hide) return self.hide()
-
-    self.timeout = setTimeout(function () {
-      if (self.hoverState == 'out') self.hide()
-    }, self.options.delay.hide)
-  }
-
-  Tooltip.prototype.show = function () {
-    var e = $.Event('show.bs.'+ this.type)
-
-    if (this.hasContent() && this.enabled) {
-      this.$element.trigger(e)
-
-      if (e.isDefaultPrevented()) return
-
-      var $tip = this.tip()
-
-      this.setContent()
-
-      if (this.options.animation) $tip.addClass('fade')
-
-      var placement = typeof this.options.placement == 'function' ?
-        this.options.placement.call(this, $tip[0], this.$element[0]) :
-        this.options.placement
-
-      var autoToken = /\s?auto?\s?/i
-      var autoPlace = autoToken.test(placement)
-      if (autoPlace) placement = placement.replace(autoToken, '') || 'top'
-
-      $tip
-        .detach()
-        .css({ top: 0, left: 0, display: 'block' })
-        .addClass(placement)
-
-      this.options.container ? $tip.appendTo(this.options.container) : $tip.insertAfter(this.$element)
-
-      var pos          = this.getPosition()
-      var actualWidth  = $tip[0].offsetWidth
-      var actualHeight = $tip[0].offsetHeight
-
-      if (autoPlace) {
-        var $parent = this.$element.parent()
-
-        var orgPlacement = placement
-        var docScroll    = document.documentElement.scrollTop || document.body.scrollTop
-        var parentWidth  = this.options.container == 'body' ? window.innerWidth  : $parent.outerWidth()
-        var parentHeight = this.options.container == 'body' ? window.innerHeight : $parent.outerHeight()
-        var parentLeft   = this.options.container == 'body' ? 0 : $parent.offset().left
-
-        placement = placement == 'bottom' && pos.top   + pos.height  + actualHeight - docScroll > parentHeight  ? 'top'    :
-                    placement == 'top'    && pos.top   - docScroll   - actualHeight < 0                         ? 'bottom' :
-                    placement == 'right'  && pos.right + actualWidth > parentWidth                              ? 'left'   :
-                    placement == 'left'   && pos.left  - actualWidth < parentLeft                               ? 'right'  :
-                    placement
-
-        $tip
-          .removeClass(orgPlacement)
-          .addClass(placement)
-      }
-
-      var calculatedOffset = this.getCalculatedOffset(placement, pos, actualWidth, actualHeight)
-
-      this.applyPlacement(calculatedOffset, placement)
-      this.$element.trigger('shown.bs.' + this.type)
-    }
-  }
-
-  Tooltip.prototype.applyPlacement = function(offset, placement) {
-    var replace
-    var $tip   = this.tip()
-    var width  = $tip[0].offsetWidth
-    var height = $tip[0].offsetHeight
-
-    // manually read margins because getBoundingClientRect includes difference
-    var marginTop = parseInt($tip.css('margin-top'), 10)
-    var marginLeft = parseInt($tip.css('margin-left'), 10)
-
-    // we must check for NaN for ie 8/9
-    if (isNaN(marginTop))  marginTop  = 0
-    if (isNaN(marginLeft)) marginLeft = 0
-
-    offset.top  = offset.top  + marginTop
-    offset.left = offset.left + marginLeft
-
-    $tip
-      .offset(offset)
-      .addClass('in')
-
-    // check to see if placing tip in new offset caused the tip to resize itself
-    var actualWidth  = $tip[0].offsetWidth
-    var actualHeight = $tip[0].offsetHeight
-
-    if (placement == 'top' && actualHeight != height) {
-      replace = true
-      offset.top = offset.top + height - actualHeight
-    }
-
-    if (/bottom|top/.test(placement)) {
-      var delta = 0
-
-      if (offset.left < 0) {
-        delta       = offset.left * -2
-        offset.left = 0
-
-        $tip.offset(offset)
-
-        actualWidth  = $tip[0].offsetWidth
-        actualHeight = $tip[0].offsetHeight
-      }
-
-      this.replaceArrow(delta - width + actualWidth, actualWidth, 'left')
-    } else {
-      this.replaceArrow(actualHeight - height, actualHeight, 'top')
-    }
-
-    if (replace) $tip.offset(offset)
-  }
-
-  Tooltip.prototype.replaceArrow = function(delta, dimension, position) {
-    this.arrow().css(position, delta ? (50 * (1 - delta / dimension) + "%") : '')
-  }
-
-  Tooltip.prototype.setContent = function () {
-    var $tip  = this.tip()
-    var title = this.getTitle()
-
-    $tip.find('.tooltip-inner')[this.options.html ? 'html' : 'text'](title)
-    $tip.removeClass('fade in top bottom left right')
-  }
-
-  Tooltip.prototype.hide = function () {
-    var that = this
-    var $tip = this.tip()
-    var e    = $.Event('hide.bs.' + this.type)
-
-    function complete() {
-      if (that.hoverState != 'in') $tip.detach()
-    }
-
-    this.$element.trigger(e)
-
-    if (e.isDefaultPrevented()) return
-
-    $tip.removeClass('in')
-
-    $.support.transition && this.$tip.hasClass('fade') ?
-      $tip
-        .one($.support.transition.end, complete)
-        .emulateTransitionEnd(150) :
-      complete()
-
-    this.$element.trigger('hidden.bs.' + this.type)
-
-    return this
-  }
-
-  Tooltip.prototype.fixTitle = function () {
-    var $e = this.$element
-    if ($e.attr('title') || typeof($e.attr('data-original-title')) != 'string') {
-      $e.attr('data-original-title', $e.attr('title') || '').attr('title', '')
-    }
-  }
-
-  Tooltip.prototype.hasContent = function () {
-    return this.getTitle()
-  }
-
-  Tooltip.prototype.getPosition = function () {
-    var el = this.$element[0]
-    return $.extend({}, (typeof el.getBoundingClientRect == 'function') ? el.getBoundingClientRect() : {
-      width: el.offsetWidth
-    , height: el.offsetHeight
-    }, this.$element.offset())
-  }
-
-  Tooltip.prototype.getCalculatedOffset = function (placement, pos, actualWidth, actualHeight) {
-    return placement == 'bottom' ? { top: pos.top + pos.height,   left: pos.left + pos.width / 2 - actualWidth / 2  } :
-           placement == 'top'    ? { top: pos.top - actualHeight, left: pos.left + pos.width / 2 - actualWidth / 2  } :
-           placement == 'left'   ? { top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth } :
-        /* placement == 'right' */ { top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width   }
-  }
-
-  Tooltip.prototype.getTitle = function () {
-    var title
-    var $e = this.$element
-    var o  = this.options
-
-    title = $e.attr('data-original-title')
-      || (typeof o.title == 'function' ? o.title.call($e[0]) :  o.title)
-
-    return title
-  }
-
-  Tooltip.prototype.tip = function () {
-    return this.$tip = this.$tip || $(this.options.template)
-  }
-
-  Tooltip.prototype.arrow = function () {
-    return this.$arrow = this.$arrow || this.tip().find('.tooltip-arrow')
-  }
-
-  Tooltip.prototype.validate = function () {
-    if (!this.$element[0].parentNode) {
-      this.hide()
-      this.$element = null
-      this.options  = null
-    }
-  }
-
-  Tooltip.prototype.enable = function () {
-    this.enabled = true
-  }
-
-  Tooltip.prototype.disable = function () {
-    this.enabled = false
-  }
-
-  Tooltip.prototype.toggleEnabled = function () {
-    this.enabled = !this.enabled
-  }
-
-  Tooltip.prototype.toggle = function (e) {
-    var self = e ? $(e.currentTarget)[this.type](this.getDelegateOptions()).data('bs.' + this.type) : this
-    self.tip().hasClass('in') ? self.leave(self) : self.enter(self)
-  }
-
-  Tooltip.prototype.destroy = function () {
-    this.hide().$element.off('.' + this.type).removeData('bs.' + this.type)
-  }
-
-
-  // TOOLTIP PLUGIN DEFINITION
-  // =========================
-
-  var old = $.fn.tooltip
-
-  $.fn.tooltip = function (option) {
-    return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.tooltip')
-      var options = typeof option == 'object' && option
-
-      if (!data) $this.data('bs.tooltip', (data = new Tooltip(this, options)))
-      if (typeof option == 'string') data[option]()
-    })
-  }
-
-  $.fn.tooltip.Constructor = Tooltip
-
-
-  // TOOLTIP NO CONFLICT
-  // ===================
-
-  $.fn.tooltip.noConflict = function () {
-    $.fn.tooltip = old
-    return this
-  }
-
-}(jQuery);
-
-/* ========================================================================
- * Bootstrap: popover.js v3.0.2
- * http://getbootstrap.com/javascript/#popovers
- * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ======================================================================== */
-
-
-+function ($) { "use strict";
-
-  // POPOVER PUBLIC CLASS DEFINITION
-  // ===============================
-
-  var Popover = function (element, options) {
-    this.init('popover', element, options)
-  }
-
-  if (!$.fn.tooltip) throw new Error('Popover requires tooltip.js')
-
-  Popover.DEFAULTS = $.extend({} , $.fn.tooltip.Constructor.DEFAULTS, {
-    placement: 'right'
-  , trigger: 'click'
-  , content: ''
-  , template: '<div class="popover"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
-  })
-
-
-  // NOTE: POPOVER EXTENDS tooltip.js
-  // ================================
-
-  Popover.prototype = $.extend({}, $.fn.tooltip.Constructor.prototype)
-
-  Popover.prototype.constructor = Popover
-
-  Popover.prototype.getDefaults = function () {
-    return Popover.DEFAULTS
-  }
-
-  Popover.prototype.setContent = function () {
-    var $tip    = this.tip()
-    var title   = this.getTitle()
-    var content = this.getContent()
-
-    $tip.find('.popover-title')[this.options.html ? 'html' : 'text'](title)
-    $tip.find('.popover-content')[this.options.html ? 'html' : 'text'](content)
-
-    $tip.removeClass('fade top bottom left right in')
-
-    // IE8 doesn't accept hiding via the `:empty` pseudo selector, we have to do
-    // this manually by checking the contents.
-    if (!$tip.find('.popover-title').html()) $tip.find('.popover-title').hide()
-  }
-
-  Popover.prototype.hasContent = function () {
-    return this.getTitle() || this.getContent()
-  }
-
-  Popover.prototype.getContent = function () {
-    var $e = this.$element
-    var o  = this.options
-
-    return $e.attr('data-content')
-      || (typeof o.content == 'function' ?
-            o.content.call($e[0]) :
-            o.content)
-  }
-
-  Popover.prototype.arrow = function () {
-    return this.$arrow = this.$arrow || this.tip().find('.arrow')
-  }
-
-  Popover.prototype.tip = function () {
-    if (!this.$tip) this.$tip = $(this.options.template)
-    return this.$tip
-  }
-
-
-  // POPOVER PLUGIN DEFINITION
-  // =========================
-
-  var old = $.fn.popover
-
-  $.fn.popover = function (option) {
-    return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.popover')
-      var options = typeof option == 'object' && option
-
-      if (!data) $this.data('bs.popover', (data = new Popover(this, options)))
-      if (typeof option == 'string') data[option]()
-    })
-  }
-
-  $.fn.popover.Constructor = Popover
-
-
-  // POPOVER NO CONFLICT
-  // ===================
-
-  $.fn.popover.noConflict = function () {
-    $.fn.popover = old
-    return this
-  }
-
-}(jQuery);
-
-/* ========================================================================
- * Bootstrap: scrollspy.js v3.0.2
- * http://getbootstrap.com/javascript/#scrollspy
- * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ======================================================================== */
-
-
-+function ($) { "use strict";
-
-  // SCROLLSPY CLASS DEFINITION
-  // ==========================
-
-  function ScrollSpy(element, options) {
-    var href
-    var process  = $.proxy(this.process, this)
-
-    this.$element       = $(element).is('body') ? $(window) : $(element)
-    this.$body          = $('body')
-    this.$scrollElement = this.$element.on('scroll.bs.scroll-spy.data-api', process)
-    this.options        = $.extend({}, ScrollSpy.DEFAULTS, options)
-    this.selector       = (this.options.target
-      || ((href = $(element).attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '')) //strip for ie7
-      || '') + ' .nav li > a'
-    this.offsets        = $([])
-    this.targets        = $([])
-    this.activeTarget   = null
-
-    this.refresh()
-    this.process()
-  }
-
-  ScrollSpy.DEFAULTS = {
-    offset: 10
-  }
-
-  ScrollSpy.prototype.refresh = function () {
-    var offsetMethod = this.$element[0] == window ? 'offset' : 'position'
-
-    this.offsets = $([])
-    this.targets = $([])
-
-    var self     = this
-    var $targets = this.$body
-      .find(this.selector)
-      .map(function () {
-        var $el   = $(this)
-        var href  = $el.data('target') || $el.attr('href')
-        var $href = /^#\w/.test(href) && $(href)
-
-        return ($href
-          && $href.length
-          && [[ $href[offsetMethod]().top + (!$.isWindow(self.$scrollElement.get(0)) && self.$scrollElement.scrollTop()), href ]]) || null
-      })
-      .sort(function (a, b) { return a[0] - b[0] })
-      .each(function () {
-        self.offsets.push(this[0])
-        self.targets.push(this[1])
-      })
-  }
-
-  ScrollSpy.prototype.process = function () {
-    var scrollTop    = this.$scrollElement.scrollTop() + this.options.offset
-    var scrollHeight = this.$scrollElement[0].scrollHeight || this.$body[0].scrollHeight
-    var maxScroll    = scrollHeight - this.$scrollElement.height()
-    var offsets      = this.offsets
-    var targets      = this.targets
-    var activeTarget = this.activeTarget
-    var i
-
-    if (scrollTop >= maxScroll) {
-      return activeTarget != (i = targets.last()[0]) && this.activate(i)
-    }
-
-    for (i = offsets.length; i--;) {
-      activeTarget != targets[i]
-        && scrollTop >= offsets[i]
-        && (!offsets[i + 1] || scrollTop <= offsets[i + 1])
-        && this.activate( targets[i] )
-    }
-  }
-
-  ScrollSpy.prototype.activate = function (target) {
-    this.activeTarget = target
-
-    $(this.selector)
-      .parents('.active')
-      .removeClass('active')
-
-    var selector = this.selector
-      + '[data-target="' + target + '"],'
-      + this.selector + '[href="' + target + '"]'
-
-    var active = $(selector)
-      .parents('li')
-      .addClass('active')
-
-    if (active.parent('.dropdown-menu').length)  {
-      active = active
-        .closest('li.dropdown')
-        .addClass('active')
-    }
-
-    active.trigger('activate')
-  }
-
-
-  // SCROLLSPY PLUGIN DEFINITION
-  // ===========================
-
-  var old = $.fn.scrollspy
-
-  $.fn.scrollspy = function (option) {
-    return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.scrollspy')
-      var options = typeof option == 'object' && option
-
-      if (!data) $this.data('bs.scrollspy', (data = new ScrollSpy(this, options)))
-      if (typeof option == 'string') data[option]()
-    })
-  }
-
-  $.fn.scrollspy.Constructor = ScrollSpy
-
-
-  // SCROLLSPY NO CONFLICT
-  // =====================
-
-  $.fn.scrollspy.noConflict = function () {
-    $.fn.scrollspy = old
-    return this
-  }
-
-
-  // SCROLLSPY DATA-API
-  // ==================
-
-  $(window).on('load', function () {
-    $('[data-spy="scroll"]').each(function () {
-      var $spy = $(this)
-      $spy.scrollspy($spy.data())
-    })
-  })
-
-}(jQuery);
-
-/* ========================================================================
- * Bootstrap: tab.js v3.0.2
- * http://getbootstrap.com/javascript/#tabs
- * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ======================================================================== */
-
-
-+function ($) { "use strict";
-
-  // TAB CLASS DEFINITION
-  // ====================
-
-  var Tab = function (element) {
-    this.element = $(element)
-  }
-
-  Tab.prototype.show = function () {
-    var $this    = this.element
-    var $ul      = $this.closest('ul:not(.dropdown-menu)')
-    var selector = $this.data('target')
-
-    if (!selector) {
-      selector = $this.attr('href')
-      selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') //strip for ie7
-    }
-
-    if ($this.parent('li').hasClass('active')) return
-
-    var previous = $ul.find('.active:last a')[0]
-    var e        = $.Event('show.bs.tab', {
-      relatedTarget: previous
-    })
-
-    $this.trigger(e)
-
-    if (e.isDefaultPrevented()) return
-
-    var $target = $(selector)
-
-    this.activate($this.parent('li'), $ul)
-    this.activate($target, $target.parent(), function () {
-      $this.trigger({
-        type: 'shown.bs.tab'
-      , relatedTarget: previous
-      })
-    })
-  }
-
-  Tab.prototype.activate = function (element, container, callback) {
-    var $active    = container.find('> .active')
-    var transition = callback
-      && $.support.transition
-      && $active.hasClass('fade')
-
-    function next() {
-      $active
-        .removeClass('active')
-        .find('> .dropdown-menu > .active')
-        .removeClass('active')
-
-      element.addClass('active')
-
-      if (transition) {
-        element[0].offsetWidth // reflow for transition
-        element.addClass('in')
-      } else {
-        element.removeClass('fade')
-      }
-
-      if (element.parent('.dropdown-menu')) {
-        element.closest('li.dropdown').addClass('active')
-      }
-
-      callback && callback()
-    }
-
-    transition ?
-      $active
-        .one($.support.transition.end, next)
-        .emulateTransitionEnd(150) :
-      next()
-
-    $active.removeClass('in')
-  }
-
-
-  // TAB PLUGIN DEFINITION
-  // =====================
-
-  var old = $.fn.tab
-
-  $.fn.tab = function ( option ) {
-    return this.each(function () {
-      var $this = $(this)
-      var data  = $this.data('bs.tab')
-
-      if (!data) $this.data('bs.tab', (data = new Tab(this)))
-      if (typeof option == 'string') data[option]()
-    })
-  }
-
-  $.fn.tab.Constructor = Tab
-
-
-  // TAB NO CONFLICT
-  // ===============
-
-  $.fn.tab.noConflict = function () {
-    $.fn.tab = old
-    return this
-  }
-
-
-  // TAB DATA-API
-  // ============
-
-  $(document).on('click.bs.tab.data-api', '[data-toggle="tab"], [data-toggle="pill"]', function (e) {
-    e.preventDefault()
-    $(this).tab('show')
-  })
-
-}(jQuery);
-
-/* ========================================================================
- * Bootstrap: affix.js v3.0.2
- * http://getbootstrap.com/javascript/#affix
- * ========================================================================
- * Copyright 2013 Twitter, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ======================================================================== */
-
-
-+function ($) { "use strict";
-
-  // AFFIX CLASS DEFINITION
-  // ======================
-
-  var Affix = function (element, options) {
-    this.options = $.extend({}, Affix.DEFAULTS, options)
-    this.$window = $(window)
-      .on('scroll.bs.affix.data-api', $.proxy(this.checkPosition, this))
-      .on('click.bs.affix.data-api',  $.proxy(this.checkPositionWithEventLoop, this))
-
-    this.$element = $(element)
-    this.affixed  =
-    this.unpin    = null
-
-    this.checkPosition()
-  }
-
-  Affix.RESET = 'affix affix-top affix-bottom'
-
-  Affix.DEFAULTS = {
-    offset: 0
-  }
-
-  Affix.prototype.checkPositionWithEventLoop = function () {
-    setTimeout($.proxy(this.checkPosition, this), 1)
-  }
-
-  Affix.prototype.checkPosition = function () {
-    if (!this.$element.is(':visible')) return
-
-    var scrollHeight = $(document).height()
-    var scrollTop    = this.$window.scrollTop()
-    var position     = this.$element.offset()
-    var offset       = this.options.offset
-    var offsetTop    = offset.top
-    var offsetBottom = offset.bottom
-
-    if (typeof offset != 'object')         offsetBottom = offsetTop = offset
-    if (typeof offsetTop == 'function')    offsetTop    = offset.top()
-    if (typeof offsetBottom == 'function') offsetBottom = offset.bottom()
-
-    var affix = this.unpin   != null && (scrollTop + this.unpin <= position.top) ? false :
-                offsetBottom != null && (position.top + this.$element.height() >= scrollHeight - offsetBottom) ? 'bottom' :
-                offsetTop    != null && (scrollTop <= offsetTop) ? 'top' : false
-
-    if (this.affixed === affix) return
-    if (this.unpin) this.$element.css('top', '')
-
-    this.affixed = affix
-    this.unpin   = affix == 'bottom' ? position.top - scrollTop : null
-
-    this.$element.removeClass(Affix.RESET).addClass('affix' + (affix ? '-' + affix : ''))
-
-    if (affix == 'bottom') {
-      this.$element.offset({ top: document.body.offsetHeight - offsetBottom - this.$element.height() })
-    }
-  }
-
-
-  // AFFIX PLUGIN DEFINITION
-  // =======================
-
-  var old = $.fn.affix
-
-  $.fn.affix = function (option) {
-    return this.each(function () {
-      var $this   = $(this)
-      var data    = $this.data('bs.affix')
-      var options = typeof option == 'object' && option
-
-      if (!data) $this.data('bs.affix', (data = new Affix(this, options)))
-      if (typeof option == 'string') data[option]()
-    })
-  }
-
-  $.fn.affix.Constructor = Affix
-
-
-  // AFFIX NO CONFLICT
-  // =================
-
-  $.fn.affix.noConflict = function () {
-    $.fn.affix = old
-    return this
-  }
-
-
-  // AFFIX DATA-API
-  // ==============
-
-  $(window).on('load', function () {
-    $('[data-spy="affix"]').each(function () {
-      var $spy = $(this)
-      var data = $spy.data()
-
-      data.offset = data.offset || {}
-
-      if (data.offsetBottom) data.offset.bottom = data.offsetBottom
-      if (data.offsetTop)    data.offset.top    = data.offsetTop
-
-      $spy.affix(data)
-    })
-  })
-
-}(jQuery);

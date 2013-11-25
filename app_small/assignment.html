@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <ul class="nav navbar-right hide" id = "loggedinHeader">
+        <div class="nav navbar-nav logged in">
+          <li><a href = "#" onclick = "homeworkBuddy.app.navigate('/student', {trigger: true})">Choose a different assignment</a></li>
+          <li><a href = "#" onclick = "homeworkBuddy.app.navigate('/student/review', {trigger: true})">Review!</a></li>
+          <li><a href = "/logout">Logout</a></li>
+        </div>
+      </ul>
+      <ul class="nav navbar-right loggedout" id = "loggedoutHeader">
+        <div class="nav navbar-nav logged in">
+          <li><a href = "/">Sign up</a></li>
+          <li><a href = "#" onclick = "homeworkBuddy.app.navigate('/student', {trigger: true})">Choose a different assignment</a></li>
+          <li><form class="navbar-form" role="login">
+            <div class="form-group">
+              <input type="text" class="form-control username" placeholder="Username">
+            </div>
+            <div class="form-group">
+              <input type="password" class="form-control password" placeholder="Password">
+            </div>
+              <a href = "#" class="btn btn-default" onclick = "homeworkBuddy.app.login()">Login</a>
+          </form></li>
+        </div>
+      </ul>
+      <h1 class="text-muted chewy"><a href = "/">HW Bud</a></h1>
+    </div>
+  </div>
+  <div class="container">
+    <div class="jumbotron container" id = "container"></div>
+  </div>
+  <script src="/bower_components/jquery/jquery.js"></script>
+  <script src="/bower_components/underscore/underscore.js"></script>
+  <script src="/bower_components/backbone/backbone.js"></script>
+  <script src = "/assignmentscripts/assignment.js"></script>
+  <script src = "/assignmentscripts/models.js"></script>
+  <script src = "/assignmentscripts/views.js"></script>
+  <script src = "/assignmentscripts/collectionViews.js"></script>
+  <script src = "/assignmentscripts/collections.js"></script>
+  <script src = "/assignmentscripts/findAssignment.js"></script>
+
+  <script src="/styles/js/bootstrap.js"></script>
+  <link rel="stylesheet" href="/styles/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/styles/assignmentStyles.css" />
+  <link href='http://fonts.googleapis.com/css?family=Chewy' rel='stylesheet' type='text/css'>
+</body>
+</html>
