@@ -16,14 +16,17 @@ homeworkBuddy.Router = Backbone.Router.extend({
     'teacher/grade/:assignment': 'getGrades',
     'teacher/grade': 'grades',
     '': 'landing',
+    'login': 'login',
     'signup/student': 'signupStudent',
     'signup/teacher': 'signupTeacher', 
     'login/student': 'loginStudent', 
     'login/teacher': 'loginTeacher',
   },
 
-  gradeAssignment: function(){
-
+  login: function(){
+    this.landing();
+    homeworkBuddy.$container.children().detach();
+    homeworkBuddy.$container.append('<h4>Either password or username was incorrect</h4>');
   },
 
   teacherView: function(){
@@ -65,7 +68,6 @@ homeworkBuddy.Router = Backbone.Router.extend({
 
   signupTeacher: function(){
     this.signOrLogin();
-
     homeworkBuddy.signupForm.signupTeacher();
   },
 
@@ -90,7 +92,6 @@ homeworkBuddy.Router = Backbone.Router.extend({
   }, 
 
   addQuestions: function() {
-    console.log('Router is on create/addquestions')
   }
 });
 
@@ -106,8 +107,6 @@ homeworkBuddy.Models.Header = Backbone.Model.extend({
         homeworkBuddy.createGradingView(data);
       }, 
       error: function(error){
-        console.log("There was an error");
-        console.log(error);
       }
     })
   }

@@ -6,20 +6,20 @@ var LocalStrategy = require('passport-local').Strategy;
 var assignments = require('./helpers/assignments');
 var grading = require('./helpers/grading');
 var review = require('./helpers/review');
-var process = require("./helpers/process");
 
 var port = process.env.PORT || 3000;
 //   Database   //
 //creating connection with database
 var db = mysql.createConnection({
   host     : process.env.HOST || 'localhost',
-  user     : process.env.USER || 'will',
+  user     : process.env.USER || 'root',
   password : process.env.PASSWORD || 'amba90w.',
 });
 
 //connecting to database and using correct table
 db.connect(function(err){
   if (err) { console.log(err); }
+
 });
 
 db.query('USE hwBud', function(err){
@@ -67,16 +67,11 @@ app.get('/student/review', function(request, response){
 })
 
 app.post('/student/review', function(request, response){
-  console.log("request received");
   review.saveReviewProgress(request, response, db);
 });
 
 app.get('/student/:teacher', function(request, response){
-  response.sendfile('student.html');
-});
-
-app.get('/student/:teacher/yaynohomework', function(request, response){
-  response.redirect('http://www.zoombo.com');
+  response.sendfile('assignment.html');
 });
 
 app.get('/student/:teacher/:assignmentid/:optional?*', function(request, response){
@@ -86,19 +81,13 @@ app.get('/student/:teacher/:assignmentid/:optional?*', function(request, respons
 //   Passport   //
 var isValidUserPassword = function(username, password, done){
   db.query('SELECT * FROM Users WHERE name = ?', username, function(err, rows, fields){
-    console.log('database query!');
-    console.log(rows);
     if (err){
-      console.log(err);
       return done(err);
     } else if (!rows[0]) {
-      console.log('username doesn\'t exist');
       return done(null, false);
     } else if (rows[0].password_hash !== password ){
-      console.log('incorrect password');
       return done(null, false)
     } else {
-      console.log('you logged in!');
       return done(null, rows[0]);
     }
   });
@@ -135,7 +124,7 @@ app.post('/login/user', passport.authenticate('local'), function(request, respon
 
 
 app.get('/login', function(request, response){
-  response.sendfile(__dirname + '/login.html');
+  response.sendfile('index.html');
 });
 
 //   Signing Up   //
@@ -153,11 +142,11 @@ app.post('/signup/:teacherOrStudent', function(request, response){
       db.query('INSERT INTO Users (name, email, password_hash, isTeacher) VALUES (?, ?, ?, ?)',
         [request.body.username, request.body.email, request.body.password, teacherOrStudent],
         function(err){
-          if (error){
+          if (err){
             response.writeHead(500)
           }
           request.login(request.body.username, function(){
-            if (isTeacher){
+            if (teacherOrStudent){
               response.redirect('/teacher/create');
             } else {
               response.redirect('/student');
