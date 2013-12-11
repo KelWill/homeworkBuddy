@@ -156,7 +156,13 @@ app.post('/signup/:teacherOrStudent', function(request, response){
           if (error){
             response.writeHead(500)
           }
-          response.end();
+          request.login(request.body.username, function(){
+            if (isTeacher){
+              response.redirect('/teacher/create');
+            } else {
+              response.redirect('/student');
+            }
+          })
       });
     } else {
       response.writeHead(401);
