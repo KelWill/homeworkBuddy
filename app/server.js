@@ -12,16 +12,10 @@ var port = process.env.PORT || 3000;
 //   Database   //
 //creating connection with database
 var db = mysql.createConnection({
-  host     : process.env.HOST,
-  user     : process.env.USER,
-  password : process.env.PASSWORD,
+  host     : process.env.HOST || 'localhost',
+  user     : process.env.USER || 'will',
+  password : process.env.PASSWORD || 'amba90w.',
 });
-
-//To guard against XSS
-var safe_tags = function(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-};
-
 
 //connecting to database and using correct table
 db.connect(function(err){
@@ -156,14 +150,17 @@ app.post('/signup/:teacherOrStudent', function(request, response){
 
   db.query('SELECT * FROM Users where name = ?', [userData.username] , function(err, rows, fields) {
     if ( rows.length === 0 ) {
-      db.query('INSERT INTO Users (name, email, password_hash, isTeacher) VALUES (?, ?, ?, ?)', 
-        [safe_tags(request.body.username), request.body.email, request.body.password, teacherOrStudent], 
+      db.query('INSERT INTO Users (name, email, password_hash, isTeacher) VALUES (?, ?, ?, ?)',
+        [request.body.username, request.body.email, request.body.password, teacherOrStudent],
         function(err){
-          response.end('You signed up successfully');
+          if (error){
+            response.writeHead(500)
+          }
+          response.end();
       });
     } else {
       response.writeHead(401);
-      response.end('User already exists');
+      response.end();
     }
   });
 });
