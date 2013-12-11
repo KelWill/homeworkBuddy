@@ -12427,18 +12427,16 @@ $(document).ready(function(){
          router.createCollectionsAndViews(paragraphs, questions);
        }, 
        error: function(error){
-         $('#container').prepend('<h1>' + error.responseText +'</h1>')
+         $('#container').prepend('<h4>' + error.responseText +'</h4>')
        }
       })
     },
 
     student: function(){
-      console.log('on route student');
       homeworkBuddy.student.start();
     },
 
     review: function(){
-      console.log("REVIEW HAS BEEN TRIGGERED!");
       $('#container').children().detach();
       $.ajax({
         method: "GET", 
@@ -12449,7 +12447,6 @@ $(document).ready(function(){
             $('#container').prepend('Looks like you\'re up to date on your review. Come back after you\'ve done more assignments');
             return
           }
-          console.log(data);
           app.questionSet = new homeworkBuddy.Collections.QuestionSet();
           app.questionSetView = new homeworkBuddy.Views.QuestionSetView({collection: app.questionSet});
           for ( var i = 0; i < data.length; i++ ){
@@ -12469,7 +12466,6 @@ $(document).ready(function(){
           $('#container').append(app.questionSetView.el);
         },
         error: function(error){
-          console.log(error)
         }
       })
     }, 
@@ -12489,6 +12485,7 @@ $(document).ready(function(){
         }
       });
     },
+
     login: function(){
       var $header = $('#loggedoutHeader');
       var username = $header.find('.username').val();
@@ -12560,6 +12557,7 @@ $(document).ready(function(){
 
   }));
   //End router
+
   homeworkBuddy.app = app;
 
   Backbone.history.start({pushState: true, silent: false});

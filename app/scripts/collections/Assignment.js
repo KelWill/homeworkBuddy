@@ -3,27 +3,23 @@ homeworkBuddy.Collections = homeworkBuddy.Collections || {};
 homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
   model: homeworkBuddy.Models.Paragraph, 
 
-  url: "http://localhost:8080",
   initialize: function(options){
     this.assignmentName = options.name;
   },
 
   submitHomework: function(){
     var assignmentName = this.assignmentName;
-    console.log(assignmentName);
     if (assignmentName.length > 25){
       assignmentName = assignmentName.split('').slice(0, 25).join('');
     }
     var data = this.processData(this.toJSON());
     data = JSON.stringify(data);
-    console.log('submitting homework');
-    console.log(data);
 
     $.ajax({
       method: 'POST', 
       contentType: 'application/json',
       data: data, 
-      url: 'http://localhost:8080/newhw/' + assignmentName, 
+      url: '/newhw/' + assignmentName, 
       success: function(urlObj){
       $('#container').children().detach();
       $('#container').append('\

@@ -12650,14 +12650,23 @@ homeworkBuddy.Router = Backbone.Router.extend({
     'teacher/grade/:assignment': 'getGrades',
     'teacher/grade': 'grades',
     '': 'landing',
+    'login': 'login',
+    'signedup': 'signedup',
     'signup/student': 'signupStudent',
     'signup/teacher': 'signupTeacher', 
     'login/student': 'loginStudent', 
     'login/teacher': 'loginTeacher',
   },
 
-  gradeAssignment: function(){
-
+  login: function(){
+    this.landing();
+    homeworkBuddy.$container.children().detach();
+    homeworkBuddy.$container.append('<h4>Either password or username was incorrect</h4>');
+  },
+  signedup: function(){
+    this.landing();
+    homeworkBuddy.$container.children().detach();
+    homeworkBuddy.$container.append('<h4>You signed up successfully, please log in.</h4>');
   },
 
   teacherView: function(){
@@ -12699,7 +12708,6 @@ homeworkBuddy.Router = Backbone.Router.extend({
 
   signupTeacher: function(){
     this.signOrLogin();
-
     homeworkBuddy.signupForm.signupTeacher();
   },
 
@@ -12724,7 +12732,6 @@ homeworkBuddy.Router = Backbone.Router.extend({
   }, 
 
   addQuestions: function() {
-    console.log('Router is on create/addquestions')
   }
 });
 
@@ -12740,8 +12747,6 @@ homeworkBuddy.Models.Header = Backbone.Model.extend({
         homeworkBuddy.createGradingView(data);
       }, 
       error: function(error){
-        console.log("There was an error");
-        console.log(error);
       }
     })
   }
@@ -13868,27 +13873,23 @@ homeworkBuddy.Collections = homeworkBuddy.Collections || {};
 homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
   model: homeworkBuddy.Models.Paragraph, 
 
-  url: "http://localhost:8080",
   initialize: function(options){
     this.assignmentName = options.name;
   },
 
   submitHomework: function(){
     var assignmentName = this.assignmentName;
-    console.log(assignmentName);
     if (assignmentName.length > 25){
       assignmentName = assignmentName.split('').slice(0, 25).join('');
     }
     var data = this.processData(this.toJSON());
     data = JSON.stringify(data);
-    console.log('submitting homework');
-    console.log(data);
 
     $.ajax({
       method: 'POST', 
       contentType: 'application/json',
       data: data, 
-      url: 'http://localhost:8080/newhw/' + assignmentName, 
+      url: '/newhw/' + assignmentName, 
       success: function(urlObj){
       $('#container').children().detach();
       $('#container').append('\
