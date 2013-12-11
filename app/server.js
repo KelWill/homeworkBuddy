@@ -126,6 +126,9 @@ app.post('/login/user', passport.authenticate('local'), function(request, respon
 app.get('/login', function(request, response){
   response.sendfile('index.html');
 });
+app.get('/signedup', function(request, response){
+  response.sendfile('index.html');
+});
 
 //   Signing Up   //
 app.post('/signup/:teacherOrStudent', function(request, response){
@@ -145,13 +148,18 @@ app.post('/signup/:teacherOrStudent', function(request, response){
           if (err){
             response.writeHead(500)
           }
-          request.login(request.body.username, function(){
-            if (teacherOrStudent){
-              response.redirect('/teacher/create');
-            } else {
-              response.redirect('/student');
+          request.login(request.body.username, function(error){
+            if (error) {
+              response.redirect('/signedup');
             }
-          })
+            else {
+              if (teacherOrStudent){
+                return response.redirect('/teacher/create');
+              } else {
+                return response.redirect('/student');
+              }
+            }
+          });
       });
     } else {
       response.writeHead(401);

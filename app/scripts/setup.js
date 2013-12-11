@@ -17,6 +17,7 @@ homeworkBuddy.Router = Backbone.Router.extend({
     'teacher/grade': 'grades',
     '': 'landing',
     'login': 'login',
+    'signedup': 'signedup',
     'signup/student': 'signupStudent',
     'signup/teacher': 'signupTeacher', 
     'login/student': 'loginStudent', 
@@ -27,6 +28,11 @@ homeworkBuddy.Router = Backbone.Router.extend({
     this.landing();
     homeworkBuddy.$container.children().detach();
     homeworkBuddy.$container.append('<h4>Either password or username was incorrect</h4>');
+  },
+  signedup: function(){
+    this.landing();
+    homeworkBuddy.$container.children().detach();
+    homeworkBuddy.$container.append('<h4>You signed up successfully, please log in.</h4>');
   },
 
   teacherView: function(){
