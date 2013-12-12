@@ -4,7 +4,6 @@ homeworkBuddy.Views.LoginView = Backbone.View.extend({
     'click a.signup.teacher': 'signupTeacher',
     'click a.login.student': 'loginStudent', 
     'click a.login.teacher': 'loginTeacher', 
-    'click a.why': 'why',
   }, 
 
   initialize: function(){
@@ -20,10 +19,6 @@ homeworkBuddy.Views.LoginView = Backbone.View.extend({
     this.$el.append('<li><a href = "#" class = "signup student landing">Student Signup</a></li>');
     this.$el.append('<li><a href = "#" class = "login teacher landing">Teacher Login</a></li>');
     this.$el.append('<li><a href = "#"" class = "signup teacher landing">Teacher Signup</a></li>');
-  },
-
-  why: function(){
-    homeworkBuddy.router.navigate('/why', {trigger: true});
   },
 
   signupStudent: function(){

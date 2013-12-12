@@ -12865,7 +12865,6 @@ homeworkBuddy.Views.LoginView = Backbone.View.extend({
     'click a.signup.teacher': 'signupTeacher',
     'click a.login.student': 'loginStudent', 
     'click a.login.teacher': 'loginTeacher', 
-    'click a.why': 'why',
   }, 
 
   initialize: function(){
@@ -12881,10 +12880,6 @@ homeworkBuddy.Views.LoginView = Backbone.View.extend({
     this.$el.append('<li><a href = "#" class = "signup student landing">Student Signup</a></li>');
     this.$el.append('<li><a href = "#" class = "login teacher landing">Teacher Login</a></li>');
     this.$el.append('<li><a href = "#"" class = "signup teacher landing">Teacher Signup</a></li>');
-  },
-
-  why: function(){
-    homeworkBuddy.router.navigate('/why', {trigger: true});
   },
 
   signupStudent: function(){
@@ -13308,7 +13303,7 @@ homeworkBuddy.templates.MCCreation =
 </div>'
 homeworkBuddy.templates.base = '<h1>Make Homework Awesome</h1>\
         <p class="lead">Great homework comes from great teachers. Homework Bud just helps.  </p>\
-        <p><a class="btn btn-lg btn-success" href="/why" role="button">Check it out</a></p>\
+        <p><a class="btn btn-lg btn-success" href="http://hwbud.azurewebsites.net/student/hwbud/whyhwbud" role="button">Check it out</a></p>\
       </div>'
 
 homeworkBuddy.templates.marketing = '\
