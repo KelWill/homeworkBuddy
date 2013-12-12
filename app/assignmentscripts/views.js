@@ -172,7 +172,7 @@ homeworkBuddy.Views.ParagraphView = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.html('<div class = "questions" >' + this.model.get('text') + '</div>');
+    this.$el.append('<div class = "questions" >' + this.model.get('text') + '</div>');
     this.$el.append('<div class = "questionSet questions hide"></div>');
     this.$el.append('<button class = "questions go btn btn-success btn-lg pull-right marTop">Ready for some questions?</button>');
     this.$el.append('<button class = "btn btn-warning questions btn-lg return hide pull-left marTop">Return to text</button>');

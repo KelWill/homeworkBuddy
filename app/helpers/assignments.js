@@ -1,6 +1,7 @@
 var safe_tags = function(str) {
   return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') ;
 };
+
 module.exports.createAssignment = function(request, response, db){
   var assignment = request.body;
   var assignmentName = request.params.assignmentName;

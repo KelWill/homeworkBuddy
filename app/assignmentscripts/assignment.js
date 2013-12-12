@@ -12,11 +12,11 @@ $(document).ready(function(){
   app = new (Backbone.Router.extend({
     url: document.URL,
     routes: {
-      'student(/)': 'student',
-      'student/review(/)': 'review',
-      'student/:teacher/:assignment/p/:id(/)' : 'showParagraph',
+      'student(/)'                              : 'student',
+      'student/review(/)'                       : 'review',
+      'student/:teacher/:assignment/p/:id(/)'   : 'showParagraph',
       'student/:teacher/:assignment/p/:id/q(/)' : 'showQuestions',
-      'student/:teacher/:assignment(/)': 'renderAssignment'
+      'student/:teacher/:assignment(/)'         : 'renderAssignment'
     },
 
     renderAssignment: function(teacher, assignment){
