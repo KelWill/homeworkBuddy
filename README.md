@@ -1,6 +1,6 @@
 Homework Buddy
 =========
-Homework Buddy is a tool that allows teachers to easily add questions to an article or passage, send it to their students, and view the results, all in the browser. It's currently deployed [here](/hwbud.azurewebsites.net). 
+Homework Buddy is a tool that allows teachers to easily add questions to an article or passage, send it to their students, and view the results, all in the browser. It's currently deployed [here](http://hwbud.azurewebsites.net). 
 ## Why use Homework Buddy?
 ### Grading
 Homework Buddy automatically grades multiple choice questions, and features a grading view that allows teachers to easily see student results, averages, and which questions students had the most trouble with, allowing them to adjust their teaching accordingly. 
