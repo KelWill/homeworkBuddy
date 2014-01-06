@@ -12408,11 +12408,11 @@ $(document).ready(function(){
   app = new (Backbone.Router.extend({
     url: document.URL,
     routes: {
-      'student(/)': 'student',
-      'student/review(/)': 'review',
-      'student/:teacher/:assignment/p/:id(/)' : 'showParagraph',
+      'student(/)'                              : 'student',
+      'student/review(/)'                       : 'review',
+      'student/:teacher/:assignment/p/:id(/)'   : 'showParagraph',
       'student/:teacher/:assignment/p/:id/q(/)' : 'showQuestions',
-      'student/:teacher/:assignment(/)': 'renderAssignment'
+      'student/:teacher/:assignment(/)'         : 'renderAssignment'
     },
 
     renderAssignment: function(teacher, assignment){
@@ -12755,7 +12755,7 @@ homeworkBuddy.Views.ParagraphView = Backbone.View.extend({
   },
 
   render: function(){
-    this.$el.html('<div class = "questions" >' + this.model.get('text') + '</div>');
+    this.$el.append('<div class = "questions" >' + this.model.get('text') + '</div>');
     this.$el.append('<div class = "questionSet questions hide"></div>');
     this.$el.append('<button class = "questions go btn btn-success btn-lg pull-right marTop">Ready for some questions?</button>');
     this.$el.append('<button class = "btn btn-warning questions btn-lg return hide pull-left marTop">Return to text</button>');

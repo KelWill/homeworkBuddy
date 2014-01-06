@@ -13907,7 +13907,7 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
   },
 
 
-//Need to concatenate all the paragraphs in order so that articles will show up in the right place on the student server
+//Need to concatenate all the paragraphs in order so that articles will show up in the right place on the student view
   processData: function(data){
     console.log(data);
     var temp = '';
