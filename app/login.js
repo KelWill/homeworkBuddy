@@ -13,7 +13,7 @@ homeworkBuddy.Views.LoginView = Backbone.View.extend({
   className: "nav navbar-nav",
 
   landing: function(){
-    this.$el.append('<li><a href = "#" class = "why landing">Why use HW bud?</a></li>');
+    this.$el.append('<li><a href = "http://hwbud.azurewebsites.net/student/hwbud/whyhwbud" class = "why landing">Why use HW bud?</a></li>');
     this.$el.append('<li><a href = "#" class = "login student landing">\
                     Student Login</a></li>');
     this.$el.append('<li><a href = "#" class = "signup student landing">Student Signup</a></li>');

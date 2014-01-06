@@ -11,17 +11,17 @@ window.homeworkBuddy = {
 
 homeworkBuddy.Router = Backbone.Router.extend({
   routes: {
-    'teacher/create': 'teacherView',
-    'teacher/create/addquestions': 'addQuestions',
-    'teacher/grade/:assignment': 'getGrades',
-    'teacher/grade': 'grades',
-    '': 'landing',
-    'login': 'login',
-    'signedup': 'signedup',
-    'signup/student': 'signupStudent',
-    'signup/teacher': 'signupTeacher', 
-    'login/student': 'loginStudent', 
-    'login/teacher': 'loginTeacher',
+    'teacher/create'               : 'teacherView',
+    'teacher/create/addquestions'  : 'addQuestions',
+    'teacher/grade/:assignment'    : 'getGrades',
+    'teacher/grade'                : 'grades',
+    ''                             : 'landing',
+    'login'                        : 'login',
+    'signedup'                     : 'signedup',
+    'signup/student'               : 'signupStudent',
+    'signup/teacher'               : 'signupTeacher', 
+    'login/student'                : 'loginStudent', 
+    'login/teacher'                : 'loginTeacher',
   },
 
   login: function(){
@@ -52,7 +52,6 @@ homeworkBuddy.Router = Backbone.Router.extend({
       homeworkBuddy.$container.append(homeworkBuddy.Views.HWCreationView.el);
     }
   },
-
 
   landing: function(){
     homeworkBuddy.signup = new homeworkBuddy.Views.LoginView({});
@@ -156,7 +155,6 @@ homeworkBuddy.Views.HeaderView = Backbone.View.extend({
 
   //  This fetches all the assignments that the teacher can grade
   //  This happens after page load
-
   fetchAssignments: function(){
     var view = this;
     homeworkBuddy.assignmentsList = new homeworkBuddy.Models.AssignmentsList({})
@@ -167,14 +165,13 @@ homeworkBuddy.Views.HeaderView = Backbone.View.extend({
       success: function(data){
         data = JSON.parse(data);
         homeworkBuddy.assignmentsListView.createLinks(data);
-      }, 
+      },
       error: function(error){
         homeworkBuddy.assignmentsListView.loggedIn();
         console.log(error)
       }
     })
   },
-
 });
 
 homeworkBuddy.Models.AssignmentsList = Backbone.Model.extend({});

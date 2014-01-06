@@ -27,8 +27,7 @@ homeworkBuddy.Collections.Assignment = Backbone.Collection.extend({
         <p>Nice job. Your homework is available at' +
         urlObj + '</p>\
         ');
-        console.log(urlObj);
-      }, 
+      },
       error: function(error){
         if (error.status === 401){
           $('#container').prepend("<h2>Looks like you aren't logged in...</h2>");

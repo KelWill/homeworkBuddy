@@ -1,11 +1,12 @@
 /*global describe, it */
 'use strict';
 (function () {
-    describe('Give it some context', function () {
-        describe('maybe a bit more context here', function () {
-            it('should run here few assertions', function () {
-
-            });
-        });
-    });
+  var expect = requie('../lib/expect');
+  describe('index.html javascript', function () {
+      describe('backbone models, views, and collections exist', function () {
+          it('should have backbone models', function () {
+            debugger;
+          });
+      });
+  });
 })();
